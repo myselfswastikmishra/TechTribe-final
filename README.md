@@ -46,6 +46,47 @@ This service powers the "Contact Us" and "Start a Chapter" forms. Any form submi
 
 ---
 
+## 🚀 Deploying to Netlify
+
+Follow these steps to deploy the fullstack application to Netlify.
+
+### 1. Create a `netlify.toml` file
+
+Create a new file named `netlify.toml` in the root of your project. This file tells Netlify how to build and deploy your site, including the Genkit flows.
+
+```toml
+# netlify.toml
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[dev]
+  # This is the command that will be run when you use `netlify dev`
+  command = "npm run dev"
+  # The port for the Next.js development server
+  port = 9002
+  # The port for the Genkit development server
+  targetPort = 4000
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/__/*"
+  to = "/__/*"
+  status = 200
+```
+
+### 2. Configure Your Netlify Site
+
+1.  **Connect Your Repository:** In your Netlify dashboard, create a new site and connect it to your GitHub/GitLab/Bitbucket repository.
+2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY`. This is crucial for the AI flows to work in production.
+3.  **Trigger Deployment:** Netlify will automatically build and deploy your site whenever you push changes to your main branch. You can also trigger a manual deploy from the Netlify dashboard.
+
+Your Next.js frontend and Genkit AI backend will now be deployed and managed by Netlify.
+
+---
+
 ## 🛠️ Technology Stack
 
 This project is built with a modern, performance-focused technology stack:
@@ -121,6 +162,7 @@ This is the heart of the application.
         -   `chapter-application-flow.ts`: Handles new university chapter applications.
 
 -   `package.json`: Lists all project dependencies and custom scripts.
+-   `netlify.toml`: Configuration file for deploying to Netlify.
 
 ---
 
@@ -197,3 +239,5 @@ This form follows the same pattern:
 1.  Open `src/app/globals.css`.
 2.  At the top, find the `:root { ... }` section for the light theme and `.dark { ... }` for the dark theme.
 3.  Modify the HSL values for CSS variables like `--primary`, `--background`, and `--accent` to change the website's color palette.
+
+    
