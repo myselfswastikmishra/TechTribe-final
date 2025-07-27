@@ -39,6 +39,7 @@ const emailPrompt = ai.definePrompt({
       subjectLine: z.string(),
     }),
   },
+  model: 'gemini-1.5-flash',
   prompt: `
           You are a helpful assistant for a company called Tech Tribe. A user with the name {{fromName}} ({{fromEmail}}) has submitted a contact form.
           The user selected the subject: "{{subject}}".
@@ -90,7 +91,6 @@ const sendMessageFlow = ai.defineFlow(
         to: toEmail,
         subject: output.subjectLine,
         html: output.emailBody,
-        reply_to: input.email,
       });
 
       console.log('Email sent successfully via Resend.');
