@@ -41,7 +41,7 @@ export function Header() {
   const BrandLink = () => (
     <Link
       href="/"
-      className="flex items-center space-x-2 font-bold text-lg font-headline hover:text-primary transition-colors"
+      className="flex items-center space-x-2 font-bold text-lg font-headline hover:text-primary transition-colors whitespace-nowrap"
       onClick={() => setIsMenuOpen(false)}
     >
       Tech Tribe
