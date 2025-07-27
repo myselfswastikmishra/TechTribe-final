@@ -46,17 +46,58 @@ This service powers the "Contact Us" and "Start a Chapter" forms. Any form submi
 
 ---
 
+## 🛠️ Technology Stack
+
+This project is built with a modern, performance-focused technology stack:
+
+-   **Framework:** **Next.js** (v15) with the App Router for server-centric routing and rendering.
+-   **Language:** **TypeScript** for robust, type-safe code.
+-   **UI Library:** **React** (v18) for building interactive user interfaces.
+-   **Styling:** **Tailwind CSS** for a utility-first styling workflow, customized via `src/app/globals.css`.
+-   **UI Components:** **ShadCN/UI** provides a set of accessible, unstyled components that we've tailored to the site's theme.
+-   **Icons:** **Lucide React** for a comprehensive and consistent set of SVG icons.
+-   **Forms:** **React Hook Form** for managing form state and **Zod** for powerful schema-based validation.
+-   **AI Backend:** **Genkit** (from Google) powers the backend logic for forms, using the **Gemini AI** model to process submissions.
+-   **Animations:** The site uses a combination of `tailwindcss-animate` and custom React hooks (`DynamicText`, `StatsCounter`) for UI animations.
+
+---
+
+## 📚 Learning Path
+
+If you're new to this stack, here’s a recommended learning path to get you comfortable with the codebase.
+
+### 1. Foundational Knowledge
+Before diving in, make sure you have a solid grasp of web development fundamentals.
+-   **HTML, CSS, and JavaScript (ES6+):** The building blocks of the web.
+-   **Basic Command-Line/Terminal Usage:** Essential for running the project and managing dependencies.
+
+### 2. Core Frontend (React & Next.js)
+This is the heart of the application.
+-   **React:** Start with the official React documentation. Focus on:
+    -   **Components, Props, and State:** How to build and manage UI elements.
+    -   **Hooks:** Specifically `useState` and `useEffect`, which are used extensively.
+    -   **JSX Syntax:** The syntax used to write components.
+-   **Next.js:** Once you're comfortable with React, move on to the Next.js documentation.
+    -   **App Router:** Understand file-based routing (pages, layouts, loading states).
+    -   **Server Components vs. Client Components:** This is a key concept. Know when to use `'use client'`.
+    -   **Built-in Components:** Learn how `next/link` (for navigation) and `next/image` (for image optimization) work.
+
+### 3. Styling & UI
+-   **Tailwind CSS:** Get familiar with the utility-first approach. The official documentation has excellent interactive tutorials. You don't need to memorize classes, just understand the concept.
+-   **ShadCN/UI:** Read the "Introduction" and "Theming" sections of the documentation. Understand that you can directly modify the component files in `src/components/ui/`.
+
+### 4. Forms & AI
+-   **React Hook Form & Zod:** Review the "Get Started" guides for both libraries. See how they work together in `ContactForm.tsx` or `ChapterApplicationForm.tsx` to manage state and validate data.
+-   **Genkit:** The `src/ai/flows` directory contains the backend logic. Read the code in `send-message-flow.ts` to see how it receives data from the frontend, uses a prompt, and interacts with the Gemini AI.
+
+---
+
 ## 📂 Project Structure
 
 -   `src/app/` - The core of the website, following the Next.js App Router structure. Each folder typically corresponds to a page.
     -   `page.tsx`: The homepage.
     -   `contact/page.tsx`: The "Contact Us" page.
     -   `chapters/page.tsx`: The "Start a Chapter" page.
-    -   `portfolio/page.tsx`: The portfolio page.
-    -   `services/page.tsx`: The services page.
-    -   `sponsors/page.tsx`: The sponsors page.
-    -   `events/page.tsx`: The events page.
-    -   `faq/page.tsx`: The FAQ page.
     -   `layout.tsx`: The main site template, including the header and footer.
     -   `globals.css`: The stylesheet for global colors, fonts, and theme variables.
 
