@@ -113,19 +113,19 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="py-20 md:py-32">
+      <section className="min-h-screen flex items-center py-20 md:py-32">
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl font-headline">
+          <h1 className="text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl font-headline">
              <DynamicText />
           </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground md:text-xl">
+          <p className="mt-8 max-w-3xl mx-auto text-lg text-muted-foreground md:text-xl">
             We are a collective of developers, designers, and strategists from the Tech Tribe community, dedicated to building exceptional digital solutions and fostering the next generation of tech talent.
           </p>
-          <div className="mt-8 flex justify-center gap-4">
-             <Button asChild size="lg">
+          <div className="mt-10 flex justify-center gap-4">
+             <Button asChild size="lg" className="text-lg py-6 px-8">
               <Link href="/contact?subject=schedule_call">Schedule a Call</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" size="lg" className="text-lg py-6 px-8">
               <Link href="#join-community">Join Community</Link>
             </Button>
           </div>

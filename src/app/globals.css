@@ -72,7 +72,11 @@
     @apply font-headline;
   }
 
-  p, div, span, a, li, button, input, textarea, label {
+  p, div, span, a, li, button, label {
     @apply font-body;
+  }
+  
+  input, textarea {
+      @apply font-body;
   }
 }

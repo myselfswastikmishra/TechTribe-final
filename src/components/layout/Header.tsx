@@ -28,7 +28,7 @@ export function Header() {
     <Link
       href={href}
       className={cn(
-        "text-sm font-medium transition-colors hover:text-primary",
+        "font-medium transition-colors hover:text-primary",
         pathname === href ? "text-primary" : "text-muted-foreground",
         className
       )}
@@ -55,7 +55,7 @@ export function Header() {
           <div className="mr-6">
             <BrandLink />
           </div>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+          <nav className="flex items-center space-x-6">
             {navLinks.map((link) => (
               <NavLink key={link.href} {...link} />
             ))}
