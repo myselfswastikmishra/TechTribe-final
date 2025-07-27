@@ -15,6 +15,7 @@ This project uses Genkit to interact with the Google Gemini AI for form processi
     ```
     GEMINI_API_KEY=YOUR_API_KEY_HERE
     ```
+> **Note on Pricing:** The Genkit framework is free and open-source. The Google Gemini API has a generous free tier, and for the form processing in this project, your usage will very likely be well within the free limits. You only pay for what you use beyond the free tier.
 
 ### 2. Install Dependencies
 
