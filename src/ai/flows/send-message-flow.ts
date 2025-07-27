@@ -89,7 +89,6 @@ const sendMessageFlow = ai.defineFlow(
         to: toEmail,
         subject: output.subjectLine,
         html: output.emailBody,
-        reply_to: input.email,
       });
       
       console.log("Email sent successfully to:", toEmail);
