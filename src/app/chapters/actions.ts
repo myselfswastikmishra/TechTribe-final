@@ -1,15 +1,10 @@
 "use server"
 
-import * as z from "zod"
+import type * as z from "zod"
+import { chapterApplication, ChapterApplicationInputSchema } from "@/ai/flows/chapter-application-flow"
 
-const formSchema = z.object({
-  universityName: z.string(),
-  contactPerson: z.string(),
-  email: z.string().email(),
-  reason: z.string(),
-})
 
-export async function submitChapterApplication(values: z.infer<typeof formSchema>) {
+export async function submitChapterApplication(values: z.infer<typeof ChapterApplicationInputSchema>) {
   console.log("Received chapter application:", values)
 
   // Here you would process the application.
@@ -19,6 +14,5 @@ export async function submitChapterApplication(values: z.infer<typeof formSchema
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   
-  // For this example, we always return success.
-  return { success: true }
+  return await chapterApplication(values);
 }

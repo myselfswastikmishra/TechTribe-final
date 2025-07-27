@@ -1,15 +1,8 @@
 "use server"
 
-import * as z from "zod"
+import { sendMessage, type SendMessageInput } from "@/ai/flows/send-message-flow"
 
-const formSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  subject: z.string(),
-  message: z.string(),
-})
-
-export async function sendDirectMessage(values: z.infer<typeof formSchema>) {
+export async function sendDirectMessage(values: SendMessageInput) {
   // Here you would typically process the form data,
   // e.g., send an email, save to a database, etc.
   console.log("Received message:", values)
@@ -17,6 +10,5 @@ export async function sendDirectMessage(values: z.infer<typeof formSchema>) {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // For this example, we'll just return a success message.
-  return { success: true }
+  return await sendMessage(values);
 }
