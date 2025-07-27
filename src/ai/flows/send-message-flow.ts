@@ -8,6 +8,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {Resend} from 'resend';
 
 // Re-define the schema here to avoid context conflicts with client components.
 const SendMessageInputSchema = z.object({
@@ -31,16 +32,18 @@ const emailPrompt = ai.definePrompt({
       fromEmail: z.string(),
       subject: z.string(),
       message: z.string(),
-      toEmail: z.string(),
     }),
   },
-  output: { schema: z.object({ emailBody: z.string() }) },
+  output: { schema: z.object({ emailBody: z.string(), subjectLine: z.string() }) },
   prompt: `
-    You are a helpful assistant. A user with the name {{fromName}} and email {{fromEmail}} has submitted a contact form.
-    Generate the body for an email to be sent to {{toEmail}} with the subject "{{subject}}" and the following message:
+    You are a helpful assistant for a company called Tech Tribe. A user with the name {{fromName}} ({{fromEmail}}) has submitted a contact form.
+    The user selected the subject: "{{subject}}".
+    Their message is:
     {{message}}
 
-    Format the email body to be clear and readable.
+    Your tasks:
+    1. Create a concise, descriptive subject line for an email to be sent to the Tech Tribe team. The subject line should start with "[TechTribe Contact]" and include the user's name and original subject.
+    2. Generate a clean, well-formatted HTML email body to be sent to the internal team. The email should clearly present all the information provided by the user in a readable format. Use simple HTML tags like <h1>, <p>, <strong>, etc. Do not include <html> or <body> tags.
   `,
 });
 
@@ -54,26 +57,36 @@ const sendMessageFlow = ai.defineFlow(
     console.log('New message received, preparing email:', input);
 
     const toEmail = "theswastikmishraofficial@gmail.com";
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const { output } = await emailPrompt({
-      fromName: input.name,
-      fromEmail: input.email,
-      subject: input.subject,
-      message: input.message,
-      toEmail: toEmail,
-    });
+    try {
+      const { output } = await emailPrompt({
+        fromName: input.name,
+        fromEmail: input.email,
+        subject: input.subject,
+        message: input.message,
+      });
 
-    if (output) {
-      console.log("------- EMAIL TO BE SENT -------");
-      console.log(`To: ${toEmail}`);
-      console.log(`Subject: New message from ${input.name}: ${input.subject}`);
-      console.log("Body:");
-      console.log(output.emailBody);
-      console.log("---------------------------------");
+      if (!output) {
+        console.error("AI did not return output.");
+        return { success: false };
+      }
+
+      console.log("Sending email via Resend...");
+      await resend.emails.send({
+        from: 'onboarding@resend.dev', // Required, can be a non-reply address
+        to: toEmail,
+        subject: output.subjectLine,
+        html: output.emailBody,
+        reply_to: input.email,
+      });
+      
+      console.log("Email sent successfully to:", toEmail);
+      return { success: true };
+
+    } catch (error) {
+      console.error("Error sending email:", error);
+      return { success: false };
     }
-
-    // In a real application, you would add logic here to send an email,
-    // save to a database, or notify a messaging service like Slack.
-    return { success: true };
   }
 );

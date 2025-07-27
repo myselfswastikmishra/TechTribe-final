@@ -8,14 +8,17 @@ Follow these steps to set up and run the project locally.
 
 ### 1. Environment Variables
 
-This project uses Genkit to interact with the Google Gemini AI for form processing. You'll need an API key to enable this functionality.
+This project uses Genkit to interact with the Google Gemini AI for form processing and Resend to send emails. You'll need API keys for these services to be enabled.
 
 1.  Create a file named `.env` in the root of the project.
-2.  Add your Google AI API key to the `.env` file:
+2.  Add your Google AI API key and your Resend API key to the `.env` file:
     ```
-    GEMINI_API_KEY=YOUR_API_KEY_HERE
+    GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+    RESEND_API_KEY=YOUR_RESEND_API_KEY_HERE
     ```
-> **Note on Pricing:** The Genkit framework is free and open-source. The Google Gemini API has a generous free tier, and for the form processing in this project, your usage will very likely be well within the free limits. You only pay for what you use beyond the free tier.
+> **Note on Pricing:** 
+> - The Genkit framework is free and open-source. The Google Gemini API has a generous free tier, and for the form processing in this project, your usage will very likely be well within the free limits.
+> - Resend also offers a free tier that is sufficient for this project's contact form. You only pay for what you use beyond the free tiers.
 
 ### 2. Install Dependencies
 
@@ -43,7 +46,7 @@ This will start the website on `http://localhost:9002`.
 npm run genkit:watch
 ```
 
-This service powers the "Contact Us" and "Start a Chapter" forms. Any form submissions will be processed by Genkit and logged in this terminal.
+This service powers the "Contact Us" and "Start a Chapter" forms. Any form submissions will be processed by Genkit and logged in this terminal. When an email is sent, you will see a confirmation here.
 
 ---
 
@@ -81,7 +84,7 @@ Create a new file named `netlify.toml` in the root of your project. This file te
 ### 2. Configure Your Netlify Site
 
 1.  **Connect Your Repository:** In your Netlify dashboard, create a new site and connect it to your GitHub/GitLab/Bitbucket repository.
-2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY`. This is crucial for the AI flows to work in production.
+2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY` and `RESEND_API_KEY`. This is crucial for the AI flows to work in production.
 3.  **Trigger Deployment:** Netlify will automatically build and deploy your site whenever you push changes to your main branch. You can also trigger a manual deploy from the Netlify dashboard.
 
 Your Next.js frontend and Genkit AI backend will now be deployed and managed by Netlify.
@@ -100,6 +103,7 @@ This project is built with a modern, performance-focused technology stack:
 -   **Icons:** **Lucide React** for a comprehensive and consistent set of SVG icons.
 -   **Forms:** **React Hook Form** for managing form state and **Zod** for powerful schema-based validation.
 -   **AI Backend:** **Genkit** (from Google) powers the backend logic for forms, using the **Gemini AI** model to process submissions.
+-   **Email:** **Resend** for sending transactional emails from the contact form.
 -   **Animations:** The site uses a combination of `tailwindcss-animate` and custom React hooks (`DynamicText`, `StatsCounter`) for UI animations.
 
 ---
@@ -130,7 +134,7 @@ This is the heart of the application.
 
 ### 4. Forms & AI
 -   **React Hook Form & Zod:** Review the "Get Started" guides for both libraries. See how they work together in `ContactForm.tsx` or `ChapterApplicationForm.tsx` to manage state and validate data.
--   **Genkit:** The `src/ai/flows` directory contains the backend logic. Read the code in `send-message-flow.ts` to see how it receives data from the frontend, uses a prompt, and interacts with the Gemini AI.
+-   **Genkit & Resend:** The `src/ai/flows` directory contains the backend logic. Read the code in `send-message-flow.ts` to see how it receives data from the frontend, uses a prompt to format an email with Gemini, and then uses Resend to send the actual email.
 
 ---
 
@@ -159,7 +163,7 @@ This is the heart of the application.
 -   `src/ai/` - Contains the Genkit AI logic.
     -   `genkit.ts`: Configures the connection to the Gemini AI model.
     -   `flows/`: Defines the backend logic for forms.
-        -   `send-message-flow.ts`: Handles "Contact Us" form submissions.
+        -   `send-message-flow.ts`: Handles "Contact Us" form submissions and sends an email via Resend.
         -   `chapter-application-flow.ts`: Handles new university chapter applications.
 
 -   `package.json`: Lists all project dependencies and custom scripts.
@@ -220,12 +224,13 @@ The forms on this website use Genkit to process submissions on the backend.
 2.  **Server Action (`src/app/contact/actions.ts`):** The `sendDirectMessage` function passes the form data to the Genkit flow.
 3.  **AI Flow (`src/ai/flows/send-message-flow.ts`):**
     -   Receives the data.
-    -   Uses an AI prompt to format the data into an email body.
-    -   **Result:** The formatted email is printed to the Genkit terminal (`npm run genkit:watch`).
+    -   Uses an AI prompt to format the data into an email body and subject line.
+    -   Uses **Resend** to send the formatted email to your inbox.
+    -   The result is logged to the Genkit terminal (`npm run genkit:watch`).
 
 ### 2. "Start a Chapter" Form
 
-This form follows the same pattern:
+This form follows the same pattern, but does not send an email.
 
 1.  **Form:** `src/app/chapters/ChapterApplicationForm.tsx`
 2.  **Server Action:** `src/app/chapters/actions.ts`
