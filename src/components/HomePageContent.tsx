@@ -311,6 +311,39 @@ export function HomePageContent() {
         </div>
       </section>
 
+      {/* Community Section */}
+      <section id="community" className="py-16">
+        <div className="container mx-auto">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold font-headline">
+              Join Our Thriving Community
+            </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+              Connect, learn, and grow with a network of passionate tech enthusiasts.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {communityPillars.map((pillar) => (
+              <Card key={pillar.title} className="text-center transition-transform transform hover:-translate-y-2">
+                <CardHeader>
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                    {pillar.icon}
+                  </div>
+                  <CardTitle className="mt-4">{pillar.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{pillar.description}</p>
+                  <Button variant="link" asChild className="mt-4">
+                    <Link href={pillar.href}>Learn More <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
       {/* Sponsor CTA */}
       <section className="py-16">
         <div className="container mx-auto text-center">
