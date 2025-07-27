@@ -98,6 +98,12 @@ This is the heart of the application.
     -   `page.tsx`: The homepage.
     -   `contact/page.tsx`: The "Contact Us" page.
     -   `chapters/page.tsx`: The "Start a Chapter" page.
+    -   `events/page.tsx`: The "Events" page.
+    -   `faq/page.tsx`: The "FAQ" page.
+    -   `partners/page.tsx`: The "Our Partners" page.
+    -   `portfolio/page.tsx`: The "Our Work" portfolio page.
+    -   `services/page.tsx`: The "Services" page.
+    -   `sponsors/page.tsx`: The "Sponsors" page.
     -   `layout.tsx`: The main site template, including the header and footer.
     -   `globals.css`: The stylesheet for global colors, fonts, and theme variables.
 
@@ -130,6 +136,8 @@ Most of the website's content is managed through simple arrays directly within t
 
 ### Homepage (`src/app/page.tsx`)
 
+This page's content is composed within `src/components/HomePageContent.tsx`.
+
 -   **Image Gallery:** Edit the `galleryImages` array to change image URLs (`src`), alt text (`alt`), and AI hints (`hint`).
 -   **Services & Projects:** Update the `services` and `featuredProjects` arrays to manage content in these sections.
 -   **Testimonials:** Modify the `testimonials` array to manage client quotes.
@@ -146,6 +154,16 @@ Most of the website's content is managed through simple arrays directly within t
 1.  Open `src/app/faq/page.tsx`.
 2.  Find the `faqs` array at the top.
 3.  Each object has a `question` and an `answer`. Edit this list to manage the FAQ section.
+
+### Portfolio (`src/app/portfolio/page.tsx`)
+
+1.  Open `src/app/portfolio/page.tsx`.
+2.  Modify the `portfolioItems` and `testimonials` arrays to manage the project listings and client quotes.
+
+### Partners (`src/app/partners/page.tsx`)
+
+1.  Open `src/app/partners/page.tsx`.
+2.  Edit the `companyPartners` and `universityChapters` arrays to manage the logos and names displayed.
 
 ---
 
