@@ -11,27 +11,29 @@ type StatsCounterProps = {
 export function StatsCounter({ value, suffix = "", duration = 2000 }: StatsCounterProps) {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
-
-  const formatValue = (val: number) => {
-    if (val >= 1000) {
-      return `${(val / 1000).toFixed(1)}k`
-    }
-    return Math.round(val).toString()
-  }
+  const observerRef = useRef<IntersectionObserver | null>(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    observerRef.current = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
           let start = 0
           const end = value
-          if (start === end) return
+          if (start === end) {
+            setCount(end);
+            return
+          }
 
           const incrementTime = (duration / end)
           const timer = setInterval(() => {
             start += 1
             setCount(start)
-            if (start === end) clearInterval(timer)
+            if (start === end) {
+              clearInterval(timer)
+              if (observerRef.current) {
+                observerRef.current.disconnect()
+              }
+            }
           }, incrementTime)
         }
       },
@@ -39,18 +41,16 @@ export function StatsCounter({ value, suffix = "", duration = 2000 }: StatsCount
     )
 
     if (ref.current) {
-      observer.observe(ref.current)
+      observerRef.current.observe(ref.current)
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
+      if (observerRef.current) {
+        observerRef.current.disconnect()
       }
     }
   }, [value, duration])
   
-  const displayValue = value >= 1000 ? `${(count/1000).toFixed(1)}K` : count;
-
   return (
     <div ref={ref}>
       <span>{count.toLocaleString()}</span>
