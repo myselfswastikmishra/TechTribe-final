@@ -8,14 +8,9 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { ChapterApplicationFormSchema } from '@/app/chapters/ChapterApplicationForm';
 
-export const ChapterApplicationInputSchema = z.object({
-    universityName: z.string().describe("The name of the university."),
-    contactPerson: z.string().describe("The name of the contact person for the application."),
-    email: z.string().email().describe("The email of the contact person."),
-    reason: z.string().describe("The reason for wanting to start a chapter."),
-});
-export type ChapterApplicationInput = z.infer<typeof ChapterApplicationInputSchema>;
+export type ChapterApplicationInput = z.infer<typeof ChapterApplicationFormSchema>;
 
 export async function chapterApplication(input: ChapterApplicationInput) {
   return await chapterApplicationFlow(input);
@@ -24,7 +19,7 @@ export async function chapterApplication(input: ChapterApplicationInput) {
 const chapterApplicationFlow = ai.defineFlow(
   {
     name: 'chapterApplicationFlow',
-    inputSchema: ChapterApplicationInputSchema,
+    inputSchema: ChapterApplicationFormSchema,
     outputSchema: z.object({ success: z.boolean() }),
   },
   async (input) => {

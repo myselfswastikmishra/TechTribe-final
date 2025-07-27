@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { submitChapterApplication } from "./actions"
 
-const formSchema = z.object({
+export const ChapterApplicationFormSchema = z.object({
   universityName: z.string().min(5, "University name is required."),
   contactPerson: z.string().min(2, "Contact person name is required."),
   email: z.string().email("Please enter a valid email address."),
@@ -20,8 +20,8 @@ const formSchema = z.object({
 
 export function ChapterApplicationForm() {
   const { toast } = useToast()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof ChapterApplicationFormSchema>>({
+    resolver: zodResolver(ChapterApplicationFormSchema),
     defaultValues: {
       universityName: "",
       contactPerson: "",
@@ -30,7 +30,7 @@ export function ChapterApplicationForm() {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof ChapterApplicationFormSchema>) {
     const result = await submitChapterApplication(values)
 
     if (result.success) {
@@ -42,7 +42,7 @@ export function ChapterApplicationForm() {
     } else {
       toast({
         title: "Error",
-        description: result.message || "An unexpected error occurred. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       })
     }

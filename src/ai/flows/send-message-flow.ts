@@ -8,13 +8,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { SendMessageInputSchema } from '@/app/contact/ContactForm';
 
-export const SendMessageInputSchema = z.object({
-  name: z.string().describe('The name of the person sending the message.'),
-  email: z.string().email().describe('The email of the person sending the message.'),
-  subject: z.string().describe('The subject of the message.'),
-  message: z.string().describe('The content of the message.'),
-});
 export type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
 
 export async function sendMessage(input: SendMessageInput) {

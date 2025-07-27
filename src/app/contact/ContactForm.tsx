@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast"
 import { sendDirectMessage } from "./actions"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const formSchema = z.object({
+export const SendMessageInputSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   subject: z.string().min(1, "Please select a subject."),
@@ -30,8 +30,8 @@ export function ContactForm() {
 
 
   const { toast } = useToast()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof SendMessageInputSchema>>({
+    resolver: zodResolver(SendMessageInputSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -40,7 +40,7 @@ export function ContactForm() {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof SendMessageInputSchema>) {
     const result = await sendDirectMessage(values)
 
     if (result.success) {
