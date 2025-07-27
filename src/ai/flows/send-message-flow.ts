@@ -54,19 +54,19 @@ const sendMessageFlow = ai.defineFlow(
     outputSchema: z.object({ success: z.boolean() }),
   },
   async (input) => {
-    console.log('New message received, preparing email:', input);
-
     const toEmail = process.env.EMAIL_TO;
     if (!toEmail) {
-      console.error("EMAIL_TO environment variable is not set.");
+      console.error("CRITICAL: EMAIL_TO environment variable is not set. Cannot send email.");
       return { success: false };
     }
     
     const resendApiKey = process.env.RESEND_API_KEY;
     if (!resendApiKey) {
-      console.error("RESEND_API_KEY environment variable is not set.");
+      console.error("CRITICAL: RESEND_API_KEY environment variable is not set. Cannot send email.");
       return { success: false };
     }
+
+    console.log('New message received, preparing email for:', toEmail);
 
     try {
       const { output } = await emailPrompt({
@@ -77,11 +77,11 @@ const sendMessageFlow = ai.defineFlow(
       });
 
       if (!output) {
-        console.error("AI did not return output.");
+        console.error("AI did not return output. Cannot formulate email.");
         return { success: false };
       }
 
-      console.log("Sending email via Resend to:", toEmail);
+      console.log("AI generated email content. Sending via Resend...");
       const resend = new Resend(resendApiKey);
 
       await resend.emails.send({
@@ -91,7 +91,7 @@ const sendMessageFlow = ai.defineFlow(
         html: output.emailBody,
       });
       
-      console.log("Email sent successfully.");
+      console.log("Email sent successfully via Resend.");
       return { success: true };
 
     } catch (error) {
