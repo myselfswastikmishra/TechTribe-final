@@ -21,31 +21,28 @@ export function DynamicText() {
   useEffect(() => {
     const handleTyping = () => {
       const currentPhrase = phrases[phraseIndex]
-      const fullText = isDeleting
-        ? currentPhrase.substring(0, text.length - 1)
-        : currentPhrase.substring(0, text.length + 1)
-
-      setText(fullText)
-
-      if (!isDeleting && fullText === currentPhrase) {
-        // Pause at the end of typing
-        timeoutRef.current = setTimeout(() => {
-          setIsDeleting(true)
-        }, PAUSE_DURATION)
-      } else if (isDeleting && fullText === "") {
-        // Move to the next phrase after deleting
-        setIsDeleting(false)
-        setPhraseIndex((prev) => (prev + 1) % phrases.length)
+      
+      if (isDeleting) {
+        setText(currentPhrase.substring(0, text.length - 1))
       } else {
-        // Continue typing or deleting
-        timeoutRef.current = setTimeout(handleTyping, isDeleting ? DELETING_SPEED : TYPING_SPEED)
+        setText(currentPhrase.substring(0, text.length + 1))
       }
     }
 
-    timeoutRef.current = setTimeout(handleTyping, isDeleting ? DELETING_SPEED : TYPING_SPEED)
+    const typingTimeout = setTimeout(handleTyping, isDeleting ? DELETING_SPEED : TYPING_SPEED)
 
-    // Cleanup function to clear the timeout
+    if (!isDeleting && text === phrases[phraseIndex]) {
+      clearTimeout(typingTimeout)
+      timeoutRef.current = setTimeout(() => {
+        setIsDeleting(true)
+      }, PAUSE_DURATION)
+    } else if (isDeleting && text === "") {
+      setIsDeleting(false)
+      setPhraseIndex((prev) => (prev + 1) % phrases.length)
+    }
+
     return () => {
+      clearTimeout(typingTimeout)
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
