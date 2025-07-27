@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Code, LayoutTemplate, PenTool, Rocket, Bot } from "lucide-react";
+import { Check, LayoutTemplate, PenTool, Rocket, Bot } from "lucide-react";
 import Link from "next/link";
 
 const services = [

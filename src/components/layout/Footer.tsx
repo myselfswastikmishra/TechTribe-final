@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Github, Twitter, Linkedin, MessageCircle } from "lucide-react"
+import { Github, Twitter, Linkedin } from "lucide-react"
 import { DiscordIcon } from "@/components/icons/DiscordIcon"
 import { WhatsappIcon } from "@/components/icons/WhatsappIcon"
 
