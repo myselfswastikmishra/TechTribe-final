@@ -2,13 +2,23 @@
 
 import { sendMessage, type SendMessageInput } from "@/ai/flows/send-message-flow"
 
-export async function sendDirectMessage(values: SendMessageInput) {
-  // Here you would typically process the form data,
-  // e.g., send an email, save to a database, etc.
-  console.log("Received message:", values)
-  
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+type FormValues = Omit<SendMessageInput, 'geminiApiKey' | 'resendApiKey'>;
 
-  return await sendMessage(values);
+export async function sendDirectMessage(values: FormValues) {
+  console.log("Received message:", values);
+
+  const geminiApiKey = process.env.GEMINI_API_KEY;
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (!geminiApiKey || !resendApiKey) {
+    console.error("API keys for Gemini or Resend are not configured on the server.");
+    return { success: false };
+  }
+
+  // Pass the API keys from the server environment to the flow.
+  return await sendMessage({
+    ...values,
+    geminiApiKey,
+    resendApiKey,
+  });
 }
