@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 
 const phrases = [
     "a Tech Community.",
@@ -9,44 +9,45 @@ const phrases = [
 ]
 
 export function DynamicText() {
-  const [index, setIndex] = useState(0)
-  const [subIndex, setSubIndex] = useState(0)
-  const [reverse, setReverse] = useState(false)
+  const [text, setText] = useState("")
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
   
-  const timeoutRef = useRef<NodeJS.Timeout>();
-
   useEffect(() => {
-    if (subIndex === phrases[index].length + 1 && !reverse) {
-      setReverse(true);
-      // Add a pause at the end of the phrase
-      timeoutRef.current = setTimeout(() => {
-         setSubIndex(prev => prev -1)
-      }, 1200);
-      return;
-    }
+    const currentPhrase = phrases[phraseIndex]
+    const typingSpeed = 120
+    const deletingSpeed = 75
+    const pauseDuration = 1200
 
-    if (subIndex === 0 && reverse) {
-      setReverse(false);
-      setIndex((prev) => (prev + 1) % phrases.length);
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      setSubIndex((prev) => prev + (reverse ? -1 : 1));
-    }, reverse ? 75 : 120);
-
-    timeoutRef.current = timeout
-
-    return () => {
-        if(timeoutRef.current) {
-            clearTimeout(timeoutRef.current)
+    const handleTyping = () => {
+      if (isDeleting) {
+        // Deleting text
+        if (text.length > 0) {
+          setText(text.substring(0, text.length - 1))
+        } else {
+          setIsDeleting(false)
+          setPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length)
         }
-    };
-  }, [subIndex, index, reverse]);
+      } else {
+        // Typing text
+        if (text.length < currentPhrase.length) {
+          setText(currentPhrase.substring(0, text.length + 1))
+        } else {
+          // Pause before deleting
+          setTimeout(() => setIsDeleting(true), pauseDuration)
+        }
+      }
+    }
+
+    const typingInterval = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed)
+
+    return () => clearTimeout(typingInterval)
+  }, [text, isDeleting, phraseIndex])
 
   return (
     <>
-      We are <span className="text-primary">{phrases[index].substring(0, subIndex)}</span>
+      We are <span className="text-primary">{text}</span>
+      <span className="animate-pulse">|</span>
     </>
   )
 }
