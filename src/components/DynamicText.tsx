@@ -18,30 +18,29 @@ export function DynamicText() {
     const deletingSpeed = 50
     const pauseDuration = 1000
 
-    let timer: NodeJS.Timeout;
-
-    const handleTyping = () => {
+    const intervalId = setInterval(() => {
       const currentPhrase = phrases[phraseIndex];
-      if (isDeleting) {
-        if (text.length > 0) {
-          setText(prev => prev.substring(0, prev.length - 1))
+      
+      setText(prevText => {
+        let newText;
+        if (isDeleting) {
+          newText = currentPhrase.substring(0, prevText.length - 1)
+          if (newText.length === 0) {
+            setIsDeleting(false)
+            setPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length)
+          }
         } else {
-          setIsDeleting(false)
-          setPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length)
+          newText = currentPhrase.substring(0, prevText.length + 1)
+          if (newText.length === currentPhrase.length) {
+            setTimeout(() => setIsDeleting(true), pauseDuration);
+          }
         }
-      } else {
-        if (text.length < currentPhrase.length) {
-          setText(prev => currentPhrase.substring(0, prev.length + 1))
-        } else {
-          timer = setTimeout(() => setIsDeleting(true), pauseDuration)
-        }
-      }
-    }
+        return newText;
+      });
+    }, isDeleting ? deletingSpeed : typingSpeed);
 
-    timer = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed)
-
-    return () => clearTimeout(timer)
-  }, [text, isDeleting, phraseIndex])
+    return () => clearInterval(intervalId);
+  }, [phraseIndex, isDeleting]);
 
   return (
     <>
