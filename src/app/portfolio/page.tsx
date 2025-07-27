@@ -1,7 +1,13 @@
+import type { Metadata } from "next"
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+export const metadata: Metadata = {
+  title: "Portfolio | Tech Tribe",
+  description: "Explore our portfolio of projects, from website development and branding to business automation. See the quality and creativity we bring to our clients.",
+}
 
 const portfolioItems = [
   {

@@ -1,4 +1,10 @@
+import type { Metadata } from "next"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+
+export const metadata: Metadata = {
+  title: "FAQ | Tech Tribe",
+  description: "Find answers to common questions about our community, events, mission, and how to get involved with Tech Tribe.",
+}
 
 const faqs = [
   {

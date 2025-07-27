@@ -1,4 +1,10 @@
+import type { Metadata } from "next"
 import { ContactForm } from "./ContactForm"
+
+export const metadata: Metadata = {
+  title: "Contact Us | Tech Tribe",
+  description: "Get in touch with Tech Tribe. Whether you have a project in mind, a question about our community, or a sponsorship proposal, we'd love to hear from you.",
+}
 
 export default function ContactPage() {
   return (

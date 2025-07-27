@@ -1,8 +1,14 @@
+import type { Metadata } from "next"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, LayoutTemplate, PenTool, Rocket, Bot } from "lucide-react";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Services | Tech Tribe",
+  description: "Leverage our community's talent. We offer website development, branding, business automation, and end-to-end online business solutions.",
+}
 
 const services = [
   {

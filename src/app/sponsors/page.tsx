@@ -1,8 +1,14 @@
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BadgeCheck, BrainCircuit, Handshake, Users } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Become a Sponsor | Tech Tribe",
+  description: "Partner with Tech Tribe to inspire the next generation of innovators, connect with exceptional tech talent, and showcase your brand to our community.",
+}
 
 const benefits = [
     {

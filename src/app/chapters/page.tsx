@@ -1,6 +1,12 @@
+import type { Metadata } from "next"
 import { GraduationCap, Lightbulb, Network, Star } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChapterApplicationForm } from "./ChapterApplicationForm"
+
+export const metadata: Metadata = {
+  title: "Start a Chapter | Tech Tribe",
+  description: "Bring the Tech Tribe community to your university. Apply to start a chapter and gain access to our global network, exclusive events, and leadership opportunities.",
+}
 
 const perks = [
   {

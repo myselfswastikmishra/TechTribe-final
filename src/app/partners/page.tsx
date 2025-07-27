@@ -1,5 +1,11 @@
+import type { Metadata } from "next"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+export const metadata: Metadata = {
+  title: "Partners & Chapters | Tech Tribe",
+  description: "We are proud to collaborate with leading companies and have active chapters at universities worldwide. See who supports our mission.",
+}
 
 const companyPartners = [
   { name: "Innovate Corp", logo: "https://placehold.co/150x80.png", hint: "company logo" },

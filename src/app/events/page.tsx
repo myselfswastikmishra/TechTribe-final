@@ -1,9 +1,15 @@
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Calendar, Clock } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "Events | Tech Tribe",
+  description: "Join our upcoming hackathons, workshops, and networking events. Learn new skills, build innovative projects, and connect with the tech community.",
+}
 
 const events = [
   {
