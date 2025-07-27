@@ -5,6 +5,7 @@ import * as z from "zod"
 const formSchema = z.object({
   name: z.string(),
   email: z.string().email(),
+  subject: z.string(),
   message: z.string(),
 })
 

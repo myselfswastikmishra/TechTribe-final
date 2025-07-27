@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, Mountain, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 
@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { cn } from "@/lib/utils"
+import { TribalTattoo } from "../TribalTattoo"
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/services", label: "Services" },
+  { href: "/portfolio", label: "Portfolio" },
+  { href: "/sponsors", label: "Sponsors" },
   { href: "/events", label: "Events" },
-  { href: "/chapters", label: "Chapters" },
-  { href: "/partners", label: "Partners" },
-  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ]
 
@@ -41,10 +42,9 @@ export function Header() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Mountain className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block font-headline">
-              TechTribe HQ
-            </span>
+            <div className="w-32">
+                <TribalTattoo />
+            </div>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             {navLinks.map((link) => (
@@ -68,8 +68,9 @@ export function Header() {
                   className="mb-8 flex items-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <Mountain className="h-6 w-6 text-primary" />
-                  <span className="ml-2 font-bold font-headline">TechTribe HQ</span>
+                    <div className="w-32">
+                        <TribalTattoo />
+                    </div>
                 </Link>
                 <nav className="flex flex-col space-y-4">
                   {navLinks.map((link) => (
@@ -81,11 +82,15 @@ export function Header() {
           </div>
 
           <Link href="/" className="flex items-center space-x-2 md:hidden">
-            <Mountain className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline">TechTribe HQ</span>
+             <div className="w-32">
+                <TribalTattoo />
+            </div>
           </Link>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+             <Button asChild size="sm">
+              <Link href="/contact?subject=schedule_call">Schedule a Call</Link>
+            </Button>
             <ThemeToggle />
           </div>
         </div>
