@@ -8,7 +8,14 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { SendMessageInputSchema } from '@/app/contact/ContactForm';
+
+// Re-define the schema here to avoid context conflicts with client components.
+const SendMessageInputSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  subject: z.string().min(1, "Please select a subject."),
+  message: z.string().min(10, "Message must be at least 10 characters."),
+});
 
 export type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
 

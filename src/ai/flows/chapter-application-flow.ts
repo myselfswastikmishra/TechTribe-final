@@ -8,7 +8,14 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { ChapterApplicationFormSchema } from '@/app/chapters/ChapterApplicationForm';
+
+// Re-define the schema here to avoid context conflicts with client components.
+const ChapterApplicationFormSchema = z.object({
+  universityName: z.string().min(5, "University name is required."),
+  contactPerson: z.string().min(2, "Contact person name is required."),
+  email: z.string().email("Please enter a valid email address."),
+  reason: z.string().min(20, "Please provide a reason with at least 20 characters."),
+});
 
 export type ChapterApplicationInput = z.infer<typeof ChapterApplicationFormSchema>;
 
