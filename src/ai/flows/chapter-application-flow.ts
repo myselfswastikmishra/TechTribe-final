@@ -5,6 +5,7 @@
  * - chapterApplication - A function that handles a new chapter application.
  * - ChapterApplicationInput - The input type for the chapterApplication function.
  */
+import 'dotenv/config';
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';

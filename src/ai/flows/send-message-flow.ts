@@ -5,6 +5,7 @@
  * - sendMessage - A function that handles sending a message.
  * - SendMessageInput - The input type for the sendMessage function.
  */
+import 'dotenv/config';
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
