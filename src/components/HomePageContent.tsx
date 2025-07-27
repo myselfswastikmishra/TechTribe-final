@@ -17,7 +17,7 @@ const DynamicText = dynamic(() => import('@/components/DynamicText').then(mod =>
 
 const StatsCounter = dynamic(() => import('@/components/StatsCounter').then(mod => mod.StatsCounter), {
   ssr: false,
-  loading: ({value, suffix}) => <>{value}{suffix}</>
+  loading: () => <>0</>
 })
 
 export function HomePageContent() {
