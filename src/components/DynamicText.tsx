@@ -15,9 +15,9 @@ export function DynamicText() {
   
   useEffect(() => {
     const currentPhrase = phrases[phraseIndex]
-    const typingSpeed = 120
-    const deletingSpeed = 75
-    const pauseDuration = 1200
+    const typingSpeed = 100
+    const deletingSpeed = 50
+    const pauseDuration = 1000
 
     const handleTyping = () => {
       if (isDeleting) {
