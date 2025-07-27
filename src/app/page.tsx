@@ -141,19 +141,21 @@ export default function Home() {
               A glimpse into our vibrant events, workshops, and collaborative moments.
             </p>
           </div>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {galleryImages.map((image, index) => (
-              <div key={index} className="overflow-hidden rounded-lg">
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  width={600}
-                  height={400}
-                  data-ai-hint={image.hint}
-                  className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-                />
-              </div>
-            ))}
+          <div className="mt-12 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {galleryImages.map((image, index) => (
+                <div key={index} className="overflow-hidden rounded-lg">
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    width={600}
+                    height={400}
+                    data-ai-hint={image.hint}
+                    className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -203,32 +205,34 @@ export default function Home() {
               A glimpse into the quality and creativity we bring to our clients.
             </p>
           </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-2">
-            {featuredProjects.map((item) => (
-              <Card key={item.title} className="overflow-hidden group">
-                <CardHeader className="p-0">
-                  <div className="overflow-hidden">
-                    <Image
-                      src={item.image.src}
-                      alt={item.title}
-                      width={600}
-                      height={400}
-                      data-ai-hint={item.image.hint}
-                      className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <CardTitle className="text-2xl font-headline">{item.title}</CardTitle>
-                  <p className="mt-2 text-muted-foreground">{item.description}</p>
-                   <div className="mt-4 flex flex-wrap gap-2">
-                    {item.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary">{tag}</Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="mt-12 max-w-5xl mx-auto">
+            <div className="grid gap-8 md:grid-cols-2">
+              {featuredProjects.map((item) => (
+                <Card key={item.title} className="overflow-hidden group">
+                  <CardHeader className="p-0">
+                    <div className="overflow-hidden">
+                      <Image
+                        src={item.image.src}
+                        alt={item.title}
+                        width={600}
+                        height={400}
+                        data-ai-hint={item.image.hint}
+                        className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <CardTitle className="text-2xl font-headline">{item.title}</CardTitle>
+                    <p className="mt-2 text-muted-foreground">{item.description}</p>
+                     <div className="mt-4 flex flex-wrap gap-2">
+                      {item.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
            <div className="mt-12 text-center">
             <Button asChild>

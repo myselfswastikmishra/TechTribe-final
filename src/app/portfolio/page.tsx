@@ -58,34 +58,36 @@ export default function PortfolioPage() {
       </div>
 
       <section id="projects" className="mt-12">
-        <div className="grid gap-8 md:grid-cols-2">
-          {portfolioItems.map((item) => (
-            <Card key={item.title} className="overflow-hidden group">
-               <CardHeader>
-                <div className="overflow-hidden rounded-lg">
-                    <Image
-                    src={item.image.src}
-                    alt={item.title}
-                    width={600}
-                    height={400}
-                    data-ai-hint={item.image.hint}
-                    className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
-                    />
-                </div>
-              </CardHeader>
-              <CardContent className="pt-4">
-                <CardTitle className="text-2xl font-headline">{item.title}</CardTitle>
-                <p className="mt-2 text-muted-foreground">{item.description}</p>
-              </CardContent>
-              <CardFooter>
-                 <div className="flex flex-wrap gap-2">
-                  {item.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">{tag}</Badge>
-                  ))}
-                </div>
-              </CardFooter>
-            </Card>
-          ))}
+        <div className="max-w-5xl mx-auto">
+            <div className="grid gap-8 md:grid-cols-2">
+            {portfolioItems.map((item) => (
+                <Card key={item.title} className="overflow-hidden group">
+                <CardHeader>
+                    <div className="overflow-hidden rounded-lg">
+                        <Image
+                        src={item.image.src}
+                        alt={item.title}
+                        width={600}
+                        height={400}
+                        data-ai-hint={item.image.hint}
+                        className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                        />
+                    </div>
+                </CardHeader>
+                <CardContent className="pt-4">
+                    <CardTitle className="text-2xl font-headline">{item.title}</CardTitle>
+                    <p className="mt-2 text-muted-foreground">{item.description}</p>
+                </CardContent>
+                <CardFooter>
+                    <div className="flex flex-wrap gap-2">
+                    {item.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                    ))}
+                    </div>
+                </CardFooter>
+                </Card>
+            ))}
+            </div>
         </div>
       </section>
 
