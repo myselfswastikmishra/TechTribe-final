@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 const phrases = [
     "a Tech Community.",
@@ -23,7 +23,7 @@ export function DynamicText() {
       if (isDeleting) {
         // Deleting text
         if (text.length > 0) {
-          setText(text.substring(0, text.length - 1))
+          setText(prev => prev.substring(0, prev.length - 1))
         } else {
           setIsDeleting(false)
           setPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length)
@@ -31,7 +31,7 @@ export function DynamicText() {
       } else {
         // Typing text
         if (text.length < currentPhrase.length) {
-          setText(currentPhrase.substring(0, text.length + 1))
+          setText(prev => currentPhrase.substring(0, prev.length + 1))
         } else {
           // Pause before deleting
           setTimeout(() => setIsDeleting(true), pauseDuration)

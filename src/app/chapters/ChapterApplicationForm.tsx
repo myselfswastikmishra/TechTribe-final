@@ -35,7 +35,6 @@ export function ChapterApplicationForm() {
 
     if (result.success) {
       toast({
-        title: "Application Submitted!",
         description: "Thank you for your interest. We will review your application and be in touch soon.",
       })
       form.reset()
