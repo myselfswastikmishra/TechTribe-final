@@ -5,18 +5,16 @@
  * - sendMessage - A function that handles sending a message.
  * - SendMessageInput - The input type for the sendMessage function.
  */
-import {genkit, z} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import {z} from 'genkit';
 import {Resend} from 'resend';
 
-// The schema now includes the API keys, which will be passed from the server action.
+import {ai} from '@/ai/genkit';
+
 const SendMessageInputSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   email: z.string().email('Please enter a valid email address.'),
   subject: z.string().min(1, 'Please select a subject.'),
   message: z.string().min(10, 'Message must be at least 10 characters.'),
-  geminiApiKey: z.string(),
-  resendApiKey: z.string(),
 });
 
 export type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
@@ -25,44 +23,23 @@ export async function sendMessage(input: SendMessageInput) {
   return await sendMessageFlow(input);
 }
 
-const sendMessageFlow = genkit.defineFlow(
-  {
-    name: 'sendMessageFlow',
-    inputSchema: SendMessageInputSchema,
-    outputSchema: z.object({success: z.boolean()}),
+const emailPrompt = ai.definePrompt({
+  name: 'sendEmailPrompt',
+  input: {
+    schema: z.object({
+      fromName: z.string(),
+      fromEmail: z.string(),
+      subject: z.string(),
+      message: z.string(),
+    }),
   },
-  async (input) => {
-    const toEmail = process.env.EMAIL_TO;
-
-    if (!toEmail) {
-      console.error('CRITICAL: EMAIL_TO environment variable is not set.');
-      return {success: false};
-    }
-
-    try {
-      // Initialize Genkit and Resend inside the flow with the passed keys.
-      const ai = genkit({
-        plugins: [googleAI({apiKey: input.geminiApiKey})],
-      });
-      const resend = new Resend(input.resendApiKey);
-
-      const emailPrompt = ai.definePrompt({
-        name: 'sendEmailPrompt',
-        input: {
-          schema: z.object({
-            fromName: z.string(),
-            fromEmail: z.string(),
-            subject: z.string(),
-            message: z.string(),
-          }),
-        },
-        output: {
-          schema: z.object({
-            emailBody: z.string(),
-            subjectLine: z.string(),
-          }),
-        },
-        prompt: `
+  output: {
+    schema: z.object({
+      emailBody: z.string(),
+      subjectLine: z.string(),
+    }),
+  },
+  prompt: `
           You are a helpful assistant for a company called Tech Tribe. A user with the name {{fromName}} ({{fromEmail}}) has submitted a contact form.
           The user selected the subject: "{{subject}}".
           Their message is:
@@ -72,8 +49,26 @@ const sendMessageFlow = genkit.defineFlow(
           1. Create a concise, descriptive subject line for an email to be sent to the Tech Tribe team. The subject line should start with "[TechTribe Contact]" and include the user's name and original subject.
           2. Generate a clean, well-formatted HTML email body to be sent to the internal team. The email should clearly present all the information provided by the user in a readable format. Use simple HTML tags like <h1>, <p>, <strong>, etc. Do not include <html> or <body> tags.
         `,
-      });
+});
 
+const sendMessageFlow = ai.defineFlow(
+  {
+    name: 'sendMessageFlow',
+    inputSchema: SendMessageInputSchema,
+    outputSchema: z.object({success: z.boolean()}),
+  },
+  async (input) => {
+    const toEmail = process.env.EMAIL_TO;
+    const resendApiKey = process.env.RESEND_API_KEY;
+
+    if (!toEmail || !resendApiKey) {
+      console.error(
+        'CRITICAL: EMAIL_TO or RESEND_API_KEY environment variables are not set.'
+      );
+      return {success: false};
+    }
+
+    try {
       console.log('Generating email content with AI...');
       const {output} = await emailPrompt({
         fromName: input.name,
@@ -88,11 +83,14 @@ const sendMessageFlow = genkit.defineFlow(
       }
 
       console.log('AI generated email content. Sending via Resend...');
+      const resend = new Resend(resendApiKey);
+
       await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: toEmail,
         subject: output.subjectLine,
         html: output.emailBody,
+        reply_to: input.email,
       });
 
       console.log('Email sent successfully via Resend.');
