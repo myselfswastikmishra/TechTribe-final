@@ -239,5 +239,3 @@ This form follows the same pattern:
 1.  Open `src/app/globals.css`.
 2.  At the top, find the `:root { ... }` section for the light theme and `.dark { ... }` for the dark theme.
 3.  Modify the HSL values for CSS variables like `--primary`, `--background`, and `--accent` to change the website's color palette.
-
-    
