@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 
 const phrases = [
     "a Tech Community.",
@@ -14,14 +14,15 @@ export function DynamicText() {
   const [isDeleting, setIsDeleting] = useState(false)
   
   useEffect(() => {
-    const currentPhrase = phrases[phraseIndex]
     const typingSpeed = 100
     const deletingSpeed = 50
     const pauseDuration = 1000
 
+    let timer: NodeJS.Timeout;
+
     const handleTyping = () => {
+      const currentPhrase = phrases[phraseIndex];
       if (isDeleting) {
-        // Deleting text
         if (text.length > 0) {
           setText(prev => prev.substring(0, prev.length - 1))
         } else {
@@ -29,19 +30,17 @@ export function DynamicText() {
           setPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length)
         }
       } else {
-        // Typing text
         if (text.length < currentPhrase.length) {
           setText(prev => currentPhrase.substring(0, prev.length + 1))
         } else {
-          // Pause before deleting
-          setTimeout(() => setIsDeleting(true), pauseDuration)
+          timer = setTimeout(() => setIsDeleting(true), pauseDuration)
         }
       }
     }
 
-    const typingInterval = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed)
+    timer = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed)
 
-    return () => clearTimeout(typingInterval)
+    return () => clearTimeout(timer)
   }, [text, isDeleting, phraseIndex])
 
   return (

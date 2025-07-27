@@ -58,7 +58,7 @@ export default function PortfolioPage() {
       </div>
 
       <section id="projects" className="mt-12">
-        <div className="max-w-5xl mx-auto">
+        <main className="max-w-5xl mx-auto">
             <div className="grid gap-8 md:grid-cols-2">
             {portfolioItems.map((item) => (
                 <Card key={item.title} className="overflow-hidden group flex flex-col">
@@ -88,7 +88,7 @@ export default function PortfolioPage() {
                 </Card>
             ))}
             </div>
-        </div>
+        </main>
       </section>
 
       <section id="testimonials" className="mt-20">
