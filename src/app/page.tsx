@@ -150,6 +150,7 @@ export default function Home() {
                     alt={image.alt}
                     width={600}
                     height={400}
+                    priority={index < 3}
                     data-ai-hint={image.hint}
                     className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
                   />
@@ -216,6 +217,7 @@ export default function Home() {
                         alt={item.title}
                         width={600}
                         height={400}
+                        priority
                         data-ai-hint={item.image.hint}
                         className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                       />
