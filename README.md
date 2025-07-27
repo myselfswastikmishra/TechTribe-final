@@ -1,6 +1,6 @@
-# TechTribe HQ Website
+# Tech Tribe Website
 
-Welcome to the TechTribe HQ project repository. This document provides a comprehensive guide to understanding, running, and managing the website.
+Welcome to the Tech Tribe project repository. This document provides a comprehensive guide to understanding, running, and managing the website.
 
 ## 🚀 Getting Started
 
