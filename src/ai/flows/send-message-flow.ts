@@ -68,8 +68,6 @@ const sendMessageFlow = ai.defineFlow(
       return { success: false };
     }
 
-    const resend = new Resend(resendApiKey);
-
     try {
       const { output } = await emailPrompt({
         fromName: input.name,
@@ -83,19 +81,21 @@ const sendMessageFlow = ai.defineFlow(
         return { success: false };
       }
 
-      console.log("Sending email via Resend...");
+      console.log("Sending email via Resend to:", toEmail);
+      const resend = new Resend(resendApiKey);
+
       await resend.emails.send({
-        from: 'onboarding@resend.dev', // Required, can be a non-reply address
+        from: 'onboarding@resend.dev',
         to: toEmail,
         subject: output.subjectLine,
         html: output.emailBody,
       });
       
-      console.log("Email sent successfully to:", toEmail);
+      console.log("Email sent successfully.");
       return { success: true };
 
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("Error in sendMessageFlow:", error);
       return { success: false };
     }
   }
