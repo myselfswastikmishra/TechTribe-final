@@ -4,24 +4,73 @@ import { Github, Twitter, Linkedin } from "lucide-react"
 export function Footer() {
   const year = new Date().getFullYear()
 
+  const footerNav = [
+    { href: "/services", label: "Services" },
+    { href: "/portfolio", label: "Portfolio" },
+    { href: "/sponsors", label: "Sponsors" },
+    { href: "/chapters", label: "Chapters" },
+    { href: "/contact", label: "Contact" },
+  ]
+
   return (
-    <footer className="border-t">
-      <div className="container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
-        <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-          <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            &copy; {year} TechTribe HQ. All Rights Reserved.
-          </p>
+    <footer className="border-t bg-secondary/50">
+      <div className="container py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="md:col-span-1">
+            <h3 className="text-lg font-bold font-headline">Tech Tribe</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Community-driven freelance agency and tech incubator.
+            </p>
+          </div>
+          <div className="md:col-span-3">
+             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                  <h4 className="font-semibold">Agency</h4>
+                  <ul className="mt-4 space-y-2 text-sm">
+                    <li><Link href="/services" className="text-muted-foreground hover:text-primary">Services</Link></li>
+                    <li><Link href="/portfolio" className="text-muted-foreground hover:text-primary">Portfolio</Link></li>
+                    <li><Link href="/contact?subject=schedule_call" className="text-muted-foreground hover:text-primary">Schedule a Call</Link></li>
+                  </ul>
+                </div>
+                 <div>
+                  <h4 className="font-semibold">Community</h4>
+                  <ul className="mt-4 space-y-2 text-sm">
+                     <li><Link href="/events" className="text-muted-foreground hover:text-primary">Events</Link></li>
+                    <li><Link href="/chapters" className="text-muted-foreground hover:text-primary">Chapters</Link></li>
+                    <li><Link href="/faq" className="text-muted-foreground hover:text-primary">FAQ</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Partners</h4>
+                  <ul className="mt-4 space-y-2 text-sm">
+                    <li><Link href="/sponsors" className="text-muted-foreground hover:text-primary">Become a Sponsor</Link></li>
+                     <li><Link href="/partners" className="text-muted-foreground hover:text-primary">Our Partners</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Company</h4>
+                  <ul className="mt-4 space-y-2 text-sm">
+                    <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact Us</Link></li>
+                  </ul>
+                </div>
+             </div>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="#" aria-label="Twitter">
-            <Twitter className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
-          </Link>
-          <Link href="#" aria-label="GitHub">
-            <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
-          </Link>
-          <Link href="#" aria-label="LinkedIn">
-            <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
-          </Link>
+         <div className="mt-8 border-t pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              &copy; {year} Tech Tribe. All Rights Reserved.
+            </p>
+            <div className="flex items-center gap-4">
+                <Link href="#" aria-label="Twitter">
+                    <Twitter className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
+                </Link>
+                <Link href="#" aria-label="GitHub">
+                    <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
+                </Link>
+                <Link href="#" aria-label="LinkedIn">
+                    <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
+                </Link>
+            </div>
         </div>
       </div>
     </footer>
