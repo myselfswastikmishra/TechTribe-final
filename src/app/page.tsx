@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Code, PenTool, Rocket, Users, Milestone, PartyPopper, Award, MessageCircle } from "lucide-react"
+import { ArrowRight, Code, PenTool, Rocket, Users, Milestone, PartyPopper, Award, MessageCircle, HeartHandshake, FolderGit2, UsersRound } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { DynamicText } from "@/components/DynamicText"
 import { DiscordIcon } from "@/components/icons/DiscordIcon"
+import { StatsCounter } from "@/components/StatsCounter"
 
 export default function Home() {
   const galleryImages = [
@@ -17,7 +18,6 @@ export default function Home() {
     { src: "https://placehold.co/600x400.png", alt: "Community networking event", hint: "community event" },
     { src: "https://placehold.co/600x400.png", alt: "Team photo", hint: "team photo" },
     { src: "https://placehold.co/600x400.png", alt: "Coding session", hint: "coding session" },
-
   ]
 
   const services = [
@@ -89,11 +89,32 @@ export default function Home() {
     }
   ]
 
+  const stats = [
+    {
+      icon: <UsersRound className="h-10 w-10 text-primary" />,
+      value: 1500,
+      label: "Active Members",
+      suffix: "+",
+    },
+    {
+      icon: <FolderGit2 className="h-10 w-10 text-primary" />,
+      value: 50,
+      label: "Projects Completed",
+      suffix: "+",
+    },
+    {
+      icon: <HeartHandshake className="h-10 w-10 text-primary" />,
+      value: 20,
+      label: "Community Events",
+      suffix: "+",
+    }
+  ]
+
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center py-20 md:py-32">
+      <section className="min-h-[calc(100vh-theme(height.14))] flex items-center py-16 md:py-24">
         <div className="container mx-auto text-center">
           <h1 className="text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl font-headline">
              <DynamicText />
@@ -112,8 +133,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section id="stats" className="py-16">
+        <div className="container mx-auto">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold font-headline">Our Impact in Numbers</h2>
+            <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+              We're proud of the community we've built and the work we've delivered.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {stats.map((stat) => (
+              <Card key={stat.label} className="text-center p-6">
+                <div className="flex flex-col items-center gap-4">
+                  {stat.icon}
+                   <div className="text-5xl font-bold font-headline text-primary">
+                    <StatsCounter value={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <p className="text-lg text-muted-foreground font-medium">{stat.label}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
       {/* Gallery Section */}
-      <section id="gallery" className="py-20">
+      <section id="gallery" className="py-16">
         <div className="container mx-auto">
           <div className="text-center">
             <h2 className="text-3xl font-bold font-headline">Our Community in Action</h2>
@@ -142,7 +189,7 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-secondary/50 dark:bg-background">
+      <section id="services" className="py-16 bg-secondary/50 dark:bg-background">
         <div className="container mx-auto">
           <div className="text-center">
             <h2 className="text-3xl font-bold font-headline">
@@ -178,7 +225,7 @@ export default function Home() {
       </section>
       
       {/* Featured Work Section */}
-      <section id="featured-work" className="py-20">
+      <section id="featured-work" className="py-16">
         <div className="container mx-auto">
           <div className="text-center">
             <h2 className="text-3xl font-bold font-headline">Featured Projects</h2>
@@ -226,37 +273,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Community Section */}
-       <section id="community" className="py-20">
-        <div className="container mx-auto">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold font-headline">
-              More Than an Agency
-            </h2>
-            <p className="mt-4 text-center text-muted-foreground max-w-xl mx-auto">
-              We are a vibrant community dedicated to learning, growth, and making a positive impact in the tech world.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {communityPillars.map((pillar) => (
-              <Card key={pillar.title} className="text-center transition-transform transform hover:-translate-y-2">
-                <CardHeader>
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                    {pillar.icon}
-                  </div>
-                  <CardTitle className="mt-4">{pillar.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{pillar.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
        {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 bg-secondary/50 dark:bg-background">
+      <section id="testimonials" className="py-16 bg-secondary/50 dark:bg-background">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center font-headline">
             What Our Clients Say
