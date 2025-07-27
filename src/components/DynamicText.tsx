@@ -18,29 +18,29 @@ export function DynamicText() {
     const deletingSpeed = 50
     const pauseDuration = 1000
 
-    const intervalId = setInterval(() => {
-      const currentPhrase = phrases[phraseIndex];
-      
-      setText(prevText => {
-        let newText;
-        if (isDeleting) {
-          newText = currentPhrase.substring(0, prevText.length - 1)
-          if (newText.length === 0) {
-            setIsDeleting(false)
-            setPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length)
-          }
-        } else {
-          newText = currentPhrase.substring(0, prevText.length + 1)
-          if (newText.length === currentPhrase.length) {
-            setTimeout(() => setIsDeleting(true), pauseDuration);
-          }
-        }
-        return newText;
-      });
-    }, isDeleting ? deletingSpeed : typingSpeed);
+    const currentPhrase = phrases[phraseIndex];
 
-    return () => clearInterval(intervalId);
-  }, [phraseIndex, isDeleting]);
+    const handleTyping = () => {
+      if (isDeleting) {
+        if (text.length > 0) {
+          setText(prevText => prevText.substring(0, prevText.length - 1));
+        } else {
+          setIsDeleting(false);
+          setPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length);
+        }
+      } else {
+        if (text.length < currentPhrase.length) {
+          setText(prevText => currentPhrase.substring(0, prevText.length + 1));
+        } else {
+          setTimeout(() => setIsDeleting(true), pauseDuration);
+        }
+      }
+    };
+
+    const typingInterval = setInterval(handleTyping, isDeleting ? deletingSpeed : typingSpeed);
+
+    return () => clearInterval(typingInterval);
+  }, [text, isDeleting, phraseIndex]);
 
   return (
     <>

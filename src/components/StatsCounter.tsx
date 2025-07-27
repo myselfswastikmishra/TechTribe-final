@@ -10,59 +10,50 @@ type StatsCounterProps = {
 
 export function StatsCounter({ value, suffix = "", duration = 2000 }: StatsCounterProps) {
   const [count, setCount] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
-  const observerRef = useRef<IntersectionObserver | null>(null)
+  const ref = useRef<HTMLSpanElement>(null)
+  const [isIntersecting, setIntersecting] = useState(false)
   const [minWidth, setMinWidth] = useState("auto")
 
   useEffect(() => {
-    // Estimate the final width based on the number of digits.
-    // This is an approximation but is effective for preventing layout shifts.
+    // Estimate the final width based on the number of digits to prevent layout shift
     const finalWidth = `${value.toLocaleString().length * 0.6}em`
-    setMinWidth(finalWidth)
-    
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          let start = 0
-          const end = value
-          if (start === end) {
-            setCount(end);
-            return
-          }
+    setMinWidth(finalWidth);
 
-          const incrementTime = (duration / end)
-          const timer = setInterval(() => {
-            start += 1
-            setCount(start)
-            if (start === end) {
-              clearInterval(timer)
-              if (observerRef.current) {
-                observerRef.current.disconnect()
-              }
-            }
-          }, incrementTime)
-        }
-      },
+    const observer = new IntersectionObserver(
+      ([entry]) => setIntersecting(entry.isIntersecting),
       { threshold: 0.1 }
-    )
+    );
 
     if (ref.current) {
-      observerRef.current.observe(ref.current)
+      observer.observe(ref.current);
     }
 
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect()
-      }
+      if(ref.current) observer.unobserve(ref.current);
+    };
+  }, [value]);
+
+  useEffect(() => {
+    if (isIntersecting) {
+      let start = 0
+      const end = value
+      if (start === end) return
+
+      const incrementTime = (duration / end)
+      const timer = setInterval(() => {
+        start += 1
+        setCount(start)
+        if (start === end) clearInterval(timer)
+      }, incrementTime)
+
+      return () => clearInterval(timer)
     }
-  }, [value, duration])
+  }, [isIntersecting, value, duration])
   
   return (
-    <div ref={ref} className="flex items-center justify-center">
-      <span style={{ minWidth }} className="inline-block text-right">
-        {count.toLocaleString()}
-      </span>
-      <span>{suffix}</span>
-    </div>
+    <span ref={ref} style={{ minWidth: minWidth, display: 'inline-block', textAlign: 'right' }}>
+      {count.toLocaleString()}
+      {suffix}
+    </span>
   )
 }
