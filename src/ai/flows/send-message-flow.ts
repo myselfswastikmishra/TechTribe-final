@@ -56,8 +56,19 @@ const sendMessageFlow = ai.defineFlow(
   async (input) => {
     console.log('New message received, preparing email:', input);
 
-    const toEmail = "theswastikmishraofficial@gmail.com";
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const toEmail = process.env.EMAIL_TO;
+    if (!toEmail) {
+      console.error("EMAIL_TO environment variable is not set.");
+      return { success: false };
+    }
+    
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      console.error("RESEND_API_KEY environment variable is not set.");
+      return { success: false };
+    }
+
+    const resend = new Resend(resendApiKey);
 
     try {
       const { output } = await emailPrompt({

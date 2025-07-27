@@ -11,11 +11,16 @@ Follow these steps to set up and run the project locally.
 This project uses Genkit to interact with the Google Gemini AI for form processing and Resend to send emails. You'll need API keys for these services to be enabled.
 
 1.  Create a file named `.env` in the root of the project.
-2.  Add your Google AI API key and your Resend API key to the `.env` file:
+2.  Add your Google AI API key, your Resend API key, and the email address you want to receive messages at to the `.env` file:
     ```
     GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
     RESEND_API_KEY=YOUR_RESEND_API_KEY_HERE
+    EMAIL_TO=your-receiving-email@example.com
     ```
+
+> **Important Note on Resend:**
+> By default, free Resend accounts can only send emails **to the email address you signed up with**. Make sure the `EMAIL_TO` address is the same as your Resend account email.
+
 > **Note on Pricing:** 
 > - The Genkit framework is free and open-source. The Google Gemini API has a generous free tier, and for the form processing in this project, your usage will very likely be well within the free limits.
 > - Resend also offers a free tier that is sufficient for this project's contact form. You only pay for what you use beyond the free tiers.
@@ -84,7 +89,7 @@ Create a new file named `netlify.toml` in the root of your project. This file te
 ### 2. Configure Your Netlify Site
 
 1.  **Connect Your Repository:** In your Netlify dashboard, create a new site and connect it to your GitHub/GitLab/Bitbucket repository.
-2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY` and `RESEND_API_KEY`. This is crucial for the AI flows to work in production.
+2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY`, `RESEND_API_KEY`, and `EMAIL_TO`. This is crucial for the AI flows to work in production.
 3.  **Trigger Deployment:** Netlify will automatically build and deploy your site whenever you push changes to your main branch. You can also trigger a manual deploy from the Netlify dashboard.
 
 Your Next.js frontend and Genkit AI backend will now be deployed and managed by Netlify.
