@@ -12,8 +12,14 @@ export function StatsCounter({ value, suffix = "", duration = 2000 }: StatsCount
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
+  const [minWidth, setMinWidth] = useState("auto")
 
   useEffect(() => {
+    // Estimate the final width based on the number of digits.
+    // This is an approximation but is effective for preventing layout shifts.
+    const finalWidth = `${value.toLocaleString().length * 0.6}em`
+    setMinWidth(finalWidth)
+    
     observerRef.current = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -52,9 +58,11 @@ export function StatsCounter({ value, suffix = "", duration = 2000 }: StatsCount
   }, [value, duration])
   
   return (
-    <div ref={ref}>
-      <span>{count.toLocaleString()}</span>
-      {suffix}
+    <div ref={ref} className="flex items-center justify-center">
+      <span style={{ minWidth }} className="inline-block text-right">
+        {count.toLocaleString()}
+      </span>
+      <span>{suffix}</span>
     </div>
   )
 }

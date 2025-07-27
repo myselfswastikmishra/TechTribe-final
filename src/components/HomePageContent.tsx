@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Code, PenTool, Rocket, Users, PartyPopper, Award, UsersRound, FolderGit2, HeartHandshake } from "lucide-react"
+import { ArrowRight, Users, PartyPopper, Award, UsersRound, FolderGit2, HeartHandshake } from "lucide-react"
 import dynamic from 'next/dynamic'
 
 import { Button } from "@/components/ui/button"
@@ -20,7 +20,6 @@ const StatsCounter = dynamic(() => import('@/components/StatsCounter').then(mod 
   loading: ({value, suffix}) => <>{value}{suffix}</>
 })
 
-
 export function HomePageContent() {
   const galleryImages = [
     { src: "https://placehold.co/600x400.png", alt: "Workshop in progress", hint: "workshop tech" },
@@ -33,17 +32,17 @@ export function HomePageContent() {
 
   const services = [
     {
-      icon: <Rocket className="h-8 w-8 text-primary" />,
+      icon: "https://placehold.co/100x100.png",
       title: "Website Development",
       description: "We build modern, responsive, and high-performing websites to establish your online presence.",
     },
     {
-      icon: <PenTool className="h-8 w-8 text-primary" />,
+      icon: "https://placehold.co/100x100.png",
       title: "Brand & Logo Design",
       description: "Crafting unique logos, banners, and posters that tell your brand's story.",
     },
     {
-      icon: <Code className="h-8 w-8 text-primary" />,
+      icon: "https://placehold.co/100x100.png",
       title: "Business Automation",
       description: "Streamline your workflow with custom automations tailored to your specific business needs.",
     },
@@ -215,7 +214,7 @@ export function HomePageContent() {
               <Card key={service.title} className="text-center transition-transform transform hover:-translate-y-2">
                 <CardHeader>
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                    {service.icon}
+                    <Image src={service.icon} alt="" width={32} height={32} className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle className="mt-4">{service.title}</CardTitle>
                 </CardHeader>
