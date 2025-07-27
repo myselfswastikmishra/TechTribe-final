@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 export const metadata: Metadata = {
   metadataBase: new URL('https://localhost:9002'),
   title: 'Tech Tribe - Community & Freelance Agency',
-  description: 'A vibrant community for tech enthusiasts and a freelance agency for building exceptional digital solutions. Explore our projects, events, and services.',
+  description: 'A vibrant community for tech enthusiasts and professionals, and a freelance agency for building exceptional digital solutions.',
 };
 
 export default function RootLayout({
