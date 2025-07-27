@@ -54,21 +54,22 @@ const sendMessageFlow = ai.defineFlow(
     outputSchema: z.object({ success: z.boolean() }),
   },
   async (input) => {
-    const toEmail = process.env.EMAIL_TO;
-    if (!toEmail) {
-      console.error("CRITICAL: EMAIL_TO environment variable is not set. Cannot send email.");
-      return { success: false };
-    }
-    
-    const resendApiKey = process.env.RESEND_API_KEY;
-    if (!resendApiKey) {
-      console.error("CRITICAL: RESEND_API_KEY environment variable is not set. Cannot send email.");
-      return { success: false };
-    }
-
-    console.log('New message received, preparing email for:', toEmail);
-
     try {
+      const toEmail = process.env.EMAIL_TO;
+      const resendApiKey = process.env.RESEND_API_KEY;
+
+      if (!toEmail) {
+        console.error("CRITICAL: EMAIL_TO environment variable is not set. Cannot send email.");
+        return { success: false };
+      }
+      
+      if (!resendApiKey) {
+        console.error("CRITICAL: RESEND_API_KEY environment variable is not set. Cannot send email.");
+        return { success: false };
+      }
+
+      console.log('New message received, preparing email for:', toEmail);
+
       const { output } = await emailPrompt({
         fromName: input.name,
         fromEmail: input.email,
@@ -76,8 +77,8 @@ const sendMessageFlow = ai.defineFlow(
         message: input.message,
       });
 
-      if (!output) {
-        console.error("AI did not return output. Cannot formulate email.");
+      if (!output || !output.emailBody || !output.subjectLine) {
+        console.error("AI did not return valid output. Cannot formulate email.");
         return { success: false };
       }
 
