@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from "next/image"
@@ -7,8 +8,9 @@ import dynamic from 'next/dynamic'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { TestimonialCarousel } from "./TestimonialCarousel"
+import { testimonials } from "@/app/portfolio/page"
 
 const DynamicText = dynamic(() => import('@/components/DynamicText').then(mod => mod.DynamicText), {
   ssr: false,
@@ -61,21 +63,6 @@ export function HomePageContent() {
       image: { src: "https://placehold.co/600x400.png", hint: "branding design" },
       tags: ["Branding", "Logo Design"],
     },
-  ]
-
-  const testimonials = [
-      {
-          name: "Jane Doe",
-          title: "CEO, Innovate Corp",
-          avatar: "https://placehold.co/100x100.png",
-          testimonial: "Tech Tribe delivered results that exceeded our expectations. Their professionalism and technical expertise were instrumental in our project's success."
-      },
-      {
-          name: "John Smith",
-          title: "CTO, QuantumLeap",
-          avatar: "https://placehold.co/100x100.png",
-          testimonial: "Working with the Tech Tribe agency was a fantastic experience. They are passionate, skilled, and brought a fresh perspective to our website."
-      }
   ]
 
   const communityPillars = [
@@ -247,28 +234,30 @@ export function HomePageContent() {
             <div className="grid gap-8 md:grid-cols-2">
               {featuredProjects.map((item) => (
                 <Card key={item.title} className="overflow-hidden group">
-                  <CardHeader className="p-0">
-                    <div className="overflow-hidden rounded-t-lg">
-                      <Image
-                        src={item.image.src}
-                        alt={item.title}
-                        width={600}
-                        height={400}
-                        priority
-                        data-ai-hint={item.image.hint}
-                        className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
-                      />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="flex flex-wrap gap-2">
-                      {item.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
-                      ))}
-                    </div>
-                    <CardTitle className="text-2xl font-headline mt-4">{item.title}</CardTitle>
-                    <p className="mt-2 text-muted-foreground">{item.description}</p>
-                  </CardContent>
+                  <Link href={`/portfolio/${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <CardHeader className="p-0">
+                      <div className="overflow-hidden rounded-t-lg">
+                        <Image
+                          src={item.image.src}
+                          alt={item.title}
+                          width={600}
+                          height={400}
+                          priority
+                          data-ai-hint={item.image.hint}
+                          className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                        />
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="flex flex-wrap gap-2">
+                        {item.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary">{tag}</Badge>
+                        ))}
+                      </div>
+                      <CardTitle className="text-2xl font-headline mt-4">{item.title}</CardTitle>
+                      <p className="mt-2 text-muted-foreground">{item.description}</p>
+                    </CardContent>
+                  </Link>
                 </Card>
               ))}
             </div>
@@ -289,26 +278,8 @@ export function HomePageContent() {
           <h2 className="text-3xl font-bold text-center font-headline">
             What Our Clients Say
           </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
-              {testimonials.map(t => (
-                  <Card key={t.name}>
-                      <CardHeader>
-                        <blockquote className="text-lg italic text-muted-foreground before:content-['“'] after:content-['”']">
-                          {t.testimonial}
-                        </blockquote>
-                      </CardHeader>
-                      <CardContent className="flex items-center gap-4">
-                           <Avatar>
-                              <AvatarImage src={t.avatar} alt={t.name} />
-                              <AvatarFallback>{t.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                              <p className="font-semibold">{t.name}</p>
-                              <p className="text-sm text-muted-foreground">{t.title}</p>
-                          </div>
-                      </CardContent>
-                  </Card>
-              ))}
+          <div className="mt-12">
+            <TestimonialCarousel testimonials={testimonials} />
           </div>
         </div>
       </section>
