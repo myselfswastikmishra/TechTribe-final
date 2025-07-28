@@ -45,7 +45,6 @@ const emailPrompt = ai.definePrompt({
   output: {
     schema: GenerateEmailContentOutputSchema,
   },
-  model: 'gemini-1.5-flash',
   prompt: `
           You are a helpful assistant for a company called Tech Tribe. A user with the name {{fromName}} ({{fromEmail}}) has submitted a contact form.
           The user selected the subject: "{{subject}}".
