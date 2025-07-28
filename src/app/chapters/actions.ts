@@ -25,9 +25,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
       // This is a server configuration issue. Let the user know.
       console.error("Discord Webhook URL is not configured.");
-      // Note: We return success: true here because the application was processed by AI, but the notification failed.
-      // The user message should reflect this nuance.
-      return { success: true, message: "Your application was received, but the admin could not be notified due to a server configuration issue." }
+      return { success: false, message: "The server is not configured to send notifications. Your application was received, but the admin was not notified." }
     }
 
     const discordMessage = {
