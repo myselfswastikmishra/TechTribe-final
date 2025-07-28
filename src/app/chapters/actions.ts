@@ -4,17 +4,11 @@
 import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/chapter-application-flow"
 
 export async function submitChapterApplication(values: ChapterApplicationInput) {
-  // First, check for the GEMINI_API_KEY before calling the flow.
-  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.includes("YOUR_GEMINI_API_KEY")) {
-    console.error("Gemini API Key is not configured.");
-    return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
-  }
-
   try {
-    // Call the Genkit flow.
+    // We directly call the Genkit flow. If GEMINI_API_KEY is not set,
+    // the genkit constructor or the flow call itself should throw an error.
     const flowResult = await chapterApplication(values)
     if (!flowResult.success) {
-      // If the AI flow itself has an issue, report it.
       console.error("The Genkit chapter application flow failed:", flowResult.message);
       return { success: false, message: flowResult.message || "An AI processing error occurred." }
     }
@@ -22,12 +16,10 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     // After the flow succeeds, send a Discord notification.
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     
-    if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-      // This is a server configuration issue. Let the user know.
-      console.error("Discord Webhook URL is not configured.");
-      // We still return success: true because the application was successfully processed by the AI.
-      // The message will inform the user about the notification part.
-      return { success: true, message: "Your application was received, but the admin notification could not be sent due to a server configuration issue." }
+    // If webhookUrl is missing, we still want to inform the user that the main application part succeeded.
+    if (!webhookUrl) {
+       console.error("Discord Webhook URL is not configured. Cannot send notification.");
+       return { success: true, message: "Your application was received, but the admin could not be notified as the server is missing the required configuration." }
     }
 
     const discordMessage = {

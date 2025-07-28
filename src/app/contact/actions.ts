@@ -6,11 +6,6 @@ import { SendMessageInputSchema } from "./ContactFormWrapper"
 
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  
-  if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-    console.error("Discord Webhook URL is not configured.");
-    return { success: false, message: "The server is not configured to send notifications. Please contact the site administrator." }
-  }
 
   const subjectMapping: { [key: string]: string } = {
     schedule_call: "Schedule a Call",
@@ -56,6 +51,12 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   }
 
   try {
+    // We will directly attempt to send the notification.
+    // If the webhookUrl is not set, fetch will throw an error which will be caught.
+    if (!webhookUrl) {
+      throw new Error("Discord Webhook URL is not set on the server.");
+    }
+    
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
@@ -65,14 +66,16 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     })
 
     if (!response.ok) {
-       console.error("Failed to send notification to Discord.", { status: response.status, statusText: response.statusText });
-      return { success: false, message: "There was an issue sending your message. The destination server reported an error." }
+      console.error("Discord API returned a non-ok response.", { status: response.status, statusText: response.statusText });
+      const errorBody = await response.text();
+      console.error("Discord response body:", errorBody);
+      return { success: false, message: `Failed to send notification. Discord returned: ${response.statusText}` }
     }
 
     return { success: true }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
-    console.error("Error sending message to Discord:", error);
-    return { success: false, message: `An unexpected network error occurred: ${errorMessage}` }
+    console.error("Failed to send message to Discord:", error);
+    return { success: false, message: `An unexpected error occurred while sending the message: ${errorMessage}` }
   }
 }
