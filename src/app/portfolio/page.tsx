@@ -65,11 +65,11 @@ export default function PortfolioPage() {
 
       <section id="projects" className="mt-12">
         <main className="max-w-5xl mx-auto">
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid gap-8 grid-cols-1 sm:grid-cols-2">
             {portfolioItems.map((item) => (
                 <Card key={item.title} className="overflow-hidden group flex flex-col">
-                <CardHeader>
-                    <div className="overflow-hidden rounded-lg">
+                <CardHeader className="p-0">
+                    <div className="overflow-hidden rounded-t-lg">
                         <Image
                         src={item.image.src}
                         alt={item.title}
@@ -80,7 +80,7 @@ export default function PortfolioPage() {
                         />
                     </div>
                 </CardHeader>
-                <CardContent className="pt-4 flex-grow">
+                <CardContent className="pt-6 flex-grow">
                     <CardTitle className="text-2xl font-headline">{item.title}</CardTitle>
                     <p className="mt-2 text-muted-foreground">{item.description}</p>
                 </CardContent>

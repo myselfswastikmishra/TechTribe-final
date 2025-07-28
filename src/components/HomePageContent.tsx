@@ -126,17 +126,17 @@ export function HomePageContent() {
       {/* Hero Section */}
       <section className="min-h-[calc(100vh-theme(height.14))] flex items-center py-16 md:py-24">
         <div className="container mx-auto text-center">
-          <h1 className="text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl font-headline">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight font-headline">
              <DynamicText />
           </h1>
           <p className="mt-8 max-w-3xl mx-auto text-lg text-muted-foreground md:text-xl">
             We are a collective of developers, designers, and strategists from the Tech Tribe community, dedicated to building exceptional digital solutions and fostering the next generation of tech talent.
           </p>
-          <div className="mt-10 flex justify-center gap-4">
-             <Button asChild size="lg" className="text-lg py-6 px-8">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+             <Button asChild size="lg" className="text-lg py-6 px-8 w-full sm:w-auto">
               <Link href="/contact?subject=schedule_call">Schedule a Call</Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg py-6 px-8">
+            <Button asChild variant="outline" size="lg" className="text-lg py-6 px-8 w-full sm:w-auto">
               <Link href="#community">Join Community</Link>
             </Button>
           </div>
@@ -179,7 +179,7 @@ export function HomePageContent() {
             </p>
           </div>
           <div className="mt-12 max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {galleryImages.map((image, index) => (
                 <div key={index} className="overflow-hidden rounded-lg">
                   <Image

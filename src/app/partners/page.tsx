@@ -42,7 +42,7 @@ export default function PartnersPage() {
         <p className="mt-4 text-center text-muted-foreground max-w-xl mx-auto">
           Our hackathons and events are made possible by the generous support of our industry partners.
         </p>
-        <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
           {companyPartners.map((partner) => (
             <Card key={partner.name} className="flex items-center justify-center p-6 transition-transform transform hover:-translate-y-2">
               <Image
@@ -65,7 +65,7 @@ export default function PartnersPage() {
         <p className="mt-4 text-center text-muted-foreground max-w-xl mx-auto">
           Our community is growing on campuses around the globe, led by passionate students.
         </p>
-        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {universityChapters.map((chapter) => (
             <Card key={chapter.name} className="text-center transition-transform transform hover:-translate-y-2">
               <CardHeader className="items-center">
