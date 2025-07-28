@@ -35,12 +35,13 @@ export function ChapterApplicationForm() {
 
     if (result.success) {
       toast({
-        description: "Thank you for your interest. We will review your application and be in touch soon.",
+        title: "Application Received!",
+        description: result.message || "Thank you for your interest. We will review your application and be in touch soon.",
       })
       form.reset()
     } else {
       toast({
-        title: "Error",
+        title: "Error Submitting Application",
         description: result.message || "An unexpected error occurred. Please try again.",
         variant: "destructive",
       })
