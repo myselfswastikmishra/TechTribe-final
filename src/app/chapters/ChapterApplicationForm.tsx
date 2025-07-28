@@ -41,7 +41,7 @@ export function ChapterApplicationForm() {
     } else {
       toast({
         title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: result.message || "An unexpected error occurred. Please try again.",
         variant: "destructive",
       })
     }

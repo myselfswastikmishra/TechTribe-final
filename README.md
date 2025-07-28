@@ -36,7 +36,7 @@ This website is built with modern and powerful tools. Here's a simple breakdown 
 | **ShadCN/UI**       | Provides the core building blocks for our UI, like buttons, cards, and forms.        |
 | **Lucide React**    | The icon library we use for clean and consistent icons.                              |
 | **Genkit (Google)** | Powers the AI features, specifically for the "Start a Chapter" application form.     |
-| **Discord Webhooks**| Sends real-time notifications to a Discord server when someone fills the contact form. |
+| **Discord Webhooks**| Sends real-time notifications to a Discord server when someone fills out a form.     |
 | **React Hook Form** | A library that makes it easy to manage form state and validation.                     |
 | **Zod**             | Used with our forms to define what kind of input is valid (e.g., must be an email).  |
 
@@ -58,7 +58,8 @@ Your project needs secret keys (API keys) to connect to external services like G
     # For Google AI features (used in the "Start a Chapter" form)
     GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
 
-    # For sending contact form submissions to your Discord channel
+    # For sending form submissions to your Discord channel
+    # This is used for BOTH the contact form and the chapter application form.
     # IMPORTANT: This is a secret! Do not share it.
     DISCORD_WEBHOOK_URL="YOUR_DISCORD_WEBHOOK_URL_HERE"
     ```
@@ -67,7 +68,7 @@ Your project needs secret keys (API keys) to connect to external services like G
 > 1. In a Discord server where you have permissions, go to **Server Settings**.
 > 2. Click on the **Integrations** tab.
 > 3. Click **Webhooks**, then **New Webhook**.
-> 4. Give your webhook a name (e.g., "Contact Form Notifier"), choose the channel you want messages to be posted in, and then click **Copy Webhook URL**. Paste this URL into your `.env` file.
+> 4. Give your webhook a name (e.g., "Website Notifications"), choose the channel you want messages to be posted in, and then click **Copy Webhook URL**. Paste this URL into your `.env` file.
 
 ### Step 2: Install Dependencies
 
@@ -123,7 +124,7 @@ In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > En
 -   `GEMINI_API_KEY` - Set this to your Google AI API key.
 -   `DISCORD_WEBHOOK_URL` - Set this to your Discord Webhook URL.
 
-**Without these variables, your AI features and contact form will not work on the live website.** The contact form relies on `DISCORD_WEBHOOK_URL` to send you notifications.
+**Without these variables, your AI features and form notifications will not work on the live website.**
 
 ### 4. Trigger Deployment
 
@@ -228,9 +229,9 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 
 ---
 
-### 2. The "Start a Chapter" Form (with Genkit AI)
+### 2. The "Start a Chapter" Form (with Discord & Genkit AI)
 
-This form on the `/chapters` page is more advanced. It also uses a Server Action, but that action then passes the data to a Genkit AI flow for processing.
+This form on the `/chapters` page is more advanced. It also uses a Server Action, but that action then passes the data to a Genkit AI flow for processing and sends a Discord notification.
 
 **End-to-End Flow:**
 
@@ -245,11 +246,11 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
     *   This file acts as a simple bridge. It receives the data from the form.
     *   Its main job is to call another function, `chapterApplication(values)`, which is imported from our Genkit AI flow file. This keeps our UI-related server code separate from our core AI logic.
 
-4.  **The AI Processing (Genkit Flow): `src/ai/flows/chapter-application-flow.ts`**
-    *   This is where the AI-powered part of the application lives.
+4.  **The AI Processing & Notification (Genkit Flow): `src/ai/flows/chapter-application-flow.ts`**
+    *   This is where the AI-powered part of the application lives. It has the `'use server'` directive, as it's called by another server component.
     *   **`ai.defineFlow`:** This defines a Genkit "flow" named `chapterApplicationFlow`. A flow is a series of steps that can include calling AI models, talking to databases, or calling other APIs.
-    *   **Current Functionality:** In its current state, the flow is very simple. It receives the application data, logs it to the Genkit terminal (`console.log(...)`), and then returns `{ success: true }`.
-    *   **Future Possibilities:** This is where you could add powerful AI features. For example, you could modify this flow to:
+    *   **Discord Notification:** Just like the contact form, this flow now also sends a notification to your Discord channel. It reads the `DISCORD_WEBHOOK_URL` from your environment variables, formats the application details into a nice embed, and sends it using `fetch`.
+    *   **Future Possibilities:** This is where you could add even more powerful AI features. For example, you could modify this flow to:
         *   Use an LLM to analyze the `reason` field and determine if it meets certain criteria.
         *   Save the application to a database (like Firestore).
         *   Send a customized confirmation email back to the applicant.

@@ -28,13 +28,73 @@ const chapterApplicationFlow = ai.defineFlow(
   {
     name: 'chapterApplicationFlow',
     inputSchema: ChapterApplicationFormSchema,
-    outputSchema: z.object({ success: z.boolean() }),
+    outputSchema: z.object({ success: z.boolean(), message: z.string().optional() }),
   },
   async (input) => {
     console.log('New chapter application received:', input);
-    // Here you would process the application.
-    // This could involve saving it to a database, sending a notification,
-    // and using another AI flow to check for eligibility.
-    return { success: true };
+    
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  
+    if (!webhookUrl) {
+      console.error("CRITICAL: Discord webhook URL is not configured for chapter applications.")
+      return { success: false, message: "Server is not configured for notifications." }
+    }
+
+    const discordMessage = {
+      embeds: [
+        {
+          title: "New University Chapter Application",
+          color: 16763904, // A vibrant orange color
+          fields: [
+             {
+              name: "University Name",
+              value: input.universityName,
+              inline: false,
+            },
+            {
+              name: "Contact Person",
+              value: input.contactPerson,
+              inline: true,
+            },
+            {
+              name: "Email",
+              value: `[${input.email}](mailto:${input.email})`,
+              inline: true,
+            },
+            {
+              name: "Reason for Applying",
+              value: input.reason,
+              inline: false,
+            },
+          ],
+          timestamp: new Date().toISOString(),
+          footer: {
+            text: "Tech Tribe Chapter Application",
+          },
+        },
+      ],
+    };
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(discordMessage),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Failed to send chapter application to Discord. Status:", response.status, "Response:", errorText);
+        return { success: false, message: "Failed to send notification to Discord." };
+      }
+
+      console.log("Chapter application successfully sent to Discord.");
+      return { success: true };
+    } catch (error) {
+      console.error("An unexpected error occurred while sending chapter application to Discord:", error);
+      return { success: false, message: "An unexpected network error occurred." };
+    }
   }
 );
