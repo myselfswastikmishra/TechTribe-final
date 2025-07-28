@@ -6,11 +6,11 @@ import { SendMessageInputSchema } from "./ContactForm"
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
   console.log("Received direct message submission:", values)
   
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE";
   
-  if (!webhookUrl) {
+  if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
     console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured.")
-    return { success: false, message: "Server is not configured for notifications." }
+    return { success: false, message: "The server is not configured to send notifications. Please add the webhook URL." }
   }
 
   const subjectMapping: { [key: string]: string } = {

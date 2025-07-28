@@ -15,11 +15,11 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     }
 
     // If the flow succeeds, send a Discord notification.
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-    if (!webhookUrl) {
+    const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE";
+    if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
       console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured.")
       // Return a user-friendly error, but log the specific issue.
-      return { success: false, message: "The server is not configured to send notifications." }
+      return { success: false, message: "The server is not configured to send notifications. Please add the webhook URL." }
     }
 
     const discordMessage = {
