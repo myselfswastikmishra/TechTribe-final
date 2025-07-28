@@ -48,27 +48,17 @@ Follow these steps to run the website on your own computer for development and t
 
 ### Step 1: Set Up Environment Variables (.env file)
 
-Your project needs secret keys (API keys) to connect to external services like Google AI and Discord. You must store these keys in a special file that is kept private and not shared publicly.
+Your project needs a secret key to connect to Google AI services. You must store this key in a special file that is kept private and not shared publicly.
 
 1.  In the main folder of your project, create a new file and name it exactly: `.env`
 
-2.  Open the `.env` file and add the following lines. Replace the placeholder text with your actual secret keys.
+2.  Open the `.env` file and add the following line. Replace the placeholder text with your actual secret key.
 
     ```
     # For Google AI features (used in the "Start a Chapter" form)
     GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
-
-    # For sending form submissions to your Discord channel
-    # This is used for BOTH the contact form and the chapter application form.
-    # IMPORTANT: This is a secret! Do not share it.
-    DISCORD_WEBHOOK_URL="YOUR_DISCORD_WEBHOOK_URL_HERE"
     ```
-
-> **How to get a Discord Webhook URL:**
-> 1. In a Discord server where you have permissions, go to **Server Settings**.
-> 2. Click on the **Integrations** tab.
-> 3. Click **Webhooks**, then **New Webhook**.
-> 4. Give your webhook a name (e.g., "Website Notifications"), choose the channel you want messages to be posted in, and then click **Copy Webhook URL**. Paste this URL into your `.env` file.
+> **Note on Discord Notifications:** For local development, the Discord notification URLs are currently hardcoded in `src/app/contact/actions.ts` and `src/app/chapters/actions.ts` to ensure they work out-of-the-box. For production, you will manage this securely (see the "Deploying to Production" section).
 
 ### Step 2: Install Dependencies
 
@@ -124,7 +114,7 @@ In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > En
 -   `GEMINI_API_KEY` - Set this to your Google AI API key.
 -   `DISCORD_WEBHOOK_URL` - Set this to your Discord Webhook URL.
 
-**Without these variables, your AI features and form notifications will not work on the live website.** The Contact Form and the Chapter Application Form **both** rely on the `DISCORD_WEBHOOK_URL` to send notifications.
+**Without these variables, your AI features and form notifications will not work on the live website.** The Contact Form and the Chapter Application Form **both** rely on the `DISCORD_WEBHOOK_URL` to send notifications. The code is configured to use this environment variable automatically when deployed.
 
 ### 4. Trigger Deployment
 
@@ -215,7 +205,7 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 3.  **The Backend Logic (Server Action): `src/app/contact/actions.ts`**
     *   This file is the backend brain for the contact form. It has the `'use server'` directive at the top.
     *   **`sendDirectMessage` function:** This function receives the form data from the frontend.
-    *   **Security Check:** The first thing it does is check for the `DISCORD_WEBHOOK_URL` in the environment variables. If it's missing, it immediately returns an error. This is a crucial security and configuration check.
+    *   **Getting the Webhook URL:** The `webhookUrl` is hardcoded in this file for local development. For a live (production) website, the code is set up to use `process.env.DISCORD_WEBHOOK_URL`, which you must configure in your hosting provider's settings.
     *   **Formatting the Message:** It formats the form data into a clean, readable message structured specifically for Discord's API. This is the `discordMessage` object, which uses the "embed" format for a nice-looking notification.
     *   **Communicating with the Webhook:** It uses the standard `fetch` API to send a `POST` request to your Discord webhook URL. The formatted message is converted to a JSON string and sent in the body of the request.
     *   **Returning the Result:**
@@ -245,7 +235,7 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 3.  **The Backend Logic (Server Action): `src/app/chapters/actions.ts`**
     *   This file acts as a bridge. It receives the data from the form.
     *   First, it calls `chapterApplication(values)`, which is our Genkit AI flow. This is where AI-based checks could happen in the future.
-    *   After the AI flow succeeds, it proceeds to send a notification to your Discord channel. It reads the `DISCORD_WEBHOOK_URL` from your environment variables, formats the application details into a nice embed, and sends it using `fetch`.
+    *   After the AI flow succeeds, it proceeds to send a notification to your Discord channel. It gets the `webhookUrl` in the same way as the contact form (hardcoded for local, environment variable for production), formats the application details into a nice embed, and sends it using `fetch`.
 
 4.  **The AI Processing (Genkit Flow): `src/ai/flows/chapter-application-flow.ts`**
     *   This file is very simple. It has the `'use server'` directive, as it's called by another server component.
@@ -259,3 +249,5 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 5.  **Displaying the Result (Back to the Frontend)**
     *   The `{ success: true }` result is passed all the way back to the `ChapterApplicationForm.tsx` component.
     *   A "Thank you for your interest" toast notification is shown, and the form is reset.
+
+    
