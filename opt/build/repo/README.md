@@ -1,4 +1,3 @@
-
 # Tech Tribe Website
 
 Welcome to the Tech Tribe project! This document is your all-in-one guide to understanding, setting up, running, managing, and deploying this website. We've written this to be as clear as possible, even if you're new to web development.
@@ -9,6 +8,9 @@ Welcome to the Tech Tribe project! This document is your all-in-one guide to und
 
 *   [Technology Stack](#-technology-stack)
 *   [Getting Started (Local Setup)](#-getting-started-local-setup)
+    *   [How Secret Keys Are Handled](#how-secret-keys-are-handled)
+    *   [Step 1: Install Dependencies](#step-1-install-dependencies)
+    *   [Step 2: Run the Development Servers](#step-2-run-the-development-servers)
 *   [Deploying to Production](#-deploying-to-production)
 *   [Managing Website Content](#-managing-website-content)
     *   [Header Navigation](#header-navigation-srccomponentslayoutheadertsx)
@@ -47,6 +49,28 @@ This website is built with modern and powerful tools. Here's a simple breakdown 
 
 Follow these steps to run the website on your own computer for development and testing.
 
+### How Secret Keys Are Handled
+
+**This project works out-of-the-box in environments like Firebase Studio without any configuration.** It includes fallback secret keys hardcoded directly into the application for immediate functionality.
+
+However, for security and best practices, especially when deploying to a public website, you should use environment variables. The code is built to automatically prefer your environment variables over the hardcoded fallbacks if you provide them.
+
+**To use your own keys (Recommended for Production):**
+
+1.  In the main folder of your project, create a new file and name it exactly: `.env`
+
+2.  Open the `.env` file and add the following lines. Replace the placeholder text with your actual secret key and URL. **The forms will not work without these.**
+
+    ```
+    # For Google AI features (used in the "Start a Chapter" form)
+    # Get your key from Google AI Studio: https://aistudio.google.com/app/apikey
+    GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
+
+    # For form notifications to Discord (used by Contact and Chapter forms)
+    # How to create a Discord Webhook: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+    DISCORD_WEBHOOK_URL="YOUR_DISCORD_WEBHOOK_URL_HERE"
+    ```
+
 ### Step 1: Install Dependencies
 
 This command reads the `package.json` file and downloads all the necessary libraries and tools that the project needs to run.
@@ -78,14 +102,28 @@ You should keep this terminal open to see logs from your AI flows.
 
 ## 🌐 Deploying to Production
 
-When you are ready to make your website live on the internet, you'll use a hosting provider like **Netlify** or **Vercel**. For the forms to work on a deployed site, you **must** set your secret keys in your hosting provider's settings.
+When you are ready to make your website live on the internet, you'll use a hosting provider like **Netlify**, **Vercel**, or **Hostinger**.
+
+### 1. Connect Your Repository
+
+In your hosting provider's dashboard, create a new site and connect it to your GitHub/GitLab/Bitbucket repository where your code is stored.
+
+### 2. Build Configuration
+
+Most providers will auto-detect that this is a Next.js project. The `netlify.toml` file in this project pre-configures this for Netlify. If you need to set them manually, use:
+- **Build Command:** `npm run build`
+- **Publish Directory:** `.next`
+
+### 3. **CRITICAL:** Set Production Environment Variables
+
+For the live website to work, you **must** set your secret keys in your hosting provider's settings. The code is designed to use these variables if they are present, which overrides the built-in fallback keys.
 
 In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > Environment`), add the following variables:
 
 -   `GEMINI_API_KEY` - Set this to your Google AI API key.
 -   `DISCORD_WEBHOOK_URL` - Set this to your Discord Webhook URL.
 
-**Without these variables, your AI features and form notifications will not work on the live website.**
+**Without these variables, the forms will use the hardcoded fallback keys.** For a production website, it is highly recommended to use your own keys by setting them here.
 
 ---
 
@@ -206,14 +244,15 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 3.  **The Backend Logic (Server Action): `src/app/contact/actions.ts`**
     *   This file is the backend brain for the contact form. It has the `'use server'` directive.
     *   **`sendDirectMessage` function:** This function receives the form data.
+    *   **Getting the Webhook URL:** The code uses a fallback system. It first checks for `process.env.DISCORD_WEBHOOK_URL`. If it's available, it uses it. If not, it falls back to a hardcoded URL, allowing it to work out-of-the-box.
     *   **Formatting the Message:** It formats the form data into a clean, readable message for Discord. It uses the `customSubject` value if the subject is "other".
-    *   **Communicating with the Webhook:** It uses `fetch` to send a `POST` request to the Discord webhook URL.
+    *   **Communicating with the Webhook:** It uses `fetch` to send a `POST` request to the determined Discord webhook URL.
     *   **Returning the Result:** It returns `{ success: true }` or `{ success: false }` to the frontend, along with a helpful message.
 
 4.  **Displaying the Result (Back to the Frontend)**
     *   Back in `ContactFormWrapper.tsx`, the `result` from the server is checked.
     *   If `result.success` is `true`, a success toast notification is displayed, and the form is cleared.
-    *   If `result.success` is `false`, an error toast is displayed with the specific message from the server.
+    *   If `result.success` is `false`, an error toast is displayed with the specific message from the server (e.g., "The webhook URL may be invalid or missing permissions.").
 
 ---
 
@@ -232,6 +271,7 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 
 3.  **The Backend Logic (Server Action): `src/app/chapters/actions.ts`**
     *   This file acts as a bridge. It receives the data from the form.
+    *   It uses the same fallback system for both the `GEMINI_API_KEY` and the `DISCORD_WEBHOOK_URL`, prioritizing environment variables but using hardcoded values if they are not set.
     *   First, it calls `chapterApplication(values)`, which is our Genkit AI flow.
     *   After the AI flow succeeds, it proceeds to send a notification to your Discord channel. It formats the application details into a nice embed and sends it using `fetch`.
 
