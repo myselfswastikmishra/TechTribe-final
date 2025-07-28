@@ -20,7 +20,6 @@ const navLinks = [
   { href: "/chapters", label: "Chapters" },
   { href: "/sponsors", label: "Sponsors" },
   { href: "/faq", label: "FAQ" },
-  { href: "/contact", label: "Contact Us" },
 ]
 
 export function Header() {
@@ -59,14 +58,13 @@ export function Header() {
             <BrandLink />
           </div>
           <nav className="flex items-center space-x-6">
-            {navLinks.filter(l => l.href !== '/contact').map((link) => (
+            {navLinks.map((link) => (
               <NavLink key={link.href} {...link} />
             ))}
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-end md:hidden">
-          <div className="flex-1 basis-0">
+        <div className="flex flex-1 items-center justify-between md:hidden">
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -83,21 +81,20 @@ export function Header() {
                   {navLinks.map((link) => (
                     <NavLink key={link.href} {...link} className="text-base" />
                   ))}
+                   <NavLink href="/contact" label="Contact Us" className="text-base" />
                 </nav>
               </SheetContent>
             </Sheet>
-          </div>
 
-          <div className="flex flex-1 basis-0 justify-center">
             <BrandLink />
-          </div>
 
-          <div className="flex flex-1 basis-0 justify-end">
             <HeaderActions />
-          </div>
         </div>
         
         <div className="hidden md:flex flex-1 items-center justify-end gap-2">
+          <Button asChild size="sm">
+              <Link href="/contact">Contact Us</Link>
+          </Button>
           <HeaderActions />
         </div>
       </div>
