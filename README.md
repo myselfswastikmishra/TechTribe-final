@@ -98,7 +98,7 @@ You should keep this terminal open to see logs from your AI flows.
 
 ## 🌐 Deploying to Production
 
-When you are ready to make your website live on the internet, you'll use a hosting provider like **Netlify** or **Vercel**.
+When you are ready to make your website live on the internet, you'll use a hosting provider like **Netlify**, **Vercel**, or **Hostinger**.
 
 ### 1. Connect Your Repository
 
@@ -120,10 +120,6 @@ In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > En
 -   `DISCORD_WEBHOOK_URL` - **IMPORTANT:** Set this to your Discord Webhook URL.
 
 **Without these variables, your AI features and form notifications will not work on the live website.** The Contact Form and the Chapter Application Form **both** rely on these variables to function. If a form fails, the first thing to check is that these variables are set correctly in your hosting provider's dashboard.
-
-### 4. Trigger Deployment
-
-Your site will automatically build and deploy whenever you push changes to your main branch. You can also trigger a manual deploy from your provider's dashboard.
 
 ---
 

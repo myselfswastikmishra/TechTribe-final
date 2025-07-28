@@ -6,7 +6,7 @@ import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/cha
 export async function submitChapterApplication(values: ChapterApplicationInput) {
   // First, check for the GEMINI_API_KEY before calling the flow.
   if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.includes("YOUR_GEMINI_API_KEY")) {
-    console.error("Gemini API Key is not configured.");
+    console.error("Gemini API Key is not configured on the server.");
     return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
   }
 
@@ -24,7 +24,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     
     if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
       // This is a server configuration issue. Let the user know.
-      console.error("Discord Webhook URL is not configured.");
+      console.error("Discord Webhook URL is not configured on the server.");
       // The application was successful, but the notification failed. This is a partial success.
       return { success: true, message: "Your application was received, but the admin could not be notified. The server's notification service is not configured." }
     }
@@ -75,11 +75,11 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     if (!response.ok) {
       console.error("Failed to send chapter application notification to Discord.", { status: response.status, statusText: response.statusText });
        // The application was successful, but the notification failed. This is a partial success.
-      return { success: true, message: "Your application was received, but the final notification to the admin could not be sent." }
+      return { success: true, message: "Your application was received, but the final notification to the admin could not be sent. Please verify the Discord Webhook URL on the server." }
     }
 
     // This is the full success path.
-    return { success: true, message: "Thank you for your interest. We will review your application and be in touch soon." }
+    return { success: true, message: "Thank you for your interest! We will review your application and be in touch soon." }
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."

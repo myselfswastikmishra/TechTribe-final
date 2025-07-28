@@ -8,7 +8,7 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   
   if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-    console.error("Discord Webhook URL is not configured.");
+    console.error("Discord Webhook URL is not configured on the server.");
     return { success: false, message: "The server is not configured to send notifications. Please contact the site administrator." }
   }
 
@@ -66,13 +66,13 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
 
     if (!response.ok) {
        console.error("Failed to send notification to Discord.", { status: response.status, statusText: response.statusText });
-      return { success: false, message: "Failed to send notification. The webhook may be configured incorrectly." }
+      return { success: false, message: "Failed to send notification. The webhook URL may be invalid or missing permissions." }
     }
 
     return { success: true }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown network error occurred."
     console.error("Error sending message to Discord:", error);
-    return { success: false, message: `An unexpected error occurred: ${errorMessage}` }
+    return { success: false, message: `An unexpected network error occurred: ${errorMessage}` }
   }
 }
