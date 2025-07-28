@@ -17,8 +17,8 @@ const navLinks = [
   { href: "/partners", label: "Partners" },
   { href: "/events", label: "Events" },
   { href: "/chapters", label: "Chapters" },
+  { href: "/sponsors", label: "Sponsors" },
   { href: "/faq", label: "FAQ" },
-  { href: "/contact", label: "Contact" },
 ]
 
 export function Header() {
@@ -73,7 +73,7 @@ export function Header() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left">
-                  <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                   <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                   <div className="mb-8">
                     <BrandLink />
                   </div>

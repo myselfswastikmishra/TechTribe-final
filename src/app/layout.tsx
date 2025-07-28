@@ -8,9 +8,24 @@ import { ThemeProvider } from "@/components/ThemeProvider"
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://localhost:9002'),
-  title: 'Tech Tribe - Community & Freelance Agency',
-  description: 'A vibrant community for tech enthusiasts and professionals, and a freelance agency for building exceptional digital solutions.',
+  metadataBase: new URL('https://techtribe.com'),
+  title: {
+    default: 'Tech Tribe - Community & Freelance Agency',
+    template: '%s | Tech Tribe',
+  },
+  description: 'A vibrant community for tech enthusiasts and a freelance agency for building exceptional digital solutions. Explore our projects, events, and services.',
+  openGraph: {
+    title: 'Tech Tribe - Community & Freelance Agency',
+    description: 'A vibrant community for tech enthusiasts and a freelance agency for building exceptional digital solutions.',
+    url: 'https://techtribe.com',
+    siteName: 'Tech Tribe',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    title: 'Tech Tribe - Community & Freelance Agency',
+    card: 'summary_large_image',
+  },
 };
 
 export default function RootLayout({
@@ -26,6 +41,7 @@ export default function RootLayout({
         spaceGrotesk.variable
       )}>
         <ThemeProvider
+          attribute="class"
           defaultTheme="dark"
           storageKey="techtribe-theme"
         >

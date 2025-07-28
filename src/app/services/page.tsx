@@ -6,7 +6,7 @@ import { Check, LayoutTemplate, PenTool, Rocket, Bot } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Services | Tech Tribe",
+  title: "Services",
   description: "Leverage our community's talent. We offer website development, branding, business automation, and end-to-end online business solutions.",
 }
 
@@ -49,16 +49,16 @@ const services = [
 export default function ServicesPage() {
   return (
     <div className="container mx-auto py-12 md:py-20">
-      <div className="text-center">
+      <header className="text-center">
         <h1 className="text-4xl font-bold tracking-tight md:text-5xl font-headline">
           Our Services
         </h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Leverage the talent of our community to build your next big thing. We offer a range of services to bring your ideas to life.
+          Leverage the talent of our community to build your next big thing. We offer a range of services designed to bring your ideas to life.
         </p>
-      </div>
+      </header>
 
-      <div className="mt-12 grid gap-8 md:grid-cols-2">
+      <main className="mt-12 grid gap-8 md:grid-cols-2">
         {services.map((service) => (
           <Card key={service.title} className="flex flex-col">
             <CardHeader>
@@ -74,6 +74,7 @@ export default function ServicesPage() {
               </div>
             </CardHeader>
             <CardContent className="flex-grow">
+              <h4 className="font-semibold mb-2">Key Features:</h4>
               <ul className="space-y-2">
                 {service.features.map(feature => (
                   <li key={feature} className="flex items-center gap-2">
@@ -92,9 +93,9 @@ export default function ServicesPage() {
             </CardFooter>
           </Card>
         ))}
-      </div>
+      </main>
 
-      <div className="mt-20 text-center bg-primary/5 p-8 rounded-lg">
+      <aside className="mt-20 text-center bg-primary/5 p-8 rounded-lg">
         <h2 className="text-3xl font-bold font-headline">Ready to Start a Project?</h2>
         <p className="mt-4 max-w-xl mx-auto text-muted-foreground">
             Let's talk about your ideas. Schedule a free, no-obligation call with our team to discuss how we can help you achieve your goals.
@@ -102,11 +103,11 @@ export default function ServicesPage() {
         <div className="mt-6">
             <Button size="lg" asChild>
                 <Link href="/contact?subject=schedule_call">
-                    Schedule Your Free Call
+                    Schedule Your Free Consultation
                 </Link>
             </Button>
         </div>
-      </div>
+      </aside>
     </div>
   );
 }

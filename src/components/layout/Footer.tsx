@@ -6,14 +6,6 @@ import { WhatsappIcon } from "@/components/icons/WhatsappIcon"
 export function Footer() {
   const year = new Date().getFullYear()
 
-  const footerNav = [
-    { href: "/services", label: "Services" },
-    { href: "/portfolio", label: "Portfolio" },
-    { href: "/sponsors", label: "Sponsors" },
-    { href: "/chapters", label: "Chapters" },
-    { href: "/contact", label: "Contact" },
-  ]
-
   return (
     <footer className="border-t bg-secondary/50">
       <div className="container py-12">
@@ -21,7 +13,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <h3 className="text-lg font-bold font-headline">Tech Tribe</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Community-driven freelance agency and tech incubator.
+              A global community of creators and a freelance agency dedicated to building the future.
             </p>
           </div>
           <div className="md:col-span-3">
@@ -63,19 +55,19 @@ export function Footer() {
               &copy; {year} Tech Tribe. All Rights Reserved.
             </p>
             <div className="flex items-center gap-4">
-                <Link href="https://wa.me/1234567890" aria-label="WhatsApp" target="_blank">
+                <Link href="https://wa.me/15551234567" aria-label="WhatsApp" target="_blank">
                     <WhatsappIcon className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://discord.gg/techtribe" aria-label="Discord" target="_blank">
+                <Link href="https://discord.gg/example" aria-label="Discord" target="_blank">
                     <DiscordIcon className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://twitter.com/techtribe" aria-label="Twitter" target="_blank">
+                <Link href="https://twitter.com/example" aria-label="Twitter" target="_blank">
                     <Twitter className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://github.com/techtribe" aria-label="GitHub" target="_blank">
+                <Link href="https://github.com/example" aria-label="GitHub" target="_blank">
                     <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://linkedin.com/company/techtribe" aria-label="LinkedIn" target="_blank">
+                <Link href="https://linkedin.com/company/example" aria-label="LinkedIn" target="_blank">
                     <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
             </div>

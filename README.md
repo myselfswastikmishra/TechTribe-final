@@ -1,4 +1,3 @@
-
 # Tech Tribe Website
 
 Welcome to the Tech Tribe project! This document is your all-in-one guide to understanding, setting up, running, managing, and deploying this website. We've written this to be as clear as possible, even if you're new to web development.
@@ -15,12 +14,12 @@ Welcome to the Tech Tribe project! This document is your all-in-one guide to und
 *   [Deploying to Production](#-deploying-to-production)
 *   [Managing Website Content](#-managing-website-content)
     *   [Header Navigation](#header-navigation-srccomponentslayoutheadertsx)
-    *   [Homepage Content](#homepage-srccomponentshomepagecontenttsx)
-    *   [Events Page](#events-srcappeventspagetsx)
-    *   [FAQ Page](#faq-srcappfaqpagetsx)
-    *   [Portfolio Page](#portfolio-srcappportfoliopagetsx)
-    *   [Partners Page](#partners-srcapppartnerspagetsx)
-    *   [Services Page](#services-srcappservicespagetsx)
+    *   [Homepage Content](#homepage-content-srccomponentshomepagecontenttsx)
+    *   [Events Page](#events-page-srcappeventspagetsx)
+    *   [FAQ Page](#faq-page-srcappfaqpagetsx)
+    *   [Portfolio Page](#portfolio-page-srcappportfoliopagetsx)
+    *   [Partners Page](#partners-page-srcapppartnerspagetsx)
+    *   [Services Page](#services-page-srcappservicespagetsx)
     *   [Customizing Colors](#customizing-colors-srcappglobalscss)
 *   [Understanding the Project Structure](#-project-structure)
 *   [How the Forms Work: A Deep Dive](#-how-the-forms-work-a-deep-dive)
@@ -42,6 +41,7 @@ This website is built with modern and powerful tools. Here's a simple breakdown 
 | **Discord Webhooks**| Sends real-time notifications to a Discord server when someone fills out a form.     |
 | **React Hook Form** | A library that makes it easy to manage form state and validation.                     |
 | **Zod**             | Used with our forms to define what kind of input is valid (e.g., must be an email).  |
+| **next-themes**     | Manages the light/dark mode theme switching.                                         |
 
 ---
 
@@ -147,7 +147,7 @@ This file controls the main navigation links at the top of every page.
 ### Homepage (`src/components/HomePageContent.tsx`)
 This file controls everything on the homepage.
 -   **Image Gallery:** Find the `galleryImages` array to change image URLs (`src`) and alternate text (`alt`).
--   **Services:** Find the `services` array to edit the title and description of the services highlighted on the homepage.
+-   **Services:** Find the `services` array to edit the icon, title, and description of the services highlighted on the homepage.
 -   **Featured Projects:** Edit the `featuredProjects` array to change which projects are shown on the homepage.
 -   **Testimonials:** Modify the `testimonials` array to update client quotes.
 -   **Stats:** Change the numbers and labels in the `stats` array to update the "Impact in Numbers" section.
@@ -155,7 +155,7 @@ This file controls everything on the homepage.
 ### Events (`src/app/events/page.tsx`)
 This file controls the list of events.
 -   Find the `events` array at the top of the file.
--   Each item in the list is an event card. You can edit the `title`, `date`, `time`, and `description`.
+-   Each item in the list is an event card. You can edit the `title`, `date`, `time`, `location`, and `description`.
 
 ### FAQ (`src/app/faq/page.tsx`)
 This file controls the Frequently Asked Questions section.
@@ -164,7 +164,7 @@ This file controls the Frequently Asked Questions section.
 
 ### Portfolio (`src/app/portfolio/page.tsx`)
 This file controls your main portfolio and the testimonials on that page.
--   **Portfolio Items:** Modify the `portfolioItems` array. Each item includes a `title`, `description`, `image` URL, and `tags`.
+-   **Portfolio Items:** Modify the `portfolioItems` array. Each item includes a `title`, `description`, `image` URL, `tags`, and a list of `features`.
 -   **Testimonials:** Modify the `testimonials` array to change the client quotes that appear on the portfolio page.
 
 ### Partners (`src/app/partners/page.tsx`)
@@ -238,7 +238,7 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 3.  **The Backend Logic (Server Action): `src/app/contact/actions.ts`**
     *   This file is the backend brain for the contact form. It has the `'use server'` directive at the top.
     *   **`sendDirectMessage` function:** This function receives the form data from the frontend.
-    *   **Getting the Webhook URL:** The `webhookUrl` is hardcoded in this file for local development. For a live (production) website, the code is set up to use `process.env.DISCORD_WEBHOOK_URL`, which you must configure in your hosting provider's settings.
+    *   **Getting the Webhook URL:** For local development, the `webhookUrl` is hardcoded. For a live (production) website, the code is set up to use `process.env.DISCORD_WEBHOOK_URL`, which you must configure in your hosting provider's settings.
     *   **Formatting the Message:** It formats the form data into a clean, readable message structured specifically for Discord's API. This is the `discordMessage` object, which uses the "embed" format for a nice-looking notification.
     *   **Communicating with the Webhook:** It uses the standard `fetch` API to send a `POST` request to your Discord webhook URL. The formatted message is converted to a JSON string and sent in the body of the request.
     *   **Returning the Result:**
