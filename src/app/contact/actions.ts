@@ -1,3 +1,4 @@
+
 "use server"
 
 import { z } from "zod"
@@ -18,6 +19,7 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     schedule_call: "Schedule a Call",
     sponsorship: "Sponsorship Inquiry",
     general_inquiry: "General Inquiry",
+    other: values.customSubject || "Other",
   }
   const subjectText = subjectMapping[values.subject] || "General Inquiry"
 

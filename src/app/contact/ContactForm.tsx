@@ -1,9 +1,11 @@
+
 "use client"
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -17,8 +19,18 @@ export const SendMessageInputSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   subject: z.string().min(1, "Please select a subject."),
+  customSubject: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters."),
-})
+}).refine(data => {
+    if (data.subject === 'other') {
+        return data.customSubject && data.customSubject.length > 2;
+    }
+    return true;
+    }, {
+    message: "Custom subject must be at least 3 characters.",
+    path: ["customSubject"],
+});
+
 
 export function ContactForm() {
   const searchParams = useSearchParams()
@@ -36,9 +48,19 @@ export function ContactForm() {
       name: "",
       email: "",
       subject: defaultSubject,
+      customSubject: "",
       message: "",
     },
   })
+
+  const subjectValue = form.watch("subject");
+
+  useEffect(() => {
+    if (subjectValue !== 'other') {
+      form.clearErrors('customSubject');
+    }
+  }, [subjectValue, form]);
+
 
   async function onSubmit(values: z.infer<typeof SendMessageInputSchema>) {
     const result = await sendDirectMessage(values)
@@ -103,12 +125,28 @@ export function ContactForm() {
                   <SelectItem value="schedule_call">Schedule a Call</SelectItem>
                   <SelectItem value="sponsorship">Sponsorship Inquiry</SelectItem>
                   <SelectItem value="general_inquiry">General Inquiry</SelectItem>
+                  <SelectItem value="other">Other (Please specify)</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
         />
+        {subjectValue === 'other' && (
+            <FormField
+            control={form.control}
+            name="customSubject"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Custom Subject</FormLabel>
+                <FormControl>
+                    <Input placeholder="e.g., Question about a project" {...field} />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+        )}
         <FormField
           control={form.control}
           name="message"
@@ -123,6 +161,7 @@ export function ContactForm() {
                     Please suggest a few time slots that work for you.
                 </FormDescription>
               )}
+               <FormMessage />
             </FormItem>
           )}
         />
