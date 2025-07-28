@@ -14,7 +14,7 @@ Welcome to the Tech Tribe project! This document is your all-in-one guide to und
     *   [Step 3: Run the Development Servers](#step-3-run-the-development-servers)
 *   [Deploying to Production](#-deploying-to-production)
 *   [Managing Website Content](#-managing-website-content)
-    *   [Homepage Content](#homepage-srcapphomepagecontenttsx)
+    *   [Homepage Content](#homepage-srccomponentshomepagecontenttsx)
     *   [Events Page](#events-srcappeventspagetsx)
     *   [FAQ Page](#faq-srcappfaqpagetsx)
     *   [Portfolio Page](#portfolio-srcappportfoliopagetsx)
@@ -123,7 +123,7 @@ In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > En
 -   `GEMINI_API_KEY` - Set this to your Google AI API key.
 -   `DISCORD_WEBHOOK_URL` - Set this to your Discord Webhook URL.
 
-**Without these variables, your AI features and contact form will not work on the live website.**
+**Without these variables, your AI features and contact form will not work on the live website.** The contact form relies on `DISCORD_WEBHOOK_URL` to send you notifications.
 
 ### 4. Trigger Deployment
 
@@ -188,7 +188,7 @@ Here's a map of the most important files and folders:
 ### 1. Contact Form (Discord Notification)
 -   **Frontend:** `src/app/contact/ContactForm.tsx`
 -   **Backend Logic:** `src/app/contact/actions.ts`
--   **How it works:** When a user submits the form, the `sendDirectMessage` function in `actions.ts` is called. It formats the data and sends it directly to the Discord channel specified by your `DISCORD_WEBHOOK_URL`.
+-   **How it works:** When a user submits the form, the `sendDirectMessage` function in `actions.ts` is called. It formats the data and sends it directly to the Discord channel specified by your `DISCORD_WEBHOOK_URL` environment variable.
 
 ### 2. "Start a Chapter" Form (Genkit AI)
 -   **Frontend:** `src/app/chapters/ChapterApplicationForm.tsx`

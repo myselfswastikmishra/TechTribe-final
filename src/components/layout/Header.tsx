@@ -14,10 +14,11 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
-  { href: "/sponsors", label: "Sponsors" },
+  { href: "/partners", label: "Partners" },
   { href: "/events", label: "Events" },
   { href: "/chapters", label: "Chapters" },
   { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
 ]
 
 export function Header() {
@@ -79,7 +80,6 @@ export function Header() {
                     {navLinks.map((link) => (
                       <NavLink key={link.href} {...link} className="text-base" />
                     ))}
-                    <NavLink href="/contact" label="Contact" className="text-base" />
                   </nav>
                 </SheetContent>
               </Sheet>
