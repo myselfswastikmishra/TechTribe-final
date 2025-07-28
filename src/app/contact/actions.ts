@@ -22,9 +22,13 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   const discordMessage = {
     embeds: [
       {
-        title: `New Message: ${subjectText}`,
+        title: "New Contact Form Submission",
         color: 0x3498db, // Blue color
         fields: [
+           {
+            name: "Subject",
+            value: subjectText,
+          },
           {
             name: "Name",
             value: values.name,
