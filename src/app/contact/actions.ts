@@ -8,7 +8,8 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   
   if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-    return { success: false, message: "The server is not configured to send notifications." }
+    console.error("Discord Webhook URL is not configured.");
+    return { success: false, message: "The server is not configured to send notifications. Please contact the site administrator." }
   }
 
   const subjectMapping: { [key: string]: string } = {
@@ -64,11 +65,13 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     })
 
     if (!response.ok) {
-      return { success: false, message: "Failed to send notification to Discord." }
+       console.error("Failed to send notification to Discord.", { status: response.status, statusText: response.statusText });
+      return { success: false, message: "Failed to send notification. Please try again later." }
     }
 
     return { success: true }
   } catch (error) {
-    return { success: false, message: "An unexpected network error occurred." }
+    console.error("An unexpected error occurred while sending the message:", error);
+    return { success: false, message: "An unexpected server error occurred." }
   }
 }

@@ -4,11 +4,18 @@
 import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/chapter-application-flow"
 
 export async function submitChapterApplication(values: ChapterApplicationInput) {
+  // First, check for the GEMINI_API_KEY before calling the flow.
+  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.includes("YOUR_GEMINI_API_KEY")) {
+    console.error("Gemini API Key is not configured.");
+    return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
+  }
+
   try {
-    // First, call the Genkit flow. This can be used for AI checks later.
+    // Call the Genkit flow.
     const flowResult = await chapterApplication(values)
     if (!flowResult.success) {
       // If the AI flow itself has an issue, report it.
+      console.error("The Genkit chapter application flow failed:", flowResult.message);
       return { success: false, message: flowResult.message || "An AI processing error occurred." }
     }
 
@@ -17,7 +24,8 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     
     if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
       // This is a server configuration issue. Let the user know.
-      return { success: false, message: "The server is not configured to send notifications. Please add the webhook URL." }
+      console.error("Discord Webhook URL is not configured.");
+      return { success: false, message: "The server is not configured to send notifications. Your application was received, but the admin was not notified." }
     }
 
     const discordMessage = {
@@ -64,14 +72,16 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      return { success: false, message: "The notification to Discord could not be sent." }
+      console.error("Failed to send chapter application notification to Discord.", { status: response.status, statusText: response.statusText });
+      return { success: false, message: "The notification to the admin could not be sent. Please try again later." }
     }
 
+    // This is the full success path.
     return { success: true }
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
+    console.error("An unexpected server error occurred during chapter application submission:", error);
     return { success: false, message: `An unexpected server error occurred: ${errorMessage}` }
   }
 }
