@@ -52,7 +52,7 @@ export function ContactForm() {
     } else {
       toast({
         title: "Something went wrong.",
-        description: "Please try again later.",
+        description: result.message || "Please try again later.",
         variant: "destructive",
       })
     }
