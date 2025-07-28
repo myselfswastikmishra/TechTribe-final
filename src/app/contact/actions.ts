@@ -55,16 +55,13 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     ],
   }
 
-  const payload = JSON.stringify(discordMessage)
-  console.log("Sending payload to Discord...");
-
   try {
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: payload,
+      body: JSON.stringify(discordMessage),
     })
 
     if (!response.ok) {
