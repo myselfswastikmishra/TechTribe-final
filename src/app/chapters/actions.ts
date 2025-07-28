@@ -3,10 +3,19 @@
 
 import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/chapter-application-flow"
 
+const GEMINI_API_KEY = (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('YOUR_GEMINI_API_KEY')) 
+    ? process.env.GEMINI_API_KEY 
+    : 'AIzaSyDPTJ7DF3UpsfhI6W5N6RVT1LyIB45end0';
+    
+const DISCORD_WEBHOOK_URL = (process.env.DISCORD_WEBHOOK_URL && !process.env.DISCORD_WEBHOOK_URL.includes('YOUR_DISCORD_WEBHOOK_URL'))
+    ? process.env.DISCORD_WEBHOOK_URL
+    : 'https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE';
+
+
 export async function submitChapterApplication(values: ChapterApplicationInput) {
-  // First, check for the GEMINI_API_KEY before calling the flow.
-  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.includes("YOUR_GEMINI_API_KEY")) {
-    console.error("Gemini API Key is not configured on the server.");
+  // First, check if the key is available.
+  if (!GEMINI_API_KEY) {
+    console.error("Gemini API Key is not configured on the server via environment variables or hardcoded fallback.");
     return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
   }
 
@@ -19,12 +28,9 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
       return { success: false, message: flowResult.message || "An AI processing error occurred." }
     }
 
-    // After the flow succeeds, send a Discord notification.
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-    
-    if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-      // This is a server configuration issue. Let the user know.
-      console.error("Discord Webhook URL is not configured on the server.");
+    // After the flow succeeds, check if the webhook URL is available.
+    if (!DISCORD_WEBHOOK_URL) {
+      console.error("Discord Webhook URL is not configured on the server via environment variables or hardcoded fallback.");
       // The application was successful, but the notification failed. This is a partial success.
       return { success: true, message: "Your application was received, but the admin could not be notified. The server's notification service is not configured." }
     }
@@ -64,7 +70,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
       ],
     }
 
-    const response = await fetch(webhookUrl, {
+    const response = await fetch(DISCORD_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
