@@ -1,9 +1,12 @@
 "use server"
 
-import { generateEmailContent, type GenerateEmailContentInput } from "@/ai/flows/send-message-flow"
 import { Resend } from "resend";
+import { type SendMessageInputSchema } from "./ContactForm";
+import type * as z from "zod";
 
-export async function sendDirectMessage(values: GenerateEmailContentInput) {
+type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
+
+export async function sendDirectMessage(values: SendMessageInput) {
   try {
     const toEmail = process.env.EMAIL_TO;
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -13,22 +16,26 @@ export async function sendDirectMessage(values: GenerateEmailContentInput) {
       return { success: false, error: "Server is not configured for sending emails." };
     }
     
-    console.log("Generating email content with AI...");
-    const emailContent = await generateEmailContent(values);
+    // Manually construct the email content
+    const subjectLine = `[TechTribe Contact] From ${values.name} - ${values.subject}`;
+    const emailBody = `
+      <h1>New Contact Form Submission</h1>
+      <p><strong>Name:</strong> ${values.name}</p>
+      <p><strong>Email:</strong> ${values.email}</p>
+      <p><strong>Subject:</strong> ${values.subject}</p>
+      <hr>
+      <p><strong>Message:</strong></p>
+      <p>${values.message.replace(/\n/g, '<br>')}</p>
+    `;
 
-    if (!emailContent || !emailContent.emailBody || !emailContent.subjectLine) {
-        console.error("AI did not return valid content.");
-        return { success: false, error: "Failed to generate email content." };
-    }
-
-    console.log("AI generated email content. Sending via Resend...");
+    console.log("Sending email via Resend...");
     const resend = new Resend(resendApiKey);
 
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: toEmail,
-      subject: emailContent.subjectLine,
-      html: emailContent.emailBody,
+      subject: subjectLine,
+      html: emailBody,
     });
     
     console.log("Email sent successfully via Resend.");
