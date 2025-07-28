@@ -2,15 +2,14 @@
 "use server"
 
 import { z } from "zod"
-import { SendMessageInputSchema } from "./ContactForm"
+import { SendMessageInputSchema } from "./ContactFormWrapper"
 
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
-  // IMPORTANT: The user's actual Discord Webhook URL is now hardcoded here.
-  const webhookUrl = "https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE";
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   
   if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-    console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured in src/app/contact/actions.ts.")
-    return { success: false, message: "The server is not configured to send notifications. Please add the webhook URL." }
+    console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured.")
+    return { success: false, message: "The server is not configured to send notifications." }
   }
 
   const subjectMapping: { [key: string]: string } = {

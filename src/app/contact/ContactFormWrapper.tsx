@@ -32,7 +32,7 @@ export const SendMessageInputSchema = z.object({
 });
 
 
-export function ContactForm() {
+export function ContactFormWrapper() {
   const searchParams = useSearchParams()
   const subjectParam = searchParams.get('subject')
   const customSubjectParam = searchParams.get('customSubject')
