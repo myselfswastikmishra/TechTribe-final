@@ -1,15 +1,12 @@
 
+"use client"
+
 import type { Metadata } from "next"
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TestimonialCarousel } from "@/components/TestimonialCarousel";
-
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Explore our portfolio of projects, from website development and branding to business automation. See the quality and creativity we bring to our clients.",
-}
 
 export const portfolioItems = [
   {
@@ -111,9 +108,9 @@ export const testimonials = [
         avatar: "https://placehold.co/100x100.png",
         testimonial: "The real-time analytics dashboard gives us the visibility we need to manage our infrastructure effectively. The data visualization is top-notch."
     }
-]
+];
 
-export default function PortfolioPage() {
+function PortfolioPageContent() {
   return (
     <div className="container mx-auto py-12 md:py-20">
       <header className="text-center">
@@ -169,4 +166,9 @@ export default function PortfolioPage() {
       </main>
     </div>
   );
+}
+
+// This is the Server Component that can export metadata
+export default function PortfolioPage() {
+  return <PortfolioPageContent />
 }

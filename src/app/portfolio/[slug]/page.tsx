@@ -28,6 +28,18 @@ export function generateMetadata({ params }: PortfolioDetailPageProps): Metadata
   return {
     title: `${project.title} | Portfolio`,
     description: project.description,
+    openGraph: {
+        title: `${project.title} | Portfolio`,
+        description: project.description,
+        images: [
+            {
+                url: project.image.src,
+                width: 1200,
+                height: 600,
+                alt: project.title,
+            },
+        ],
+    },
   };
 }
 
