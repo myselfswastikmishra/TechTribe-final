@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -64,35 +65,43 @@ export function Header() {
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-between md:justify-end">
-           <div className="flex-1 md:hidden">
-              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    {isMenuOpen ? <X /> : <Menu />}
-                    <span className="sr-only">Toggle Menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left">
-                   <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                  <div className="mb-8">
-                    <BrandLink />
-                  </div>
-                  <nav className="flex flex-col space-y-4">
-                    {navLinks.map((link) => (
-                      <NavLink key={link.href} {...link} className="text-base" />
-                    ))}
-                  </nav>
-                </SheetContent>
-              </Sheet>
-            </div>
-
-          <div className="flex-1 flex justify-center md:hidden">
-             <BrandLink />
+        <div className="flex flex-1 items-center justify-end md:hidden">
+          <div className="flex-1 basis-0">
+            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  {isMenuOpen ? <X /> : <Menu />}
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left">
+                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                <div className="mb-8">
+                  <BrandLink />
+                </div>
+                <nav className="flex flex-col space-y-4">
+                  {navLinks.map((link) => (
+                    <NavLink key={link.href} {...link} className="text-base" />
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
-          
+
+          <div className="flex flex-1 basis-0 justify-center">
+            <BrandLink />
+          </div>
+
+          <div className="flex flex-1 basis-0 justify-end">
+            <HeaderActions />
+          </div>
+        </div>
+        
+        <div className="hidden md:flex flex-1 items-center justify-end gap-2">
+           <Button asChild size="sm">
+            <Link href="/contact">Contact Us</Link>
+          </Button>
           <HeaderActions />
-          
         </div>
       </div>
     </header>
