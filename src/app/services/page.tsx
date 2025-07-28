@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ const services = [
     description: "From simple landing pages to complex web applications, we build fast, scalable, and secure websites using the latest technologies like Next.js and React.",
     features: ["Responsive Design", "E-commerce Solutions", "Content Management Systems (CMS)", "Web Hosting & Deployment"],
     tags: ["Web", "Development"],
-    contactSubject: "schedule_call"
   },
   {
     icon: <PenTool className="w-8 h-8 text-primary" />,
@@ -25,7 +25,6 @@ const services = [
     description: "Crafting a unique visual identity is key. Our designers create memorable logos, engaging posters, and professional banners that capture your brand's essence.",
     features: ["Brand Identity Kits", "Vector Logo Design", "Marketing & Event Materials", "Social Media Graphics"],
     tags: ["Design", "Branding"],
-    contactSubject: "schedule_call"
   },
   {
     icon: <Bot className="w-8 h-8 text-primary" />,
@@ -33,7 +32,6 @@ const services = [
     description: "We identify bottlenecks in your workflow and build custom automation solutions to save you time and reduce manual effort, using APIs and modern scripting.",
     features: ["Workflow Automation", "API Integration", "Custom Scripts & Tools", "Data Processing"],
     tags: ["Automation", "Productivity"],
-    contactSubject: "schedule_call"
   },
   {
     icon: <Rocket className="w-8 h-8 text-primary" />,
@@ -41,7 +39,6 @@ const services = [
     description: "Launching a new online venture? We provide end-to-end solutions, from initial strategy and MVP development to scaling your platform for a growing user base.",
     features: ["MVP Development", "SaaS Solutions", "Platform Strategy", "Scalability Consulting"],
     tags: ["Startup", "Business"],
-    contactSubject: "schedule_call"
   },
 ];
 
@@ -86,7 +83,7 @@ export default function ServicesPage() {
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full">
-                <Link href={`/contact?subject=${service.contactSubject}`}>
+                <Link href={`/contact?subject=other&customSubject=Inquiry about ${service.title}`}>
                   Inquire about {service.title}
                 </Link>
               </Button>

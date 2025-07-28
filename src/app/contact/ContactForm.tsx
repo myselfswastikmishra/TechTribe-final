@@ -35,10 +35,12 @@ export const SendMessageInputSchema = z.object({
 export function ContactForm() {
   const searchParams = useSearchParams()
   const subjectParam = searchParams.get('subject')
+  const customSubjectParam = searchParams.get('customSubject')
 
   let defaultSubject = "general_inquiry"
   if (subjectParam === 'sponsorship') defaultSubject = 'sponsorship'
   if (subjectParam === 'schedule_call') defaultSubject = 'schedule_call'
+  if (subjectParam === 'other') defaultSubject = 'other'
 
 
   const { toast } = useToast()
@@ -48,7 +50,7 @@ export function ContactForm() {
       name: "",
       email: "",
       subject: defaultSubject,
-      customSubject: "",
+      customSubject: customSubjectParam || "",
       message: "",
     },
   })
