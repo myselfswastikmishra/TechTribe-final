@@ -15,9 +15,11 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     }
 
     // After the flow succeeds, send a Discord notification.
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-    if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
-      console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured for the chapter form.")
+    // IMPORTANT: Replace the placeholder with your actual Discord Webhook URL.
+    const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_GOES_HERE";
+    
+    if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_GOES_HERE") {
+      console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured for the chapter form in src/app/chapters/actions.ts.")
       // This is a server configuration issue. Let the user know.
       return { success: false, message: "The server is not configured to send notifications. Please add the webhook URL." }
     }
