@@ -124,7 +124,7 @@ In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > En
 -   `GEMINI_API_KEY` - Set this to your Google AI API key.
 -   `DISCORD_WEBHOOK_URL` - Set this to your Discord Webhook URL.
 
-**Without these variables, your AI features and form notifications will not work on the live website.**
+**Without these variables, your AI features and form notifications will not work on the live website.** The Contact Form and the Chapter Application Form **both** rely on the `DISCORD_WEBHOOK_URL` to send notifications.
 
 ### 4. Trigger Deployment
 
@@ -215,7 +215,7 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 3.  **The Backend Logic (Server Action): `src/app/contact/actions.ts`**
     *   This file is the backend brain for the contact form. It has the `'use server'` directive at the top.
     *   **`sendDirectMessage` function:** This function receives the form data from the frontend.
-    *   **Security Check:** The first thing it does is check for the `DISCORD_WEBHOOK_URL` environment variable. If it's missing, it immediately returns an error. This is a crucial security and configuration check.
+    *   **Security Check:** The first thing it does is check for the `DISCORD_WEBHOOK_URL`. If it's missing or hasn't been replaced from the placeholder, it immediately returns an error. This is a crucial security and configuration check.
     *   **Formatting the Message:** It formats the form data into a clean, readable message structured specifically for Discord's API. This is the `discordMessage` object, which uses the "embed" format for a nice-looking notification.
     *   **Communicating with the Webhook:** It uses the standard `fetch` API to send a `POST` request to your Discord webhook URL. The formatted message is converted to a JSON string and sent in the body of the request.
     *   **Returning the Result:**

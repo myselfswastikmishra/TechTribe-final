@@ -5,7 +5,6 @@
  * - chapterApplication - A function that handles a new chapter application.
  * - ChapterApplicationInput - The input type for the chapterApplication function.
  */
-import 'dotenv/config';
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
@@ -33,11 +32,14 @@ const chapterApplicationFlow = ai.defineFlow(
   async (input) => {
     console.log('New chapter application received:', input);
     
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+    // This is NOT secure for production.
+    // In a real application, use your hosting provider's environment variable settings.
+    const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE";
   
-    if (!webhookUrl) {
+    if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
       console.error("CRITICAL: Discord webhook URL is not configured for chapter applications.")
-      return { success: false, message: "Server is not configured for notifications." }
+      // Return a user-friendly error, but log the specific issue.
+      return { success: false, message: "The server is not configured to handle this request. Please contact support." }
     }
 
     const discordMessage = {
