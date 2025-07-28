@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Check } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -120,29 +119,15 @@ export default function PortfolioPage() {
                           />
                       </div>
                   </CardHeader>
-                  <CardContent className="p-6 flex-grow">
+                  <CardContent className="p-4 flex-grow">
                       <div className="flex flex-wrap gap-2">
                       {item.tags.map((tag) => (
                           <Badge key={tag} variant="secondary">{tag}</Badge>
                       ))}
                       </div>
-                      <CardTitle className="text-2xl font-headline mt-4">{item.title}</CardTitle>
-                      <p className="mt-2 text-muted-foreground line-clamp-3">{item.description}</p>
+                      <CardTitle className="text-xl font-headline mt-4">{item.title}</CardTitle>
+                      <p className="mt-2 text-muted-foreground line-clamp-3 text-sm">{item.description}</p>
                   </CardContent>
-                  <CardFooter>
-                    <ul className="space-y-2 text-sm w-full">
-                      {item.features.slice(0, 2).map(feature => (
-                        <li key={feature} className="flex items-center gap-2 text-muted-foreground">
-                          <Check className="w-4 h-4 text-primary" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                        <li className="flex items-center gap-2 text-muted-foreground">
-                          <Check className="w-4 h-4 text-primary" />
-                          <span>And more...</span>
-                        </li>
-                    </ul>
-                  </CardFooter>
                 </Card>
               </Link>
             ))}
