@@ -1,6 +1,5 @@
 "use server"
 
-import { Resend } from "resend";
 import { type SendMessageInputSchema } from "./ContactForm";
 import type * as z from "zod";
 
@@ -15,36 +14,43 @@ export async function sendDirectMessage(values: SendMessageInput) {
     return { success: false, error: "Server is not configured for sending emails." };
   }
 
+  const subjectLine = `[TechTribe Contact] From ${values.name} - ${values.subject}`;
+  const emailBody = `
+    <h1>New Contact Form Submission</h1>
+    <p><strong>Name:</strong> ${values.name}</p>
+    <p><strong>Email:</strong> ${values.email}</p>
+    <p><strong>Subject:</strong> ${values.subject}</p>
+    <hr>
+    <p><strong>Message:</strong></p>
+    <p>${values.message.replace(/\n/g, '<br>')}</p>
+  `;
+
   try {
-    const resend = new Resend(resendApiKey);
+    console.log(`Attempting to send email to ${toEmail} via Resend API...`);
 
-    const subjectLine = `[TechTribe Contact] From ${values.name} - ${values.subject}`;
-    const emailBody = `
-      <h1>New Contact Form Submission</h1>
-      <p><strong>Name:</strong> ${values.name}</p>
-      <p><strong>Email:</strong> ${values.email}</p>
-      <p><strong>Subject:</strong> ${values.subject}</p>
-      <hr>
-      <p><strong>Message:</strong></p>
-      <p>${values.message.replace(/\n/g, '<br>')}</p>
-    `;
-
-    console.log(`Attempting to send email to ${toEmail}...`);
-
-    const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: toEmail,
-      subject: subjectLine,
-      html: emailBody,
-      reply_to: values.email,
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: 'onboarding@resend.dev',
+        to: toEmail,
+        subject: subjectLine,
+        html: emailBody,
+        reply_to: values.email,
+      }),
     });
 
-    if (error) {
-      console.error("Resend API Error:", error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Resend API Error:", errorData);
       return { success: false, error: "Failed to send email via Resend." };
     }
-
-    console.log("Email sent successfully via Resend. ID:", data?.id);
+    
+    const data = await response.json();
+    console.log("Email sent successfully via Resend. ID:", data.id);
     return { success: true };
 
   } catch (error) {
