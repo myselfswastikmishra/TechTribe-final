@@ -11,12 +11,11 @@ import { notFound } from 'next/navigation';
 
 
 type PortfolioDetailPageProps = {
-  params: {
-    slug: string;
-  };
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export function generateMetadata({ params }: PortfolioDetailPageProps): Metadata {
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
