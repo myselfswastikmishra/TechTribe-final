@@ -226,29 +226,28 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 
 1.  **The User Interface (Frontend): `src/app/contact/ContactForm.tsx`**
     *   This file contains the React component for the form. It defines the layout of the input fields (Name, Email, Subject, Message).
-    *   **Validation Schema (`SendMessageInputSchema`):** At the top of the file, a Zod schema defines the rules for valid data (e.g., name is required, email must be valid).
+    *   **Validation Schema (`SendMessageInputSchema`):** At the top of the file, a Zod schema defines the rules for valid data. This includes a special rule (`refine`) that requires the `customSubject` field to be filled out only if the user selects "Other" from the subject dropdown.
     *   **Form Management:** The `useForm` hook from `react-hook-form` is initialized with our Zod schema. This hook gives us everything we need to manage the form.
-    *   **The "Send Message" Button:** This is a standard `<Button type="submit">`. When inside a `<form>` tag, clicking this button automatically triggers the `onSubmit` function defined in the form setup. It also has a `disabled` state to prevent multiple clicks while a submission is in progress.
+    *   **Dynamic Fields:** The component watches the value of the `subject` field. If it's "other", it renders an additional input field for the custom subject.
+    *   **Pre-filling from URL:** The form uses the `useSearchParams` hook to check if `subject` or `customSubject` are present in the URL (e.g., from clicking a link on the Services page). If so, it uses them as the default values for the form.
+    *   **The "Send Message" Button:** This is a standard `<Button type="submit">`. When inside a `<form>` tag, clicking this button automatically triggers the `onSubmit` function defined in the form setup.
 
 2.  **The Submission (Client to Server): `onSubmit` function in `ContactForm.tsx`**
-    *   When the user clicks "Send Message," `react-hook-form` first validates all the fields against the Zod schema. If there are errors, it prevents submission and displays the error messages.
-    *   If validation passes, the `onSubmit` function is called. This function takes the form data (`values`) as an argument.
-    *   Inside `onSubmit`, it calls `sendDirectMessage(values)`, which is our Server Action. The `await` keyword makes it wait for the server to respond.
+    *   When the user clicks "Send Message," `react-hook-form` first validates all the fields against the Zod schema.
+    *   If validation passes, the `onSubmit` function calls `sendDirectMessage(values)`, which is our Server Action.
 
 3.  **The Backend Logic (Server Action): `src/app/contact/actions.ts`**
-    *   This file is the backend brain for the contact form. It has the `'use server'` directive at the top.
-    *   **`sendDirectMessage` function:** This function receives the form data from the frontend.
-    *   **Getting the Webhook URL:** For local development, the `webhookUrl` is hardcoded. For a live (production) website, the code is set up to use `process.env.DISCORD_WEBHOOK_URL`, which you must configure in your hosting provider's settings.
-    *   **Formatting the Message:** It formats the form data into a clean, readable message structured specifically for Discord's API. This is the `discordMessage` object, which uses the "embed" format for a nice-looking notification.
-    *   **Communicating with the Webhook:** It uses the standard `fetch` API to send a `POST` request to your Discord webhook URL. The formatted message is converted to a JSON string and sent in the body of the request.
-    *   **Returning the Result:**
-        *   If the `fetch` call is successful (Discord responds with `200 OK`), the function returns `{ success: true }`.
-        *   If anything goes wrong (e.g., the webhook URL is invalid, Discord is down), the `try...catch` block catches the error, logs it to the server console for debugging, and returns `{ success: false }`.
+    *   This file is the backend brain for the contact form. It has the `'use server'` directive.
+    *   **`sendDirectMessage` function:** This function receives the form data.
+    *   **Getting the Webhook URL:** For local development, the `webhookUrl` is hardcoded. For production, the code uses `process.env.DISCORD_WEBHOOK_URL`, which you configure in your hosting provider's settings.
+    *   **Formatting the Message:** It formats the form data into a clean, readable message for Discord. It uses the `customSubject` value if the subject is "other".
+    *   **Communicating with the Webhook:** It uses `fetch` to send a `POST` request to your Discord webhook URL.
+    *   **Returning the Result:** It returns `{ success: true }` or `{ success: false }` to the frontend.
 
 4.  **Displaying the Result (Back to the Frontend)**
     *   Back in `ContactForm.tsx`, the `result` from the server is checked.
-    *   If `result.success` is `true`, a "Message Sent!" success toast notification is displayed, and the form is cleared.
-    *   If `result.success` is `false`, a "Something went wrong" error toast is displayed, allowing the user to try again.
+    *   If `result.success` is `true`, a success toast notification is displayed, and the form is cleared.
+    *   If `result.success` is `false`, an error toast is displayed.
 
 ---
 

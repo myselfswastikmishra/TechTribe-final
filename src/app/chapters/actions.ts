@@ -1,10 +1,9 @@
+
 "use server"
 
 import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/chapter-application-flow"
 
 export async function submitChapterApplication(values: ChapterApplicationInput) {
-  console.log("Submitting chapter application:", values)
-
   try {
     // First, call the Genkit flow. This can be used for AI checks later.
     const flowResult = await chapterApplication(values)
@@ -73,7 +72,6 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
       return { success: false, message: "The notification to Discord could not be sent." }
     }
 
-    console.log("Chapter application successfully sent to Discord.")
     return { success: true }
 
   } catch (error) {

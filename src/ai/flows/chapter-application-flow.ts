@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow for handling chapter application submissions.
@@ -33,7 +34,6 @@ const chapterApplicationFlow = ai.defineFlow(
     // This flow can be expanded later to perform AI-based checks,
     // like evaluating the quality of the reason provided.
     // For now, it just acknowledges receipt of the application.
-    console.log('Chapter application flow received input:', input);
     
     // This is the primary return path after all operations are successful.
     return { success: true };

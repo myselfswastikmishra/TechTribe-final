@@ -5,8 +5,6 @@ import { z } from "zod"
 import { SendMessageInputSchema } from "./ContactForm"
 
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
-  console.log("Received direct message submission:", values)
-  
   // IMPORTANT: The user's actual Discord Webhook URL is now hardcoded here.
   const webhookUrl = "https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE";
   
@@ -73,7 +71,6 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
       return { success: false, message: "Failed to send notification to Discord." }
     }
 
-    console.log("Message successfully sent to Discord.")
     return { success: true }
   } catch (error) {
     console.error("An unexpected error occurred while sending message to Discord:", error)
