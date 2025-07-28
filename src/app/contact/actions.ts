@@ -4,11 +4,11 @@ import { z } from "zod"
 import { SendMessageInputSchema } from "./ContactForm"
 
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
-  console.log("Received direct message:", values)
+  console.log("Received direct message submission:", values)
   
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL
   if (!webhookUrl) {
-    console.error("Discord webhook URL is not configured. Please set DISCORD_WEBHOOK_URL in your .env file.")
+    console.error("CRITICAL: Discord webhook URL is not configured. Please set DISCORD_WEBHOOK_URL in your .env file.")
     return { success: false, message: "Server is not configured for notifications." }
   }
 
@@ -17,17 +17,18 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     sponsorship: "Sponsorship Inquiry",
     general_inquiry: "General Inquiry",
   }
-  const subjectText = subjectMapping[values.subject] || "New Inquiry"
+  const subjectText = subjectMapping[values.subject] || "General Inquiry"
 
   const discordMessage = {
     embeds: [
       {
         title: "New Contact Form Submission",
-        color: 0x3498db, // Blue color
+        color: 3447003, // A pleasant blue color
         fields: [
            {
             name: "Subject",
             value: subjectText,
+            inline: false,
           },
           {
             name: "Name",
@@ -42,6 +43,7 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
           {
             name: "Message",
             value: values.message,
+            inline: false,
           },
         ],
         timestamp: new Date().toISOString(),
@@ -52,25 +54,28 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     ],
   }
 
+  const payload = JSON.stringify(discordMessage)
+  console.log("Sending the following payload to Discord:", payload)
+
   try {
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(discordMessage),
+      body: payload,
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error("Failed to send message to Discord:", response.status, errorText)
-      return { success: false, message: "Failed to send notification." }
+      console.error("Failed to send message to Discord. Status:", response.status, "Response:", errorText)
+      return { success: false, message: "Failed to send notification to Discord." }
     }
 
     console.log("Message successfully sent to Discord.")
     return { success: true }
   } catch (error) {
-    console.error("Error sending message to Discord:", error)
-    return { success: false, message: "An unexpected error occurred." }
+    console.error("An unexpected error occurred while sending message to Discord:", error)
+    return { success: false, message: "An unexpected network error occurred." }
   }
 }
