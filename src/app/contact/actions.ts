@@ -36,6 +36,7 @@ export async function sendDirectMessage(values: SendMessageInput) {
       to: toEmail,
       subject: subjectLine,
       html: emailBody,
+      reply_to: values.email,
     });
 
     if (error) {
