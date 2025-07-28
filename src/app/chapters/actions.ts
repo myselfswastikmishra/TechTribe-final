@@ -6,19 +6,19 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
   console.log("Submitting chapter application:", values)
 
   try {
-    // First, call the Genkit flow.
+    // First, call the Genkit flow. This can be used for AI checks later.
     const flowResult = await chapterApplication(values)
     if (!flowResult.success) {
-      // If the AI flow fails, return its error message.
+      // If the AI flow itself has an issue, report it.
       console.error("Genkit flow failed:", flowResult.message)
-      return { success: false, message: flowResult.message }
+      return { success: false, message: flowResult.message || "An AI processing error occurred." }
     }
 
-    // If the flow succeeds, send a Discord notification.
-    const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE";
+    // After the flow succeeds, send a Discord notification.
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
-      console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured.")
-      // Return a user-friendly error, but log the specific issue.
+      console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured for the chapter form.")
+      // This is a server configuration issue. Let the user know.
       return { success: false, message: "The server is not configured to send notifications. Please add the webhook URL." }
     }
 
@@ -68,7 +68,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     if (!response.ok) {
       const errorText = await response.text()
       console.error("Failed to send chapter application to Discord. Status:", response.status, "Response:", errorText)
-      return { success: false, message: "Could not send notification to Discord." }
+      return { success: false, message: "The notification to Discord could not be sent." }
     }
 
     console.log("Chapter application successfully sent to Discord.")
@@ -76,6 +76,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
 
   } catch (error) {
     console.error("An unexpected error occurred in submitChapterApplication:", error)
-    return { success: false, message: "An unexpected server error occurred." }
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
+    return { success: false, message: `An unexpected server error occurred: ${errorMessage}` }
   }
 }

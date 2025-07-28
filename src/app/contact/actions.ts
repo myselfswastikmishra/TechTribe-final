@@ -6,7 +6,7 @@ import { SendMessageInputSchema } from "./ContactForm"
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
   console.log("Received direct message submission:", values)
   
-  const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE";
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   
   if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
     console.error("CRITICAL: DISCORD_WEBHOOK_URL is not configured.")
