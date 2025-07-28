@@ -14,11 +14,14 @@ Welcome to the Tech Tribe project! This document is your all-in-one guide to und
     *   [Step 3: Run the Development Servers](#step-3-run-the-development-servers)
 *   [Deploying to Production](#-deploying-to-production)
 *   [Managing Website Content](#-managing-website-content)
+    *   [Header Navigation](#header-navigation-srccomponentslayoutheadertsx)
     *   [Homepage Content](#homepage-srccomponentshomepagecontenttsx)
     *   [Events Page](#events-srcappeventspagetsx)
     *   [FAQ Page](#faq-srcappfaqpagetsx)
     *   [Portfolio Page](#portfolio-srcappportfoliopagetsx)
     *   [Partners Page](#partners-srcapppartnerspagetsx)
+    *   [Services Page](#services-srcappservicespagetsx)
+    *   [Customizing Colors](#customizing-colors-srcappglobalscss)
 *   [Understanding the Project Structure](#-project-structure)
 *   [How the Forms Work: A Deep Dive](#-how-the-forms-work-a-deep-dive)
 
@@ -112,7 +115,7 @@ The `.env` file is only for local development and is not uploaded with your code
 In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > Environment`), add the following variables:
 
 -   `GEMINI_API_KEY` - Set this to your Google AI API key.
--   `DISCORD_WEBHOOK_URL` - Set this to your Discord Webhook URL.
+-   `DISCORD_WEBHOOK_URL` - **IMPORTANT:** Set this to your Discord Webhook URL.
 
 **Without these variables, your AI features and form notifications will not work on the live website.** The Contact Form and the Chapter Application Form **both** rely on the `DISCORD_WEBHOOK_URL` to send notifications. The code is configured to use this environment variable automatically when deployed.
 
@@ -124,30 +127,60 @@ Your site will automatically build and deploy whenever you push changes to your 
 
 ## ✍️ Managing Website Content
 
-You don't need a database to update this site's content. Most content is stored in simple lists (arrays) directly in the code. To edit content, find the correct file and modify the text inside the quotes.
+You don't need a database to update this site's content. Most content is stored in simple lists (arrays) directly in the code. This makes it incredibly easy to manage. To edit content, find the correct file and modify the text inside the quotes.
+
+**How to Edit:**
+-   **Find the right file** from the list below.
+-   **Locate the array** (e.g., `const portfolioItems = [...]`).
+-   **To change text:** Simply edit the text within the `""` or `''`.
+-   **To add an item:** Copy an existing item (from `{` to `}` including the comma), paste it at the end of the list, and change its content.
+-   **To remove an item:** Delete the entire item block (from `{` to `}`). Be careful with commas between items.
+
+---
+
+### Header Navigation (`src/components/layout/Header.tsx`)
+This file controls the main navigation links at the top of every page.
+-   Find the `navLinks` array.
+-   Each item in the list is an object with a `href` (the URL path, like `/about`) and a `label` (the text that appears, like "About Us").
+-   You can add, remove, or reorder these links to manage your site's navigation.
 
 ### Homepage (`src/components/HomePageContent.tsx`)
 This file controls everything on the homepage.
--   **Image Gallery:** Find the `galleryImages` array to change image URLs and descriptions.
--   **Services & Projects:** Edit the `services` and `featuredProjects` arrays.
+-   **Image Gallery:** Find the `galleryImages` array to change image URLs (`src`) and alternate text (`alt`).
+-   **Services:** Find the `services` array to edit the title and description of the services highlighted on the homepage.
+-   **Featured Projects:** Edit the `featuredProjects` array to change which projects are shown on the homepage.
 -   **Testimonials:** Modify the `testimonials` array to update client quotes.
--   **Stats:** Change the numbers and labels in the `stats` array.
+-   **Stats:** Change the numbers and labels in the `stats` array to update the "Impact in Numbers" section.
 
 ### Events (`src/app/events/page.tsx`)
--   Find the `events` array at the top of the file. Each item in the list is an event card.
+This file controls the list of events.
+-   Find the `events` array at the top of the file.
+-   Each item in the list is an event card. You can edit the `title`, `date`, `time`, and `description`.
 
 ### FAQ (`src/app/faq/page.tsx`)
--   Find the `faqs` array. Each item has a `question` and an `answer`.
+This file controls the Frequently Asked Questions section.
+-   Find the `faqs` array.
+-   Each item has a `question` and an `answer`. Edit these to manage your FAQ.
 
 ### Portfolio (`src/app/portfolio/page.tsx`)
--   Modify the `portfolioItems` and `testimonials` arrays.
+This file controls your main portfolio and the testimonials on that page.
+-   **Portfolio Items:** Modify the `portfolioItems` array. Each item includes a `title`, `description`, `image` URL, and `tags`.
+-   **Testimonials:** Modify the `testimonials` array to change the client quotes that appear on the portfolio page.
 
 ### Partners (`src/app/partners/page.tsx`)
--   Edit the `companyPartners` and `universityChapters` arrays to manage logos.
+This file controls the partner and university logos.
+-   **Company Partners:** Edit the `companyPartners` array to manage company logos and names.
+-   **University Chapters:** Edit the `universityChapters` array to manage university chapter logos and names.
+
+### Services (`src/app/services/page.tsx`)
+This file controls the detailed list of services your agency offers.
+-   Find the `services` array. Each item represents a service card and includes an `icon`, `title`, `description`, a list of `features`, and `tags`.
 
 ### Customizing Colors (`src/app/globals.css`)
 -   Open `src/app/globals.css`. At the top, you'll find `:root { ... }` (for light mode) and `.dark { ... }` (for dark mode).
--   Change the HSL values for variables like `--primary`, `--background`, and `--accent` to change the site's color scheme.
+-   These sections use HSL (Hue, Saturation, Lightness) color values.
+-   To change the site's main color, modify the HSL values for the `--primary` variable. You can use an online "HSL color picker" to find the values for the color you want.
+-   You can also change `--background`, `--accent`, and other colors here to completely customize the look and feel of the site.
 
 ---
 
@@ -249,5 +282,3 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 5.  **Displaying the Result (Back to the Frontend)**
     *   The `{ success: true }` result is passed all the way back to the `ChapterApplicationForm.tsx` component.
     *   A "Thank you for your interest" toast notification is shown, and the form is reset.
-
-    
