@@ -98,9 +98,6 @@ export function Header() {
         </div>
         
         <div className="hidden md:flex flex-1 items-center justify-end gap-2">
-           <Button asChild size="sm">
-            <Link href="/contact">Contact Us</Link>
-          </Button>
           <HeaderActions />
         </div>
       </div>
