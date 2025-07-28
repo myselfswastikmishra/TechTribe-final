@@ -243,14 +243,15 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
     *   If valid, the `onSubmit` function calls the Server Action: `submitChapterApplication(values)`.
 
 3.  **The Backend Logic (Server Action): `src/app/chapters/actions.ts`**
-    *   This file acts as a simple bridge. It receives the data from the form.
-    *   Its main job is to call another function, `chapterApplication(values)`, which is imported from our Genkit AI flow file. This keeps our UI-related server code separate from our core AI logic.
+    *   This file acts as a bridge. It receives the data from the form.
+    *   First, it calls `chapterApplication(values)`, which is our Genkit AI flow. This is where AI-based checks could happen in the future.
+    *   After the AI flow succeeds, it proceeds to send a notification to your Discord channel. It reads the `DISCORD_WEBHOOK_URL` from your environment variables, formats the application details into a nice embed, and sends it using `fetch`.
 
-4.  **The AI Processing & Notification (Genkit Flow): `src/ai/flows/chapter-application-flow.ts`**
-    *   This is where the AI-powered part of the application lives. It has the `'use server'` directive, as it's called by another server component.
-    *   **`ai.defineFlow`:** This defines a Genkit "flow" named `chapterApplicationFlow`. A flow is a series of steps that can include calling AI models, talking to databases, or calling other APIs.
-    *   **Discord Notification:** Just like the contact form, this flow now also sends a notification to your Discord channel. It reads the `DISCORD_WEBHOOK_URL` from your environment variables, formats the application details into a nice embed, and sends it using `fetch`.
-    *   **Future Possibilities:** This is where you could add even more powerful AI features. For example, you could modify this flow to:
+4.  **The AI Processing (Genkit Flow): `src/ai/flows/chapter-application-flow.ts`**
+    *   This file is very simple. It has the `'use server'` directive, as it's called by another server component.
+    *   **`ai.defineFlow`:** This defines a Genkit "flow" named `chapterApplicationFlow`. A flow is a series of steps that can include calling AI models.
+    *   **Current Function:** Right now, this flow is very basic. It just accepts the application data and returns `{ success: true }`.
+    *   **Future Possibilities:** This is where you could add powerful AI features. For example, you could modify this flow to:
         *   Use an LLM to analyze the `reason` field and determine if it meets certain criteria.
         *   Save the application to a database (like Firestore).
         *   Send a customized confirmation email back to the applicant.
@@ -258,4 +259,3 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 5.  **Displaying the Result (Back to the Frontend)**
     *   The `{ success: true }` result is passed all the way back to the `ChapterApplicationForm.tsx` component.
     *   A "Thank you for your interest" toast notification is shown, and the form is reset.
-
