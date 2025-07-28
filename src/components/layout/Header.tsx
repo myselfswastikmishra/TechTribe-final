@@ -2,14 +2,12 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
-import { useState } from "react"
 import { usePathname } from "next/navigation"
 
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { HeaderActions } from "./HeaderActions"
+import { MobileHeader } from "./MobileHeader"
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -23,7 +21,6 @@ const navLinks = [
 ]
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
 
   const NavLink = ({ href, label, className }: { href: string; label: string, className?: string }) => (
@@ -34,7 +31,6 @@ export function Header() {
         pathname === href ? "text-primary" : "text-muted-foreground",
         className
       )}
-      onClick={() => setIsMenuOpen(false)}
     >
       {label}
     </Link>
@@ -44,7 +40,6 @@ export function Header() {
     <Link
       href="/"
       className="flex items-center space-x-2 font-bold text-lg font-headline hover:text-primary transition-colors whitespace-nowrap"
-      onClick={() => setIsMenuOpen(false)}
     >
       Tech Tribe
     </Link>
@@ -53,6 +48,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
+        {/* Desktop Header */}
         <div className="mr-4 hidden md:flex">
           <div className="mr-6">
             <BrandLink />
@@ -64,35 +60,14 @@ export function Header() {
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-between md:hidden">
-            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  {isMenuOpen ? <X /> : <Menu />}
-                  <span className="sr-only">Toggle Menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left">
-                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                <div className="mb-8">
-                  <BrandLink />
-                </div>
-                <nav className="flex flex-col space-y-4">
-                  {navLinks.map((link) => (
-                    <NavLink key={link.href} {...link} className="text-base" />
-                  ))}
-                   <NavLink href="/contact" label="Contact Us" className="text-base" />
-                </nav>
-              </SheetContent>
-            </Sheet>
-
-            <BrandLink />
-
-            <HeaderActions />
+        {/* Mobile Header */}
+        <div className="contents md:hidden">
+          <MobileHeader navLinks={navLinks} BrandLink={BrandLink} />
         </div>
         
+        {/* Actions for Desktop */}
         <div className="hidden md:flex flex-1 items-center justify-end gap-2">
-          <Button asChild size="sm">
+           <Button asChild size="sm">
               <Link href="/contact">Contact Us</Link>
           </Button>
           <HeaderActions />
