@@ -5,8 +5,8 @@ import { z } from "zod"
 import { SendMessageInputSchema } from "./ContactFormWrapper"
 
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-
+  const webhookUrl = "https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE";
+  
   const subjectMapping: { [key: string]: string } = {
     schedule_call: "Schedule a Call",
     sponsorship: "Sponsorship Inquiry",
@@ -51,7 +51,7 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   }
 
   try {
-    const response = await fetch(webhookUrl!, {
+    const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

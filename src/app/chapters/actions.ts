@@ -13,7 +13,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     }
 
     // After the flow succeeds, send a Discord notification.
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+    const webhookUrl = "https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE";
     
     const discordMessage = {
       embeds: [
@@ -50,20 +50,18 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
       ],
     }
 
-    if (webhookUrl) {
-        const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(discordMessage),
-        })
+    const response = await fetch(webhookUrl, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(discordMessage),
+    })
 
-        if (!response.ok) {
+    if (!response.ok) {
         console.error("Failed to send chapter application notification to Discord.", { status: response.status, statusText: response.statusText });
         // The AI part succeeded, so overall success is true, but we pass a message.
         return { success: true, message: "Your application was received, but the final notification to the admin could not be sent." }
-        }
     }
 
 
