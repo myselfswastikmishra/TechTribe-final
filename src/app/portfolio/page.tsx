@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next"
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,7 +71,7 @@ export default function PortfolioPage() {
 
       <main>
         <section id="projects" className="mt-12">
-            <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
+            <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {portfolioItems.map((item) => (
                 <Card key={item.title} className="overflow-hidden group flex flex-col">
                 <CardHeader className="p-0">
