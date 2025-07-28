@@ -4,10 +4,17 @@
 import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/chapter-application-flow"
 
 export async function submitChapterApplication(values: ChapterApplicationInput) {
+  // First, check for the GEMINI_API_KEY before calling the flow.
+  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.includes("YOUR_GEMINI_API_KEY")) {
+    console.error("Gemini API Key is not configured.");
+    return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
+  }
+
   try {
     // Call the Genkit flow.
     const flowResult = await chapterApplication(values)
     if (!flowResult.success) {
+      // If the AI flow itself has an issue, report it.
       console.error("The Genkit chapter application flow failed:", flowResult.message);
       return { success: false, message: flowResult.message || "An AI processing error occurred." }
     }
@@ -15,12 +22,12 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     // After the flow succeeds, send a Discord notification.
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     
-    // If the webhook isn't configured, we can still consider the application
-    // successfully submitted to the AI flow, but we should log the issue.
     if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-      console.warn("Discord Webhook URL is not configured. Skipping notification.");
-      // Return success because the application was processed by the flow.
-      return { success: true, message: "Your application was received, but the admin notification could not be sent." }
+      // This is a server configuration issue. Let the user know.
+      console.error("Discord Webhook URL is not configured.");
+      // We still return success: true because the application was successfully processed by the AI.
+      // The message will inform the user about the notification part.
+      return { success: true, message: "Your application was received, but the admin notification could not be sent due to a server configuration issue." }
     }
 
     const discordMessage = {
@@ -68,19 +75,16 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
 
     if (!response.ok) {
       console.error("Failed to send chapter application notification to Discord.", { status: response.status, statusText: response.statusText });
+       // The AI part succeeded, so overall success is true, but we pass a message.
       return { success: true, message: "Your application was received, but the final notification to the admin could not be sent." }
     }
 
     // This is the full success path.
-    return { success: true }
+    return { success: true, message: "Thank you for your interest. We will review your application and be in touch soon." }
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
     console.error("An unexpected server error occurred during chapter application submission:", error);
-    // Even if there's an error, it might be after the AI flow, so we check Gemini key
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.includes("YOUR_GEMINI_API_KEY")) {
-        return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
-    }
     return { success: false, message: `An unexpected server error occurred: ${errorMessage}` }
   }
 }
