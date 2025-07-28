@@ -7,6 +7,11 @@ import { SendMessageInputSchema } from "./ContactFormWrapper"
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   
+  if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
+    console.error("Discord Webhook URL is not configured.");
+    return { success: false, message: "The server is not configured to send notifications. Please contact the site administrator." }
+  }
+
   const subjectMapping: { [key: string]: string } = {
     schedule_call: "Schedule a Call",
     sponsorship: "Sponsorship Inquiry",
@@ -50,16 +55,6 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     ],
   }
 
-  // If the webhook isn't configured, log it but don't block the user.
-  // In a real app, you might handle this differently, but for direct use, we proceed.
-  if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
-    console.error("Discord Webhook URL is not configured. Message will not be sent.");
-    // For the user, pretend it was successful so they are not blocked.
-    // The error is logged on the server for the developer to see.
-    return { success: true, message: "Message sent (simulated)." };
-  }
-
-
   try {
     const response = await fetch(webhookUrl, {
       method: "POST",
@@ -70,13 +65,14 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     })
 
     if (!response.ok) {
-      console.error("Failed to send notification to Discord.", { status: response.status });
-      return { success: false, message: "There was an issue sending your message to the destination." }
+       console.error("Failed to send notification to Discord.", { status: response.status, statusText: response.statusText });
+      return { success: false, message: "There was an issue sending your message. The destination server reported an error." }
     }
 
     return { success: true }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
     console.error("Error sending message to Discord:", error);
-    return { success: false, message: "An unexpected network error occurred." }
+    return { success: false, message: `An unexpected network error occurred: ${errorMessage}` }
   }
 }
