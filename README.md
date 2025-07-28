@@ -8,9 +8,9 @@ Follow these steps to set up and run the project locally.
 
 ### 1. Environment Variables
 
-This project uses Genkit to interact with the Google Gemini AI for some backend processing and Discord for contact form notifications. You'll need API keys for these services to be enabled.
+This project uses Genkit to interact with the Google Gemini AI and Discord for contact form notifications. You'll need API keys for these services.
 
-**Crucially, you must create a file named `.env` in the root of the project.** This file is for your secret keys and is not checked into version control.
+**You must create a file named `.env` in the root of the project for local development.** This file is for your secret keys and is not checked into version control.
 
 1.  Create a file named `.env` in the root of the project.
 2.  Add your Google AI API key and your Discord Webhook URL to this new `.env` file. It should look like this:
@@ -24,10 +24,6 @@ This project uses Genkit to interact with the Google Gemini AI for some backend 
 > 2. Click on the **Integrations** tab.
 > 3. Click **Webhooks**, then **New Webhook**.
 > 4. Give your webhook a name (e.g., "Contact Form Notifier"), choose the channel you want messages to be posted in, and then click **Copy Webhook URL**.
-
-> **Note on Pricing:** 
-> - The Genkit framework is free and open-source. The Google Gemini API has a generous free tier, and your usage will very likely be well within the free limits.
-> - Discord webhooks are completely free to use.
 
 ### 2. Install Dependencies
 
@@ -59,44 +55,38 @@ This service powers the "Start a Chapter" form. Any form submissions will be pro
 
 ---
 
-## 🚀 Deploying to Netlify
+## 🚀 Deploying to Production (e.g., Netlify)
 
-Follow these steps to deploy the fullstack application to Netlify.
+Follow these steps to deploy the fullstack application to a hosting provider like Netlify.
 
-### 1. Create a `netlify.toml` file
+### 1. Connect Your Repository
 
-Create a new file named `netlify.toml` in the root of your project. This file tells Netlify how to build and deploy your site, including the Genkit flows.
+In your hosting provider's dashboard (e.g., Netlify), create a new site and connect it to your GitHub/GitLab/Bitbucket repository.
 
-```toml
-# netlify.toml
-[build]
-  command = "npm run build"
-  publish = ".next"
+### 2. Set Build Configuration
 
-[dev]
-  # This is the command that will be run when you use `netlify dev`
-  command = "npm run dev"
-  # The port for the Next.js development server
-  port = 9002
-  # The port for the Genkit development server
-  targetPort = 4000
+Most modern hosting providers will automatically detect that this is a Next.js project and configure the build settings correctly. If you need to set them manually, use:
+- **Build Command:** `npm run build`
+- **Publish Directory:** `.next`
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+For Netlify, the included `netlify.toml` file handles this automatically.
 
-[[redirects]]
-  from = "/__/*"
-  to = "/__/*"
-  status = 200
-```
+### 3. Set Production Environment Variables
 
-### 2. Configure Your Netlify Site
+This is the most important step for a successful deployment. In your site's settings on your hosting provider, find the section for Environment Variables (e.g., on Netlify: `Site settings > Build & deploy > Environment`).
 
-1.  **Connect Your Repository:** In your Netlify dashboard, create a new site and connect it to your GitHub/GitLab/Bitbucket repository.
-2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY` and `DISCORD_WEBHOOK_URL`. This is crucial for the AI flows and notifications to work in production.
-3.  **Trigger Deployment:** Netlify will automatically build and deploy your site whenever you push changes to your main branch. You can also trigger a manual deploy from the Netlify dashboard.
+You must add the following variables:
 
-Your Next.js frontend and Genkit AI backend will now be deployed and managed by Netlify.
+-   `GEMINI_API_KEY` - Set this to your Google AI API key.
+-   `DISCORD_WEBHOOK_URL` - Set this to your Discord Webhook URL.
+
+**This is critical.** The live website will not be able to process chapter applications or send contact form notifications without these variables.
+
+### 4. Trigger Deployment
+
+Netlify (and similar platforms) will automatically build and deploy your site whenever you push changes to your main branch. You can also trigger a manual deploy from the dashboard.
+
+Your Next.js frontend and Genkit AI backend will now be deployed and managed by your hosting provider.
 
 ---
 
@@ -114,37 +104,6 @@ This project is built with a modern, performance-focused technology stack:
 -   **AI Backend:** **Genkit** (from Google) powers the backend logic for the university chapter application form.
 -   **Notifications:** **Discord Webhooks** for sending contact form submissions to a Discord channel.
 -   **Animations:** The site uses a combination of `tailwindcss-animate` and custom React hooks (`DynamicText`, `StatsCounter`) for UI animations.
-
----
-
-## 📚 Learning Path
-
-If you're new to this stack, here’s a recommended learning path to get you comfortable with the codebase.
-
-### 1. Foundational Knowledge
-Before diving in, make sure you have a solid grasp of web development fundamentals.
--   **HTML, CSS, and JavaScript (ES6+):** The building blocks of the web.
--   **Basic Command-Line/Terminal Usage:** Essential for running the project and managing dependencies.
-
-### 2. Core Frontend (React & Next.js)
-This is the heart of the application.
--   **React:** Start with the official React documentation. Focus on:
-    -   **Components, Props, and State:** How to build and manage UI elements.
-    -   **Hooks:** Specifically `useState` and `useEffect`, which are used extensively.
-    -   **JSX Syntax:** The syntax used to write components.
--   **Next.js:** Once you're comfortable with React, move on to the Next.js documentation.
-    -   **App Router:** Understand file-based routing (pages, layouts, loading states).
-    -   **Server Components vs. Client Components:** This is a key concept. Know when to use `'use client'`.
-    -   **Built-in Components:** Learn how `next/link` (for navigation) and `next/image` (for image optimization) work.
-
-### 3. Styling & UI
--   **Tailwind CSS:** Get familiar with the utility-first approach. The official documentation has excellent interactive tutorials. You don't need to memorize classes, just understand the concept.
--   **ShadCN/UI:** Read the "Introduction" and "Theming" sections of the documentation. Understand that you can directly modify the component files in `src/components/ui/`.
-
-### 4. Forms & Backend Logic
--   **React Hook Form & Zod:** Review the "Get Started" guides for both libraries. See how they work together in `ContactForm.tsx` or `ChapterApplicationForm.tsx` to manage state and validate data.
--   **Discord Webhooks:** The logic for sending the contact form data is in `src/app/contact/actions.ts`. It uses the native `fetch` API to send a formatted message to your Discord server.
--   **Genkit:** The `src/ai/flows` directory contains the backend logic for the chapter application. Read the code in `chapter-application-flow.ts` to see how it receives data from the frontend and logs it.
 
 ---
 

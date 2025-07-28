@@ -9,7 +9,7 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   
   if (!webhookUrl) {
-    console.error("CRITICAL: Discord webhook URL is not configured.")
+    console.error("CRITICAL: Discord webhook URL is not configured. This must be set in the hosting environment's settings.")
     return { success: false, message: "Server is not configured for notifications." }
   }
 
@@ -56,7 +56,7 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   }
 
   const payload = JSON.stringify(discordMessage)
-  console.log("Sending the following payload to Discord:", payload)
+  console.log("Sending payload to Discord...");
 
   try {
     const response = await fetch(webhookUrl, {
