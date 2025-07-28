@@ -4,17 +4,31 @@
 import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/chapter-application-flow"
 
 export async function submitChapterApplication(values: ChapterApplicationInput) {
+  // First, check for the GEMINI_API_KEY before calling the flow.
+  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.includes("YOUR_GEMINI_API_KEY")) {
+    console.error("Gemini API Key is not configured.");
+    return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
+  }
+
   try {
-    // We directly call the Genkit flow.
+    // Call the Genkit flow.
     const flowResult = await chapterApplication(values)
     if (!flowResult.success) {
+      // If the AI flow itself has an issue, report it.
       console.error("The Genkit chapter application flow failed:", flowResult.message);
       return { success: false, message: flowResult.message || "An AI processing error occurred." }
     }
 
     // After the flow succeeds, send a Discord notification.
-    const webhookUrl = "https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE";
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     
+    if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
+      // This is a server configuration issue. Let the user know.
+      console.error("Discord Webhook URL is not configured.");
+      // The application was successful, but the notification failed. This is a partial success.
+      return { success: true, message: "Your application was received, but the admin could not be notified. The server's notification service is not configured." }
+    }
+
     const discordMessage = {
       embeds: [
         {
@@ -51,19 +65,18 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     }
 
     const response = await fetch(webhookUrl, {
-    method: "POST",
-    headers: {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
-    },
-    body: JSON.stringify(discordMessage),
+      },
+      body: JSON.stringify(discordMessage),
     })
 
     if (!response.ok) {
-        console.error("Failed to send chapter application notification to Discord.", { status: response.status, statusText: response.statusText });
-        // The AI part succeeded, so overall success is true, but we pass a message.
-        return { success: true, message: "Your application was received, but the final notification to the admin could not be sent." }
+      console.error("Failed to send chapter application notification to Discord.", { status: response.status, statusText: response.statusText });
+       // The application was successful, but the notification failed. This is a partial success.
+      return { success: true, message: "Your application was received, but the final notification to the admin could not be sent." }
     }
-
 
     // This is the full success path.
     return { success: true, message: "Thank you for your interest. We will review your application and be in touch soon." }

@@ -51,17 +51,19 @@ Follow these steps to run the website on your own computer for development and t
 
 ### Step 1: Set Up Environment Variables (.env file)
 
-Your project needs a secret key to connect to Google AI services and a Discord Webhook for notifications. You must store these in a special file that is kept private and not shared publicly.
+**This is the most important step.** Your project needs secret keys to connect to Google AI services and a Discord Webhook for notifications. You must store these in a special file that is kept private and not shared publicly.
 
 1.  In the main folder of your project, create a new file and name it exactly: `.env`
 
-2.  Open the `.env` file and add the following lines. Replace the placeholder text with your actual secret key and URL.
+2.  Open the `.env` file and add the following lines. Replace the placeholder text with your actual secret key and URL. **The forms will not work without these.**
 
     ```
     # For Google AI features (used in the "Start a Chapter" form)
+    # Get your key from Google AI Studio: https://aistudio.google.com/app/apikey
     GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
 
     # For form notifications to Discord (used by Contact and Chapter forms)
+    # How to create a Discord Webhook: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
     DISCORD_WEBHOOK_URL="YOUR_DISCORD_WEBHOOK_URL_HERE"
     ```
 
@@ -117,7 +119,7 @@ In your site's dashboard (e.g., on Netlify: `Site settings > Build & deploy > En
 -   `GEMINI_API_KEY` - Set this to your Google AI API key.
 -   `DISCORD_WEBHOOK_URL` - **IMPORTANT:** Set this to your Discord Webhook URL.
 
-**Without these variables, your AI features and form notifications will not work on the live website.** The Contact Form and the Chapter Application Form **both** rely on the `DISCORD_WEBHOOK_URL` to send notifications. The code is configured to use this environment variable automatically when deployed.
+**Without these variables, your AI features and form notifications will not work on the live website.** The Contact Form and the Chapter Application Form **both** rely on these variables to function. If a form fails, the first thing to check is that these variables are set correctly in your hosting provider's dashboard.
 
 ### 4. Trigger Deployment
 
@@ -149,8 +151,7 @@ This file controls everything on the homepage.
 -   **Image Gallery:** Find the `galleryImages` array to change image URLs (`src`) and alternate text (`alt`).
 -   **Services:** Find the `services` array to edit the icon, title, and description of the services highlighted on the homepage.
 -   **Featured Projects:** Edit the `featuredProjects` array to change which projects are shown on the homepage.
--   **Testimonials:** Modify the `testimonials` array to update client quotes.
--   **Stats:** Change the numbers and labels in the `stats` array to update the "Impact in Numbers" section.
+-   **Testimonials:** Modify the `testimonials` array in `src/lib/portfolio-data.ts` to update client quotes.
 
 ### Events (`src/app/events/page.tsx`)
 This file controls the list of events.
@@ -163,9 +164,9 @@ This file controls the Frequently Asked Questions section.
 -   Each item has a `question` and an `answer`. Edit these to manage your FAQ.
 
 ### Portfolio (`src/app/portfolio/page.tsx`)
-This file controls your main portfolio and the testimonials on that page.
--   **Portfolio Items:** Modify the `portfolioItems` array. Each item includes a `title`, `description`, `image` URL, `tags`, and a list of `features`.
--   **Testimonials:** Modify the `testimonials` array to change the client quotes that appear on the portfolio page.
+This file controls your main portfolio display. The portfolio items and testimonials are managed in `src/lib/portfolio-data.ts`.
+-   **Portfolio Items:** Modify the `portfolioItems` array in `src/lib/portfolio-data.ts`. Each item includes a `title`, `description`, `image` URL, `tags`, and a list of `features`.
+-   **Testimonials:** Modify the `testimonials` array in `src/lib/portfolio-data.ts` to change the client quotes.
 
 ### Partners (`src/app/partners/page.tsx`)
 This file controls the partner and university logos.
@@ -201,6 +202,9 @@ Here's a map of the most important files and folders:
 
 -   `src/ai/`: Contains the Genkit AI logic.
     -   `flows/chapter-application-flow.ts`: The backend logic for the university chapter application form.
+
+-   `src/lib/`: Contains shared utilities and data.
+    -   `portfolio-data.ts`: The central source for all portfolio projects and testimonials.
 
 -   `package.json`: Lists all project dependencies and custom `npm` scripts.
 -   `netlify.toml`: Configuration file for deploying to Netlify.
@@ -240,15 +244,15 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 3.  **The Backend Logic (Server Action): `src/app/contact/actions.ts`**
     *   This file is the backend brain for the contact form. It has the `'use server'` directive.
     *   **`sendDirectMessage` function:** This function receives the form data.
-    *   **Getting the Webhook URL:** The code securely accesses the `DISCORD_WEBHOOK_URL` from the environment variables, which you configure in your hosting provider's settings.
+    *   **Getting the Webhook URL:** The code securely accesses the `DISCORD_WEBHOOK_URL` from the environment variables, which you configure in your `.env` file or hosting provider's settings. If it's not found, the function returns an error.
     *   **Formatting the Message:** It formats the form data into a clean, readable message for Discord. It uses the `customSubject` value if the subject is "other".
     *   **Communicating with the Webhook:** It uses `fetch` to send a `POST` request to your Discord webhook URL.
-    *   **Returning the Result:** It returns `{ success: true }` or `{ success: false }` to the frontend.
+    *   **Returning the Result:** It returns `{ success: true }` or `{ success: false }` to the frontend, along with a helpful message.
 
 4.  **Displaying the Result (Back to the Frontend)**
     *   Back in `ContactFormWrapper.tsx`, the `result` from the server is checked.
     *   If `result.success` is `true`, a success toast notification is displayed, and the form is cleared.
-    *   If `result.success` is `false`, an error toast is displayed.
+    *   If `result.success` is `false`, an error toast is displayed with the specific message from the server (e.g., "The server is not configured to send notifications.").
 
 ---
 
@@ -267,8 +271,9 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 
 3.  **The Backend Logic (Server Action): `src/app/chapters/actions.ts`**
     *   This file acts as a bridge. It receives the data from the form.
-    *   First, it calls `chapterApplication(values)`, which is our Genkit AI flow. This is where AI-based checks could happen in the future.
-    *   After the AI flow succeeds, it proceeds to send a notification to your Discord channel. It gets the `DISCORD_WEBHOOK_URL` from the environment variables, formats the application details into a nice embed, and sends it using `fetch`.
+    *   First, it checks for the `GEMINI_API_KEY`. If missing, it returns an error.
+    *   Next, it calls `chapterApplication(values)`, which is our Genkit AI flow.
+    *   After the AI flow succeeds, it proceeds to check for the `DISCORD_WEBHOOK_URL` and sends a notification to your Discord channel. It formats the application details into a nice embed and sends it using `fetch`.
 
 4.  **The AI Processing (Genkit Flow): `src/ai/flows/chapter-application-flow.ts`**
     *   This file is very simple. It has the `'use server'` directive, as it's called by another server component.
@@ -280,5 +285,5 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
         *   Send a customized confirmation email back to the applicant.
 
 5.  **Displaying the Result (Back to the Frontend)**
-    *   The `{ success: true }` result is passed all the way back to the `ChapterApplicationForm.tsx` component.
-    *   A "Thank you for your interest" toast notification is shown, and the form is reset.
+    *   The `{ success: true, message: "..." }` result is passed all the way back to the `ChapterApplicationForm.tsx` component.
+    *   A toast notification is shown with the appropriate message from the server, and the form is reset on success.

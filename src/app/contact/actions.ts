@@ -5,8 +5,13 @@ import { z } from "zod"
 import { SendMessageInputSchema } from "./ContactFormWrapper"
 
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
-  const webhookUrl = "https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE";
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   
+  if (!webhookUrl || webhookUrl.includes("YOUR_DISCORD_WEBHOOK_URL")) {
+    console.error("Discord Webhook URL is not configured.");
+    return { success: false, message: "The server is not configured to send notifications. Please contact the site administrator." }
+  }
+
   const subjectMapping: { [key: string]: string } = {
     schedule_call: "Schedule a Call",
     sponsorship: "Sponsorship Inquiry",
@@ -60,13 +65,14 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     })
 
     if (!response.ok) {
-      console.error("Failed to send notification to Discord.", { status: response.status, statusText: response.statusText });
-      return { success: false, message: "Failed to send notification to Discord." }
+       console.error("Failed to send notification to Discord.", { status: response.status, statusText: response.statusText });
+      return { success: false, message: "Failed to send notification. The webhook may be configured incorrectly." }
     }
 
     return { success: true }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown network error occurred."
     console.error("Error sending message to Discord:", error);
-    return { success: false, message: "An unexpected error occurred while sending the message." }
+    return { success: false, message: `An unexpected error occurred: ${errorMessage}` }
   }
 }
