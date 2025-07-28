@@ -7,16 +7,17 @@ import type * as z from "zod";
 type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
 
 export async function sendDirectMessage(values: SendMessageInput) {
-  try {
-    const toEmail = process.env.EMAIL_TO;
-    const resendApiKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.EMAIL_TO;
+  const resendApiKey = process.env.RESEND_API_KEY;
 
-    if (!toEmail || !resendApiKey) {
-      console.error("CRITICAL: EMAIL_TO or RESEND_API_KEY environment variables are not set.");
-      return { success: false, error: "Server is not configured for sending emails." };
-    }
-    
-    // Manually construct the email content
+  if (!toEmail || !resendApiKey) {
+    console.error("CRITICAL: EMAIL_TO or RESEND_API_KEY environment variables are not set.");
+    return { success: false, error: "Server is not configured for sending emails." };
+  }
+
+  try {
+    const resend = new Resend(resendApiKey);
+
     const subjectLine = `[TechTribe Contact] From ${values.name} - ${values.subject}`;
     const emailBody = `
       <h1>New Contact Form Submission</h1>
@@ -28,21 +29,25 @@ export async function sendDirectMessage(values: SendMessageInput) {
       <p>${values.message.replace(/\n/g, '<br>')}</p>
     `;
 
-    console.log("Sending email via Resend...");
-    const resend = new Resend(resendApiKey);
+    console.log(`Attempting to send email to ${toEmail}...`);
 
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: toEmail,
       subject: subjectLine,
       html: emailBody,
     });
-    
-    console.log("Email sent successfully via Resend.");
+
+    if (error) {
+      console.error("Resend API Error:", error);
+      return { success: false, error: "Failed to send email via Resend." };
+    }
+
+    console.log("Email sent successfully via Resend. ID:", data?.id);
     return { success: true };
 
   } catch (error) {
-    console.error("Error in sendDirectMessage:", error);
-    return { success: false, error: "An unexpected error occurred." };
+    console.error("Error in sendDirectMessage function:", error);
+    return { success: false, error: "An unexpected server error occurred." };
   }
 }
