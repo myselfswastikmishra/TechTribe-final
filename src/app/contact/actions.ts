@@ -51,13 +51,7 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
   }
 
   try {
-    // We will directly attempt to send the notification.
-    // If the webhookUrl is not set, fetch will throw an error which will be caught.
-    if (!webhookUrl) {
-      throw new Error("Discord Webhook URL is not set on the server.");
-    }
-    
-    const response = await fetch(webhookUrl, {
+    const response = await fetch(webhookUrl!, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,16 +60,13 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     })
 
     if (!response.ok) {
-      console.error("Discord API returned a non-ok response.", { status: response.status, statusText: response.statusText });
-      const errorBody = await response.text();
-      console.error("Discord response body:", errorBody);
-      return { success: false, message: `Failed to send notification. Discord returned: ${response.statusText}` }
+      console.error("Failed to send notification to Discord.", { status: response.status, statusText: response.statusText });
+      return { success: false, message: "Failed to send notification to Discord." }
     }
 
     return { success: true }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
-    console.error("Failed to send message to Discord:", error);
-    return { success: false, message: `An unexpected error occurred while sending the message: ${errorMessage}` }
+    console.error("Error sending message to Discord:", error);
+    return { success: false, message: "An unexpected error occurred while sending the message." }
   }
 }
