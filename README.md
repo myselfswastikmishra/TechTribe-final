@@ -10,11 +10,13 @@ Follow these steps to set up and run the project locally.
 
 This project uses Genkit to interact with the Google Gemini AI for some backend processing and Discord for contact form notifications. You'll need API keys for these services to be enabled.
 
+**Crucially, you must create a file named `.env` in the root of the project.** This file is for your secret keys and is not checked into version control.
+
 1.  Create a file named `.env` in the root of the project.
-2.  Add your Google AI API key and your Discord Webhook URL to the `.env` file:
+2.  Add your Google AI API key and your Discord Webhook URL to this new `.env` file. It should look like this:
     ```
-    GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
-    DISCORD_WEBHOOK_URL=YOUR_DISCORD_WEBHOOK_URL_HERE
+    GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
+    DISCORD_WEBHOOK_URL="YOUR_DISCORD_WEBHOOK_URL_HERE"
     ```
 
 > **How to get a Discord Webhook URL:**
@@ -45,7 +47,7 @@ The project requires two services to be running simultaneously in separate termi
 npm run dev
 ```
 
-This will start the website on `http://localhost:9002`.
+This will start the website on `http://localhost:9002`. The `npm run dev` command is configured to automatically load the variables from your `.env` file.
 
 **Terminal 2: Start the Genkit AI Service**
 
