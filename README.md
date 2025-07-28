@@ -258,3 +258,4 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 5.  **Displaying the Result (Back to the Frontend)**
     *   The `{ success: true }` result is passed all the way back to the `ChapterApplicationForm.tsx` component.
     *   A "Thank you for your interest" toast notification is shown, and the form is reset.
+
