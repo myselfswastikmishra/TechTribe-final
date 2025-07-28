@@ -6,10 +6,10 @@ import { SendMessageInputSchema } from "./ContactForm"
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
   console.log("Received direct message submission:", values)
   
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  const webhookUrl = "https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE";
   
   if (!webhookUrl) {
-    console.error("CRITICAL: Discord webhook URL is not configured. Please check your .env file.")
+    console.error("CRITICAL: Discord webhook URL is not configured.")
     return { success: false, message: "Server is not configured for notifications." }
   }
 
