@@ -12,11 +12,18 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     return { success: false, message: "Server is not configured for notifications." }
   }
 
+  const subjectMapping: { [key: string]: string } = {
+    schedule_call: "Schedule a Call",
+    sponsorship: "Sponsorship Inquiry",
+    general_inquiry: "General Inquiry",
+  }
+  const subjectText = subjectMapping[values.subject] || "New Inquiry"
+
   const discordMessage = {
     embeds: [
       {
-        title: `New Message: ${values.subject}`,
-        color: 3447003, // Blue color
+        title: `New Message: ${subjectText}`,
+        color: 0x3498db, // Blue color
         fields: [
           {
             name: "Name",
@@ -34,6 +41,9 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
           },
         ],
         timestamp: new Date().toISOString(),
+        footer: {
+          text: "Tech Tribe Contact Form",
+        },
       },
     ],
   }
@@ -48,7 +58,8 @@ export async function sendDirectMessage(values: z.infer<typeof SendMessageInputS
     })
 
     if (!response.ok) {
-      console.error("Failed to send message to Discord:", response.status, await response.text())
+      const errorText = await response.text()
+      console.error("Failed to send message to Discord:", response.status, errorText)
       return { success: false, message: "Failed to send notification." }
     }
 

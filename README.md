@@ -8,22 +8,24 @@ Follow these steps to set up and run the project locally.
 
 ### 1. Environment Variables
 
-This project uses Genkit to interact with the Google Gemini AI for form processing and Resend to send emails. You'll need API keys for these services to be enabled.
+This project uses Genkit to interact with the Google Gemini AI for some backend processing and Discord for contact form notifications. You'll need API keys for these services to be enabled.
 
 1.  Create a file named `.env` in the root of the project.
-2.  Add your Google AI API key, your Resend API key, and the email address you want to receive messages at to the `.env` file:
+2.  Add your Google AI API key and your Discord Webhook URL to the `.env` file:
     ```
     GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
-    RESEND_API_KEY=YOUR_RESEND_API_KEY_HERE
-    EMAIL_TO=your-receiving-email@example.com
+    DISCORD_WEBHOOK_URL=YOUR_DISCORD_WEBHOOK_URL_HERE
     ```
 
-> **Important Note on Resend:**
-> By default, free Resend accounts can only send emails **to the email address you signed up with**. Make sure the `EMAIL_TO` address is the same as your Resend account email.
+> **How to get a Discord Webhook URL:**
+> 1. In a Discord server where you have permissions, go to **Server Settings**.
+> 2. Click on the **Integrations** tab.
+> 3. Click **Webhooks**, then **New Webhook**.
+> 4. Give your webhook a name (e.g., "Contact Form Notifier"), choose the channel you want messages to be posted in, and then click **Copy Webhook URL**.
 
 > **Note on Pricing:** 
-> - The Genkit framework is free and open-source. The Google Gemini API has a generous free tier, and for the form processing in this project, your usage will very likely be well within the free limits.
-> - Resend also offers a free tier that is sufficient for this project's contact form. You only pay for what you use beyond the free tiers.
+> - The Genkit framework is free and open-source. The Google Gemini API has a generous free tier, and your usage will very likely be well within the free limits.
+> - Discord webhooks are completely free to use.
 
 ### 2. Install Dependencies
 
@@ -51,7 +53,7 @@ This will start the website on `http://localhost:9002`.
 npm run genkit:watch
 ```
 
-This service powers the "Contact Us" and "Start a Chapter" forms. Any form submissions will be processed by Genkit and logged in this terminal. When an email is sent, you will see a confirmation here.
+This service powers the "Start a Chapter" form. Any form submissions will be processed by Genkit and logged in this terminal.
 
 ---
 
@@ -89,7 +91,7 @@ Create a new file named `netlify.toml` in the root of your project. This file te
 ### 2. Configure Your Netlify Site
 
 1.  **Connect Your Repository:** In your Netlify dashboard, create a new site and connect it to your GitHub/GitLab/Bitbucket repository.
-2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY`, `RESEND_API_KEY`, and `EMAIL_TO`. This is crucial for the AI flows to work in production.
+2.  **Set Environment Variables:** In your site's settings on Netlify (`Site settings > Build & deploy > Environment`), add your `GEMINI_API_KEY` and `DISCORD_WEBHOOK_URL`. This is crucial for the AI flows and notifications to work in production.
 3.  **Trigger Deployment:** Netlify will automatically build and deploy your site whenever you push changes to your main branch. You can also trigger a manual deploy from the Netlify dashboard.
 
 Your Next.js frontend and Genkit AI backend will now be deployed and managed by Netlify.
@@ -107,8 +109,8 @@ This project is built with a modern, performance-focused technology stack:
 -   **UI Components:** **ShadCN/UI** provides a set of accessible, unstyled components that we've tailored to the site's theme.
 -   **Icons:** **Lucide React** for a comprehensive and consistent set of SVG icons.
 -   **Forms:** **React Hook Form** for managing form state and **Zod** for powerful schema-based validation.
--   **AI Backend:** **Genkit** (from Google) powers the backend logic for forms, using the **Gemini AI** model to process submissions.
--   **Email:** **Resend** for sending transactional emails from the contact form.
+-   **AI Backend:** **Genkit** (from Google) powers the backend logic for the university chapter application form.
+-   **Notifications:** **Discord Webhooks** for sending contact form submissions to a Discord channel.
 -   **Animations:** The site uses a combination of `tailwindcss-animate` and custom React hooks (`DynamicText`, `StatsCounter`) for UI animations.
 
 ---
@@ -137,9 +139,10 @@ This is the heart of the application.
 -   **Tailwind CSS:** Get familiar with the utility-first approach. The official documentation has excellent interactive tutorials. You don't need to memorize classes, just understand the concept.
 -   **ShadCN/UI:** Read the "Introduction" and "Theming" sections of the documentation. Understand that you can directly modify the component files in `src/components/ui/`.
 
-### 4. Forms & AI
+### 4. Forms & Backend Logic
 -   **React Hook Form & Zod:** Review the "Get Started" guides for both libraries. See how they work together in `ContactForm.tsx` or `ChapterApplicationForm.tsx` to manage state and validate data.
--   **Genkit & Resend:** The `src/ai/flows` directory contains the backend logic. Read the code in `send-message-flow.ts` to see how it receives data from the frontend, uses a prompt to format an email with Gemini, and then uses Resend to send the actual email.
+-   **Discord Webhooks:** The logic for sending the contact form data is in `src/app/contact/actions.ts`. It uses the native `fetch` API to send a formatted message to your Discord server.
+-   **Genkit:** The `src/ai/flows` directory contains the backend logic for the chapter application. Read the code in `chapter-application-flow.ts` to see how it receives data from the frontend and logs it.
 
 ---
 
@@ -168,7 +171,6 @@ This is the heart of the application.
 -   `src/ai/` - Contains the Genkit AI logic.
     -   `genkit.ts`: Configures the connection to the Gemini AI model.
     -   `flows/`: Defines the backend logic for forms.
-        -   `send-message-flow.ts`: Handles "Contact Us" form submissions and sends an email via Resend.
         -   `chapter-application-flow.ts`: Handles new university chapter applications.
 
 -   `package.json`: Lists all project dependencies and custom scripts.
@@ -219,27 +221,23 @@ This page's content is composed within `src/components/HomePageContent.tsx`.
 
 ---
 
-## 🤖 AI Backend (Forms)
+## 🤖 Backend (Forms)
 
-The forms on this website use Genkit to process submissions on the backend.
+The forms on this website use two different mechanisms for processing submissions.
 
-### 1. Contact Form
+### 1. Contact Form (Discord Notification)
 
 1.  **Form Component (`src/app/contact/ContactForm.tsx`):** Defines the form fields and validation rules.
-2.  **Server Action (`src/app/contact/actions.ts`):** The `sendDirectMessage` function passes the form data to the Genkit flow.
-3.  **AI Flow (`src/ai/flows/send-message-flow.ts`):**
-    -   Receives the data.
-    -   Uses an AI prompt to format the data into an email body and subject line.
-    -   Uses **Resend** to send the formatted email to your inbox.
-    -   The result is logged to the Genkit terminal (`npm run genkit:watch`).
+2.  **Server Action (`src/app/contact/actions.ts`):** The `sendDirectMessage` function takes the form data, formats it into a message, and sends it to your Discord server using your configured webhook URL.
+3.  **Result:** The message appears instantly in your Discord channel.
 
-### 2. "Start a Chapter" Form
+### 2. "Start a Chapter" Form (Genkit)
 
-This form follows the same pattern, but does not send an email.
+This form uses Genkit to process the data.
 
 1.  **Form:** `src/app/chapters/ChapterApplicationForm.tsx`
 2.  **Server Action:** `src/app/chapters/actions.ts`
-3.  **AI Flow:** `src/ai/flows/chapter-application-flow.ts` (This flow logs all application data to the Genkit terminal).
+3.  **AI Flow:** `src/ai/flows/chapter-application-flow.ts` (This flow logs all application data to the Genkit terminal when you run `npm run genkit:watch`).
 
 ---
 
