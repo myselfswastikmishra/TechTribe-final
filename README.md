@@ -51,17 +51,19 @@ Follow these steps to run the website on your own computer for development and t
 
 ### Step 1: Set Up Environment Variables (.env file)
 
-Your project needs a secret key to connect to Google AI services. You must store this key in a special file that is kept private and not shared publicly.
+Your project needs a secret key to connect to Google AI services and a Discord Webhook for notifications. You must store these in a special file that is kept private and not shared publicly.
 
 1.  In the main folder of your project, create a new file and name it exactly: `.env`
 
-2.  Open the `.env` file and add the following line. Replace the placeholder text with your actual secret key.
+2.  Open the `.env` file and add the following lines. Replace the placeholder text with your actual secret key and URL.
 
     ```
     # For Google AI features (used in the "Start a Chapter" form)
     GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
+
+    # For form notifications to Discord (used by Contact and Chapter forms)
+    DISCORD_WEBHOOK_URL="YOUR_DISCORD_WEBHOOK_URL_HERE"
     ```
-> **Note on Discord Notifications:** For local development, the Discord notification URLs are currently hardcoded in `src/app/contact/actions.ts` and `src/app/chapters/actions.ts` to ensure they work out-of-the-box. For production, you will manage this securely (see the "Deploying to Production" section).
 
 ### Step 2: Install Dependencies
 
@@ -102,11 +104,9 @@ In your hosting provider's dashboard, create a new site and connect it to your G
 
 ### 2. Build Configuration
 
-Most providers will auto-detect that this is a Next.js project. If you need to set them manually, use:
+Most providers will auto-detect that this is a Next.js project. The `netlify.toml` file in this project pre-configures this for Netlify. If you need to set them manually, use:
 - **Build Command:** `npm run build`
 - **Publish Directory:** `.next`
-
-The `netlify.toml` file in this project pre-configures this for Netlify.
 
 ### 3. **CRITICAL:** Set Production Environment Variables
 
@@ -224,28 +224,29 @@ This is the form on the `/contact` page. When a user fills it out and clicks "Se
 
 **End-to-End Flow:**
 
-1.  **The User Interface (Frontend): `src/app/contact/ContactForm.tsx`**
+1.  **The User Interface (Frontend): `src/app/contact/ContactFormWrapper.tsx`**
     *   This file contains the React component for the form. It defines the layout of the input fields (Name, Email, Subject, Message).
     *   **Validation Schema (`SendMessageInputSchema`):** At the top of the file, a Zod schema defines the rules for valid data. This includes a special rule (`refine`) that requires the `customSubject` field to be filled out only if the user selects "Other" from the subject dropdown.
     *   **Form Management:** The `useForm` hook from `react-hook-form` is initialized with our Zod schema. This hook gives us everything we need to manage the form.
     *   **Dynamic Fields:** The component watches the value of the `subject` field. If it's "other", it renders an additional input field for the custom subject.
     *   **Pre-filling from URL:** The form uses the `useSearchParams` hook to check if `subject` or `customSubject` are present in the URL (e.g., from clicking a link on the Services page). If so, it uses them as the default values for the form.
+    *   **Suspense Boundary:** The parent component (`src/app/contact/page.tsx`) wraps the `ContactFormWrapper` in a `<Suspense>` boundary. This is critical because `useSearchParams` is a client-side hook, and this prevents errors during the server-side build process.
     *   **The "Send Message" Button:** This is a standard `<Button type="submit">`. When inside a `<form>` tag, clicking this button automatically triggers the `onSubmit` function defined in the form setup.
 
-2.  **The Submission (Client to Server): `onSubmit` function in `ContactForm.tsx`**
+2.  **The Submission (Client to Server): `onSubmit` function in `ContactFormWrapper.tsx`**
     *   When the user clicks "Send Message," `react-hook-form` first validates all the fields against the Zod schema.
     *   If validation passes, the `onSubmit` function calls `sendDirectMessage(values)`, which is our Server Action.
 
 3.  **The Backend Logic (Server Action): `src/app/contact/actions.ts`**
     *   This file is the backend brain for the contact form. It has the `'use server'` directive.
     *   **`sendDirectMessage` function:** This function receives the form data.
-    *   **Getting the Webhook URL:** For local development, the `webhookUrl` is hardcoded. For production, the code uses `process.env.DISCORD_WEBHOOK_URL`, which you configure in your hosting provider's settings.
+    *   **Getting the Webhook URL:** The code securely accesses the `DISCORD_WEBHOOK_URL` from the environment variables, which you configure in your hosting provider's settings.
     *   **Formatting the Message:** It formats the form data into a clean, readable message for Discord. It uses the `customSubject` value if the subject is "other".
     *   **Communicating with the Webhook:** It uses `fetch` to send a `POST` request to your Discord webhook URL.
     *   **Returning the Result:** It returns `{ success: true }` or `{ success: false }` to the frontend.
 
 4.  **Displaying the Result (Back to the Frontend)**
-    *   Back in `ContactForm.tsx`, the `result` from the server is checked.
+    *   Back in `ContactFormWrapper.tsx`, the `result` from the server is checked.
     *   If `result.success` is `true`, a success toast notification is displayed, and the form is cleared.
     *   If `result.success` is `false`, an error toast is displayed.
 
@@ -267,7 +268,7 @@ This form on the `/chapters` page is more advanced. It also uses a Server Action
 3.  **The Backend Logic (Server Action): `src/app/chapters/actions.ts`**
     *   This file acts as a bridge. It receives the data from the form.
     *   First, it calls `chapterApplication(values)`, which is our Genkit AI flow. This is where AI-based checks could happen in the future.
-    *   After the AI flow succeeds, it proceeds to send a notification to your Discord channel. It gets the `webhookUrl` in the same way as the contact form (hardcoded for local, environment variable for production), formats the application details into a nice embed, and sends it using `fetch`.
+    *   After the AI flow succeeds, it proceeds to send a notification to your Discord channel. It gets the `DISCORD_WEBHOOK_URL` from the environment variables, formats the application details into a nice embed, and sends it using `fetch`.
 
 4.  **The AI Processing (Genkit Flow): `src/ai/flows/chapter-application-flow.ts`**
     *   This file is very simple. It has the `'use server'` directive, as it's called by another server component.
