@@ -2,9 +2,9 @@
 import type { Metadata } from "next"
 import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { TestimonialCarousel } from "@/components/TestimonialCarousel";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -29,7 +29,7 @@ export const portfolioItems = [
     image: { src: "https://placehold.co/600x400.png", hint: "branding design" },
     features: ["Logo Design", "Style Guide", "Social Media Kit", "Pitch Deck Template"],
     tags: ["Branding", "Design"],
-    githubUrl: null,
+    githubUrl: "https://github.com/techtribe/innovate-corp-branding",
     liveUrl: "https://innovatecorp.example.com",
   },
   {
@@ -40,7 +40,7 @@ export const portfolioItems = [
     features: ["Python & Pandas", "API Integration", "Automated Reporting", "Scheduled Tasks"],
     tags: ["Automation", "Internal Tools"],
     githubUrl: "https://github.com/techtribe/dataweavers-automation",
-    liveUrl: null,
+    liveUrl: "https://dataweavers.example.com",
   },
    {
     slug: "future-systems-ecommerce",
@@ -74,7 +74,7 @@ export const portfolioItems = [
   },
 ];
 
-const testimonials = [
+export const testimonials = [
     {
         name: "Jane Doe",
         title: "CEO, Innovate Corp",
@@ -86,6 +86,30 @@ const testimonials = [
         title: "CTO, QuantumLeap",
         avatar: "https://placehold.co/100x100.png",
         testimonial: "Working with the Tech Tribe agency was a fantastic experience. They are passionate, skilled, and brought a fresh perspective to our website. The final product is simply outstanding."
+    },
+    {
+        name: "Samantha Ray",
+        title: "Founder, Future Systems",
+        avatar: "https://placehold.co/100x100.png",
+        testimonial: "The e-commerce solution they built for us was a game-changer. Our sales have doubled, and the new platform is incredibly easy to manage."
+    },
+    {
+        name: "David Chen",
+        title: "COO, DataWeavers",
+        avatar: "https://placehold.co/100x100.png",
+        testimonial: "The automation tools developed by Tech Tribe have saved us countless hours of manual work. Their impact on our operational efficiency is undeniable."
+    },
+    {
+        name: "Emily Rodriguez",
+        title: "Project Manager, EcoBuilders",
+        avatar: "https://placehold.co/100x100.png",
+        testimonial: "The mobile app is fantastic. Our field team can now manage projects seamlessly, and the offline sync feature is a lifesaver. A truly reliable partner."
+    },
+    {
+        name: "Michael Brown",
+        title: "Head of Infra, CloudPioneers",
+        avatar: "https://placehold.co/100x100.png",
+        testimonial: "The real-time analytics dashboard gives us the visibility we need to manage our infrastructure effectively. The data visualization is top-notch."
     }
 ]
 
@@ -138,24 +162,8 @@ export default function PortfolioPage() {
           <h2 className="text-3xl font-bold text-center font-headline">
             What Our Clients Say
           </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
-              {testimonials.map(t => (
-                  <Card key={t.name}>
-                      <CardContent className="p-6">
-                          <blockquote className="text-lg text-muted-foreground">"{t.testimonial}"</blockquote>
-                      </CardContent>
-                      <CardFooter className="items-center gap-4">
-                           <Avatar>
-                              <AvatarImage src={t.avatar} alt={t.name} />
-                              <AvatarFallback>{t.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                              <p className="font-semibold">{t.name}</p>
-                              <p className="text-sm text-muted-foreground">{t.title}</p>
-                          </div>
-                      </CardFooter>
-                  </Card>
-              ))}
+          <div className="mt-12">
+              <TestimonialCarousel testimonials={testimonials} />
           </div>
         </section>
       </main>
