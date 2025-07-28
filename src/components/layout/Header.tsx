@@ -5,10 +5,10 @@ import { Menu, X } from "lucide-react"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 
-import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { ThemeToggle } from "@/components/ThemeToggle"
 import { cn } from "@/lib/utils"
+import { Button } from "../ui/button"
+import { HeaderActions } from "./HeaderActions"
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -89,13 +89,9 @@ export function Header() {
           <div className="flex-1 flex justify-center md:hidden">
              <BrandLink />
           </div>
-
-          <div className="flex flex-1 items-center justify-end gap-2">
-             <Button asChild size="sm">
-              <Link href="/contact">Contact Us</Link>
-            </Button>
-            <ThemeToggle />
-          </div>
+          
+          <HeaderActions />
+          
         </div>
       </div>
     </header>
