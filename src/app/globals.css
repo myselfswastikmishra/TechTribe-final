@@ -71,12 +71,8 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline;
   }
-
-  p, div, span, a, li, button, label {
-    @apply font-body;
-  }
   
   input, textarea {
-      @apply font-body;
+      @apply font-sans;
   }
 }

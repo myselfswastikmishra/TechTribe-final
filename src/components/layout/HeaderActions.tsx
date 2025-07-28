@@ -24,10 +24,12 @@ export function HeaderActions() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-end gap-2">
-      <Button asChild size="sm">
-        <Link href="/contact">Contact Us</Link>
-      </Button>
+    <div className="flex items-center justify-end gap-2">
+       <div className="hidden md:block">
+        <Button asChild size="sm">
+          <Link href="/contact">Contact Us</Link>
+        </Button>
+      </div>
       <ThemeToggle />
     </div>
   )

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ptSans, spaceGrotesk } from '@/lib/fonts'
+import { spaceGrotesk } from '@/lib/fonts'
 import './globals.css'
 import { Toaster } from "@/components/ui/toaster"
 import { Header } from "@/components/layout/Header"
@@ -36,8 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
-        "font-body antialiased min-h-screen bg-background flex flex-col",
-        ptSans.variable,
+        "font-sans antialiased min-h-screen bg-background flex flex-col",
         spaceGrotesk.variable
       )}>
         <ThemeProvider

@@ -19,6 +19,7 @@ const navLinks = [
   { href: "/chapters", label: "Chapters" },
   { href: "/sponsors", label: "Sponsors" },
   { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact Us" },
 ]
 
 export function Header() {
@@ -57,7 +58,7 @@ export function Header() {
             <BrandLink />
           </div>
           <nav className="flex items-center space-x-6">
-            {navLinks.map((link) => (
+            {navLinks.filter(l => l.href !== '/contact').map((link) => (
               <NavLink key={link.href} {...link} />
             ))}
           </nav>
