@@ -55,19 +55,19 @@ export function Footer() {
               &copy; {year} Tech Tribe. All Rights Reserved.
             </p>
             <div className="flex items-center gap-4">
-                <Link href="https://wa.me/15551234567" aria-label="WhatsApp" target="_blank">
+                <Link href="https://wa.me/15551234567" aria-label="Contact us on WhatsApp" target="_blank">
                     <WhatsappIcon className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://discord.gg/example" aria-label="Discord" target="_blank">
+                <Link href="https://discord.gg/techtribe" aria-label="Join our Discord community" target="_blank">
                     <DiscordIcon className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://twitter.com/example" aria-label="Twitter" target="_blank">
+                <Link href="https://twitter.com/techtribe" aria-label="Follow us on Twitter" target="_blank">
                     <Twitter className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://github.com/example" aria-label="GitHub" target="_blank">
+                <Link href="https://github.com/techtribe" aria-label="View our GitHub profile" target="_blank">
                     <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
-                <Link href="https://linkedin.com/company/example" aria-label="LinkedIn" target="_blank">
+                <Link href="https://linkedin.com/company/techtribe" aria-label="Follow us on LinkedIn" target="_blank">
                     <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
                 </Link>
             </div>
