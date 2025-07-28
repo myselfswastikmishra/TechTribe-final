@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TestimonialCarousel } from "./TestimonialCarousel"
-import { testimonials } from "@/app/portfolio/page"
+import { testimonials } from "@/lib/portfolio-data"
 
 const DynamicText = dynamic(() => import('@/components/DynamicText').then(mod => mod.DynamicText), {
   ssr: false,

@@ -1,5 +1,5 @@
 
-import { portfolioItems } from "@/app/portfolio/page";
+import { portfolioItems } from "@/lib/portfolio-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
