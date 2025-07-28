@@ -6,7 +6,7 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { cn } from "@/lib/utils"
 
@@ -73,6 +73,7 @@ export function Header() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left">
+                  <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                   <div className="mb-8">
                     <BrandLink />
                   </div>
