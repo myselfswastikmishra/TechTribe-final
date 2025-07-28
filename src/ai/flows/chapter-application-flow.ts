@@ -32,8 +32,6 @@ const chapterApplicationFlow = ai.defineFlow(
   async (input) => {
     console.log('New chapter application received:', input);
     
-    // This is NOT secure for production.
-    // In a real application, use your hosting provider's environment variable settings.
     const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL_HERE";
   
     if (!webhookUrl || webhookUrl === "YOUR_DISCORD_WEBHOOK_URL_HERE") {
@@ -93,10 +91,12 @@ const chapterApplicationFlow = ai.defineFlow(
       }
 
       console.log("Chapter application successfully sent to Discord.");
-      return { success: true };
     } catch (error) {
       console.error("An unexpected error occurred while sending chapter application to Discord:", error);
       return { success: false, message: "An unexpected network error occurred." };
     }
+
+    // This is the primary return path after all operations are successful.
+    return { success: true };
   }
 );
