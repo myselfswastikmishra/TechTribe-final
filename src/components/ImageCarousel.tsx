@@ -1,46 +1,50 @@
 "use client"
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
-type Image = {
+type ImageInfo = {
     src: string
     alt: string
     hint: string
 }
 
 interface ImageCarouselProps {
-    images: Image[]
+    images: ImageInfo[]
     className?: string
 }
 
 export const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
-    // Duplicate the images to create a seamless loop
-    const extendedImages = [...images, ...images];
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        if (images.length === 0) return;
+
+        const intervalId = setInterval(() => {
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+        }, 1000); // Change image every 1 second
+
+        return () => clearInterval(intervalId);
+    }, [images.length]);
 
     return (
-        <div
-            className={cn(
-                "w-full overflow-hidden relative",
-                "[mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]",
-                className
-            )}
-        >
-            <div className="flex animate-scroll-slow hover:[animation-play-state:paused]">
-                {extendedImages.map((image, index) => (
-                    <div key={index} className="flex-shrink-0 w-[400px] h-[267px] mx-2 overflow-hidden rounded-lg">
-                         <Image
-                            src={image.src}
-                            alt={image.alt}
-                            width={400}
-                            height={267}
-                            data-ai-hint={image.hint}
-                            className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-                        />
-                    </div>
-                ))}
-            </div>
+        <div className={cn("relative w-full h-[400px] overflow-hidden rounded-lg", className)}>
+            {images.map((image, index) => (
+                <Image
+                    key={index}
+                    src={image.src}
+                    alt={image.alt}
+                    width={600}
+                    height={400}
+                    data-ai-hint={image.hint}
+                    className={cn(
+                        "absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out",
+                        index === currentIndex ? "opacity-100" : "opacity-0"
+                    )}
+                    priority={index === 0} // Prioritize loading the first image
+                />
+            ))}
         </div>
     )
 }
