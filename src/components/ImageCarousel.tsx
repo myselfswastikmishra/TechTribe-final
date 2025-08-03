@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect } from 'react'
@@ -29,7 +30,7 @@ export const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
     }, [images.length]);
 
     return (
-        <div className={cn("relative w-full h-[400px] overflow-hidden rounded-lg", className)}>
+        <div className={cn("relative w-full h-[250px] overflow-hidden rounded-lg", className)}>
             {images.map((image, index) => (
                 <Image
                     key={index}
