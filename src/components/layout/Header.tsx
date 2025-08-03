@@ -41,7 +41,7 @@ export function Header() {
       href="/"
       className="flex items-center space-x-2 font-bold text-lg font-headline hover:text-primary transition-colors whitespace-nowrap"
     >
-      Tech Tribe
+      Tech TribeX
     </Link>
   )
 
@@ -49,7 +49,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         {/* Desktop Header */}
-        <div className="mr-4 hidden md:flex">
+        <div className="hidden md:flex flex-1 items-center">
           <div className="mr-6">
             <BrandLink />
           </div>
@@ -66,7 +66,7 @@ export function Header() {
         </div>
         
         {/* Actions for Desktop */}
-        <div className="hidden md:flex flex-1 items-center justify-end gap-2">
+        <div className="hidden md:flex items-center justify-end gap-2">
            <Button asChild size="sm">
               <Link href="/contact">Contact Us</Link>
           </Button>

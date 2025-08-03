@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next'
 import { spaceGrotesk } from '@/lib/fonts'
 import './globals.css'
@@ -10,20 +11,20 @@ import { cn } from '@/lib/utils'
 export const metadata: Metadata = {
   metadataBase: new URL('https://techtribe.com'),
   title: {
-    default: 'Tech Tribe - Community & Freelance Agency',
-    template: '%s | Tech Tribe',
+    default: 'Tech TribeX - Community & Freelance Agency',
+    template: '%s | Tech TribeX',
   },
   description: 'A vibrant community for tech enthusiasts and a freelance agency for building exceptional digital solutions. Explore our projects, events, and services.',
   openGraph: {
-    title: 'Tech Tribe - Community & Freelance Agency',
+    title: 'Tech TribeX - Community & Freelance Agency',
     description: 'A vibrant community for tech enthusiasts and a freelance agency for building exceptional digital solutions.',
     url: 'https://techtribe.com',
-    siteName: 'Tech Tribe',
+    siteName: 'Tech TribeX',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
-    title: 'Tech Tribe - Community & Freelance Agency',
+    title: 'Tech TribeX - Community & Freelance Agency',
     card: 'summary_large_image',
   },
 };

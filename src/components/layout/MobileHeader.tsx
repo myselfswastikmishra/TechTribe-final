@@ -77,7 +77,7 @@ export function MobileHeader({ navLinks, BrandLink }: MobileHeaderProps) {
         </SheetContent>
       </Sheet>
 
-      <div onClick={() => setIsMenuOpen(false)}>
+      <div className="absolute left-1/2 -translate-x-1/2" onClick={() => setIsMenuOpen(false)}>
         <BrandLink />
       </div>
 

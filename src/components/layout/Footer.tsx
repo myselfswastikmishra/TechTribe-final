@@ -1,3 +1,4 @@
+
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
 import { DiscordIcon } from "@/components/icons/DiscordIcon"
@@ -11,7 +12,7 @@ export function Footer() {
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <h3 className="text-lg font-bold font-headline">Tech Tribe</h3>
+            <h3 className="text-lg font-bold font-headline">Tech TribeX</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               A global community of creators and a freelance agency dedicated to building the future.
             </p>
@@ -52,7 +53,7 @@ export function Footer() {
         </div>
          <div className="mt-8 border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground text-center sm:text-left">
-              &copy; {year} Tech Tribe. All Rights Reserved.
+              &copy; {year} Tech TribeX. All Rights Reserved.
             </p>
             <div className="flex items-center gap-4">
                 <Link href="https://wa.me/15551234567" aria-label="Contact us on WhatsApp" target="_blank">
