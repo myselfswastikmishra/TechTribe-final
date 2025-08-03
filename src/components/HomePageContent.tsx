@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { TestimonialCarousel } from "./TestimonialCarousel"
 import { testimonials } from "@/lib/portfolio-data"
+import { ImageCarousel } from "./ImageCarousel"
 
 const DynamicText = dynamic(() => import('@/components/DynamicText').then(mod => mod.DynamicText), {
   ssr: false,
@@ -55,7 +56,7 @@ export function HomePageContent() {
       title: "QuantumLeap Website",
       description: "A complete website redesign for a leading AI startup, focusing on a futuristic aesthetic and user engagement.",
       image: { src: "https://placehold.co/600x400.png", hint: "tech website" },
-      tags: ["Web Development", "UI/UX", "Next.js"],
+      tags: ["Web Development", "UI/UX"],
     },
     {
       title: "Innovate Corp Branding",
@@ -165,22 +166,8 @@ export function HomePageContent() {
               A glimpse into our vibrant events, workshops, and collaborative moments that define the Tech Tribe spirit.
             </p>
           </div>
-          <div className="mt-12 max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {galleryImages.map((image, index) => (
-                <div key={index} className="overflow-hidden rounded-lg">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    width={600}
-                    height={400}
-                    priority={index < 3}
-                    data-ai-hint={image.hint}
-                    className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="mt-12">
+            <ImageCarousel images={galleryImages} />
           </div>
         </div>
       </section>
