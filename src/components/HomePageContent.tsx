@@ -25,12 +25,12 @@ const StatsCounter = dynamic(() => import('@/components/StatsCounter').then(mod 
 
 export function HomePageContent() {
   const galleryImages = [
-    { src: "https://placehold.co/600x400.png", alt: "Students collaborating at a Tech Tribe workshop", hint: "workshop tech" },
-    { src: "https://placehold.co/600x400.png", alt: "A team presenting their project at a hackathon", hint: "team collaboration" },
-    { src: "https://placehold.co/600x400.png", alt: "Keynote speaker at a Tech Tribe conference", hint: "hackathon event" },
-    { src: "https://placehold.co/600x400.png", alt: "Members networking at a community event", hint: "community event" },
-    { src: "https://placehold.co/600x400.png", alt: "A university chapter group photo", hint: "team photo" },
-    { src: "https://placehold.co/600x400.png", alt: "A focused coding session during a workshop", hint: "coding session" },
+    { src: "https://placehold.co/600x400/E63946/FAFAFA.png", alt: "Students collaborating at a Tech Tribe workshop", hint: "workshop collaboration" },
+    { src: "https://placehold.co/600x400/262626/FAFAFA.png", alt: "A team presenting their project at a hackathon", hint: "team presentation" },
+    { src: "https://placehold.co/600x400/F1727A/262626.png", alt: "Keynote speaker at a Tech Tribe conference", hint: "conference speaker" },
+    { src: "https://placehold.co/600x400/FAFAFA/262626.png", alt: "Members networking at a community event", hint: "community networking" },
+    { src: "https://placehold.co/600x400/E63946/FFFFFF.png", alt: "A university chapter group photo", hint: "team photo" },
+    { src: "https://placehold.co/600x400/262626/FFFFFF.png", alt: "A focused coding session during a workshop", hint: "coding workshop" },
   ]
 
   const services = [
