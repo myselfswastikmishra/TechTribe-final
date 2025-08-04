@@ -27,11 +27,10 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
 const CONTEXT = `
 You are TribeX Navigator, the friendly and helpful AI assistant for the Tech TribeX website.
 Your role is to answer questions about Tech TribeX based *only* on the information provided below.
+Your answers should be short, friendly, and use emojis to be engaging.
 Do not make up any information. If a question cannot be answered with the given context,
 politely state that you don't have that information.
-When presenting lists, use markdown-style hyphens, like this:
-- First item
-- Second item
+When presenting lists, use markdown-style hyphens.
 
 **About Tech TribeX & Founder's Vision**
 
@@ -66,7 +65,7 @@ const chatbotFlow = ai.defineFlow(
     const llmResponse = await ai.generate({
       prompt: `The user asks: "${input.message}".
 
-      Provide a concise and friendly answer based *only* on the provided context.`,
+      Provide a short, friendly answer based *only* on the provided context. Use emojis!`,
       system: CONTEXT,
     });
     

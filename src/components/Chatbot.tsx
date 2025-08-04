@@ -36,36 +36,8 @@ const navLinks = [
 ]
 
 function BotMessageContent({ text }: { text: string }) {
-    const lines = text.split('\n');
-    const content: JSX.Element[] = [];
-    let listItems: string[] = [];
-
-    const flushList = () => {
-        if (listItems.length > 0) {
-            content.push(
-                <ul key={`list-${content.length}`} className="list-disc list-inside space-y-1 my-1">
-                    {listItems.map((item, index) => <li key={index}>{item.replace(/^- /, '')}</li>)}
-                </ul>
-            );
-            listItems = [];
-        }
-    };
-
-    lines.forEach((line, i) => {
-        const trimmedLine = line.trim();
-        if (trimmedLine.startsWith('- ')) {
-            listItems.push(trimmedLine);
-        } else {
-            flushList();
-            if (trimmedLine) {
-                 content.push(<p key={`p-${content.length}-${i}`} className="mt-2 first:mt-0">{trimmedLine}</p>);
-            }
-        }
-    });
-
-    flushList(); 
-
-    return <div>{content}</div>;
+    // Simple renderer for now, can be expanded to handle markdown
+    return <div>{text}</div>;
 }
 
 
@@ -81,20 +53,20 @@ export function Chatbot() {
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([
-        { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today?", sender: "bot" }
+        { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
       ])
       setActiveAction("ask")
     }
   }, [isOpen, messages.length])
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
-        if (viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
-        }
+    const scrollViewport = scrollAreaRef.current?.querySelector("div[data-radix-scroll-area-viewport]");
+    if (scrollViewport) {
+      setTimeout(() => {
+        scrollViewport.scrollTop = scrollViewport.scrollHeight;
+      }, 100);
     }
-  }, [messages])
+  }, [messages, isLoading])
 
   const handleSubmit = async (e: React.FormEvent, question?: string) => {
     e.preventDefault()
@@ -113,12 +85,13 @@ export function Chatbot() {
       setMessages(prev => [...prev, botMessage])
     } catch (error) {
       console.error("Chatbot error:", error)
+      const errorMessageText = "Sorry, I couldn't connect to my brain right now. 🧠 Please try again later.";
       toast({
-        title: "Error",
-        description: "Sorry, I couldn't connect to my brain. Please try again later.",
+        title: "Chatbot Error",
+        description: errorMessageText,
         variant: "destructive",
       })
-      const errorMessage: Message = { id: (Date.now() + 1).toString(), text: "I seem to be having trouble connecting. Please try again in a moment.", sender: "bot" }
+      const errorMessage: Message = { id: (Date.now() + 1).toString(), text: errorMessageText, sender: "bot" }
       setMessages(prev => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
@@ -129,7 +102,7 @@ export function Chatbot() {
   const handleQuickAction = (action: QuickAction) => {
     setActiveAction(action)
     if (action === "navigate") {
-       setMessages(prev => [...prev, { id: "nav-prompt", text: "Great! Where would you like to go?", sender: "bot" }])
+       setMessages(prev => [...prev, { id: "nav-prompt", text: "Great! Where would you like to go? 🚀", sender: "bot" }])
     }
   }
 
@@ -142,7 +115,7 @@ export function Chatbot() {
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:h-auto md:w-[440px] md:max-h-[85vh] md:bottom-6 md:right-6 transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-full md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-3">
@@ -156,6 +129,7 @@ export function Chatbot() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
+
           <CardContent className="flex-grow p-0 overflow-hidden">
             <ScrollArea ref={scrollAreaRef} className="h-full">
               <div className="p-4 space-y-4">
@@ -166,7 +140,7 @@ export function Chatbot() {
                       "max-w-[80%] rounded-lg px-3.5 py-2.5 text-sm",
                       message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                     )}>
-                      {message.sender === 'bot' ? <BotMessageContent text={message.text} /> : message.text}
+                      <BotMessageContent text={message.text} />
                     </div>
                   </div>
                 ))}
@@ -185,41 +159,45 @@ export function Chatbot() {
               </div>
             </ScrollArea>
           </CardContent>
-          <div className="p-4 border-t">
-            <div className={cn("transition-all duration-300", activeAction ? "opacity-100 h-auto mb-2" : "opacity-0 h-0 invisible")}>
-              {activeAction === 'ask' && (
-                <div className="space-y-2">
-                    <div className="grid grid-cols-1 gap-2">
-                    {quickQuestions.map(q => (
-                        <Button key={q.id} variant="outline" size="sm" className="justify-start h-auto py-2" onClick={(e) => handleSubmit(e, q.text)}>
-                            <span className="text-left whitespace-normal">{q.text}</span>
-                        </Button>
-                    ))}
-                    </div>
-                    <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
-                </div>
-              )}
-               {activeAction === 'navigate' && (
-                <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
-                        {navLinks.map(link => (
-                            <Button key={link.href} variant="outline" size="sm" asChild>
-                                <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
-                            </Button>
-                        ))}
-                    </div>
-                    <Button variant="ghost" size="sm" className="w-full" onClick={() => setActiveAction('ask')}>
-                        <CornerDownLeft className="mr-2 h-4 w-4"/> Back to questions
-                    </Button>
-                </div>
-              )}
-            </div>
+
+          <div className="p-4 border-t bg-background">
+            {activeAction && (
+              <div className="mb-2">
+                {activeAction === 'ask' && (
+                  <div className="space-y-2">
+                      <div className="grid grid-cols-1 gap-2">
+                      {quickQuestions.map(q => (
+                          <Button key={q.id} variant="outline" size="sm" className="justify-start h-auto py-2" onClick={(e) => handleSubmit(e, q.text)}>
+                              <span className="text-left whitespace-normal">{q.text}</span>
+                          </Button>
+                      ))}
+                      </div>
+                      <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
+                  </div>
+                )}
+                 {activeAction === 'navigate' && (
+                  <div className="space-y-2">
+                      <div className="grid grid-cols-2 gap-2">
+                          {navLinks.map(link => (
+                              <Button key={link.href} variant="outline" size="sm" asChild>
+                                  <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
+                              </Button>
+                          ))}
+                      </div>
+                      <Button variant="ghost" size="sm" className="w-full" onClick={() => setActiveAction('ask')}>
+                          <CornerDownLeft className="mr-2 h-4 w-4"/> Back to questions
+                      </Button>
+                  </div>
+                )}
+              </div>
+            )}
              <form onSubmit={handleSubmit} className="flex gap-2">
                 <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask me anything..."
-                disabled={isLoading}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask me anything..."
+                  disabled={isLoading}
+                  autoComplete="off"
                 />
                 <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
                     <Send className="w-5 h-5" />
