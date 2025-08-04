@@ -1,0 +1,78 @@
+
+'use server';
+/**
+ * @fileOverview A chatbot flow for the Tech TribeX website.
+ *
+ * - chat - A function that handles the chatbot conversation.
+ * - ChatInput - The input type for the chat function.
+ * - ChatOutput - The return type for the chat function.
+ */
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+const ChatInputSchema = z.object({
+  message: z.string(),
+});
+export type ChatInput = z.infer<typeof ChatInputSchema>;
+
+const ChatOutputSchema = z.object({
+  answer: z.string(),
+});
+export type ChatOutput = z.infer<typeof ChatOutputSchema>;
+
+export async function chat(input: ChatInput): Promise<ChatOutput> {
+  return await chatbotFlow(input);
+}
+
+const CONTEXT = `
+You are TribeX Navigator, the friendly and helpful AI assistant for the Tech TribeX website.
+Your role is to answer questions about Tech TribeX based *only* on the information provided below.
+Do not make up any information. If a question cannot be answered with the given context,
+politely state that you don't have that information.
+
+**About Tech TribeX & Founder's Vision**
+
+Tech TribeX is India’s largest tech-driven student community, connecting, educating, and empowering students and tech enthusiasts globally.
+
+**Founder:** Swastik Mishra
+
+**Founder’s Background:**
+Swastik Mishra's journey began at K.R. Mangalam University, where he led a tech community of over 1000 students. This initiative fostered collaborations with organizations like Growbinar, ISKCON Gurugram, MUEsportsIndia, and Blockchain Orbit.
+
+**Key Milestones:**
+- **Roborush:** A flagship tech event at KRMU with 400+ participants.
+- **Spiritual Tech Retreat:** Organized at ISKCON Gurugram, focusing on inner growth for innovators.
+- **Gen AI Workshop:** Held at IIT Delhi, exploring the future of artificial intelligence.
+
+**The Vision for Tech TribeX:**
+The vision is to create a powerful ecosystem that provides:
+- Hands-on Trainings & Workshops
+- Internship & Placement Opportunities
+- An esports community and tournament platform called TribeXesports.
+
+The core mission is to build a movement that connects and empowers people driven to build, disrupt, and do something meaningful. Swastik is always open to collaborations and partnerships that align with this mission.
+`;
+
+const prompt = ai.definePrompt({
+  name: 'chatbotPrompt',
+  input: {schema: ChatInputSchema},
+  output: {schema: ChatOutputSchema},
+  system: CONTEXT,
+  prompt: `The user asks: "{{message}}".
+
+  Provide a concise and friendly answer based *only* on the provided context.`,
+});
+
+
+const chatbotFlow = ai.defineFlow(
+  {
+    name: 'chatbotFlow',
+    inputSchema: ChatInputSchema,
+    outputSchema: ChatOutputSchema,
+  },
+  async (input) => {
+    const {output} = await prompt(input);
+    return output!;
+  }
+);

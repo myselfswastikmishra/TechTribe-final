@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import { cn } from '@/lib/utils'
+import { Chatbot } from '@/components/Chatbot'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://techtribe.com'),
@@ -50,6 +51,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <Chatbot />
           <Toaster />
         </ThemeProvider>
       </body>
