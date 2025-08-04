@@ -25,12 +25,15 @@ const StatsCounter = dynamic(() => import('@/components/StatsCounter').then(mod 
 
 export function HomePageContent() {
   const galleryImages = [
-    { src: "https://placehold.co/600x400/E63946/FAFAFA.png", alt: "Students collaborating at a Tech Tribe workshop", hint: "workshop collaboration" },
-    { src: "https://placehold.co/600x400/262626/FAFAFA.png", alt: "A team presenting their project at a hackathon", hint: "team presentation" },
-    { src: "https://placehold.co/600x400/F1727A/262626.png", alt: "Keynote speaker at a Tech Tribe conference", hint: "conference speaker" },
-    { src: "https://placehold.co/600x400/FAFAFA/262626.png", alt: "Members networking at a community event", hint: "community networking" },
-    { src: "https://placehold.co/600x400/E63946/FFFFFF.png", alt: "A university chapter group photo", hint: "team photo" },
-    { src: "https://placehold.co/600x400/262626/FFFFFF.png", alt: "A focused coding session during a workshop", hint: "coding workshop" },
+    { src: "https://placehold.co/600x400.png", alt: "Students collaborating at a Tech Tribe workshop", hint: "workshop collaboration" },
+    { src: "https://placehold.co/600x400.png", alt: "A team presenting their project at a hackathon", hint: "team presentation" },
+    { src: "https://placehold.co/600x400.png", alt: "Keynote speaker at a Tech Tribe conference", hint: "conference speaker" },
+    { src: "https://placehold.co/600x400.png", alt: "Members networking at a community event", hint: "community networking" },
+    { src: "https://placehold.co/600x400.png", alt: "A university chapter group photo", hint: "team photo" },
+    { src: "https://placehold.co/600x400.png", alt: "A focused coding session during a workshop", hint: "coding workshop" },
+    { src: "https://placehold.co/600x400.png", alt: "Students learning to code", hint: "learning code" },
+    { src: "https://placehold.co/600x400.png", alt: "Hackathon winners on stage", hint: "hackathon winners" },
+    { src: "https://placehold.co/600x400.png", alt: "Community members socializing", hint: "socializing event" },
   ]
 
   const services = [
@@ -118,7 +121,7 @@ export function HomePageContent() {
              <DynamicText />
           </h1>
           <p className="mt-8 max-w-3xl mx-auto text-lg text-muted-foreground md:text-xl">
-            We are a collective of developers, designers, and strategists from the Tech Tribe community, dedicated to building exceptional digital solutions and fostering the next generation of tech talent.
+            We are a collective of developers, designers, and strategists from the Tech TribeX community, dedicated to building exceptional digital solutions and fostering the next generation of tech talent.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
              <Button asChild size="lg" className="text-lg py-6 px-8 w-full sm:w-auto">
@@ -163,7 +166,7 @@ export function HomePageContent() {
           <div className="text-center">
             <h2 className="text-3xl font-bold font-headline">Our Community in Action</h2>
             <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-              A glimpse into our vibrant events, workshops, and collaborative moments that define the Tech Tribe spirit.
+              A dynamic showcase of our vibrant events, workshops, and collaborative moments that define the Tech TribeX spirit.
             </p>
           </div>
           <div className="mt-12">

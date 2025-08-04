@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -82,7 +83,7 @@ export default {
             'to': {
                 transform: 'translateX(calc(-50% - 1rem))',
             }
-        }
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
@@ -16,36 +16,68 @@ interface ImageCarouselProps {
     className?: string
 }
 
+const IMAGES_PER_SLIDE = 3;
+const SLIDE_INTERVAL = 3000; // 3 seconds
+
 export const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    const slides = useMemo(() => {
+        const result = [];
+        for (let i = 0; i < images.length; i += IMAGES_PER_SLIDE) {
+            result.push(images.slice(i, i + IMAGES_PER_SLIDE));
+        }
+        return result;
+    }, [images]);
+
     useEffect(() => {
-        if (images.length === 0) return;
+        if (slides.length <= 1) return;
 
         const intervalId = setInterval(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-        }, 1000); // Change image every 1 second
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+        }, SLIDE_INTERVAL);
 
         return () => clearInterval(intervalId);
-    }, [images.length]);
+    }, [slides.length]);
+
 
     return (
-        <div className={cn("relative w-full h-[250px] overflow-hidden rounded-lg", className)}>
-            {images.map((image, index) => (
-                <Image
-                    key={index}
-                    src={image.src}
-                    alt={image.alt}
-                    width={600}
-                    height={400}
-                    data-ai-hint={image.hint}
-                    className={cn(
-                        "absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out",
-                        index === currentIndex ? "opacity-100" : "opacity-0"
-                    )}
-                    priority={index === 0} // Prioritize loading the first image
-                />
-            ))}
+        <div className={cn("relative w-full h-[250px] overflow-hidden", className)}>
+            <div
+                className="flex h-full transition-transform duration-700 ease-in-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+                {slides.map((slide, slideIndex) => (
+                    <div key={slideIndex} className="flex-shrink-0 w-full h-full grid grid-cols-3 gap-4">
+                        {slide.map((image, imageIndex) => (
+                             <div key={imageIndex} className="relative w-full h-full rounded-lg overflow-hidden">
+                                <Image
+                                    src={image.src}
+                                    alt={image.alt}
+                                    fill
+                                    data-ai-hint={image.hint}
+                                    className="object-cover"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    priority={slideIndex === 0}
+                                />
+                             </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {slides.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setCurrentIndex(index)}
+                        className={cn(
+                            "w-2 h-2 rounded-full transition-colors",
+                            currentIndex === index ? "bg-primary" : "bg-muted-foreground/50 hover:bg-muted-foreground"
+                        )}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
         </div>
     )
 }
