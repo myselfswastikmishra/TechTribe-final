@@ -1,6 +1,4 @@
 
-"use client"
-
 import type { Metadata } from "next"
 import Image from "next/image";
 import Link from "next/link";
@@ -9,11 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { TestimonialCarousel } from "@/components/TestimonialCarousel";
 import { portfolioItems, testimonials } from "@/lib/portfolio-data";
 
-// Note: We cannot export metadata from a "use client" component.
-// To solve this, we will likely need to refactor this page.
-// The parent `layout.tsx` or a new Server Component wrapper would handle metadata.
+export const metadata: Metadata = {
+  title: "Our Work",
+  description: "We take pride in the solutions we've built. Explore some of our favorite projects that showcase our commitment to quality and innovation.",
+};
 
-function PortfolioPageContent() {
+export default function PortfolioPage() {
   return (
     <div className="container mx-auto py-12 md:py-20">
       <header className="text-center">
@@ -70,9 +69,3 @@ function PortfolioPageContent() {
     </div>
   );
 }
-
-
-export default function PortfolioPage() {
-  return <PortfolioPageContent />
-}
-

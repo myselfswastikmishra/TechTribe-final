@@ -2,17 +2,15 @@
 import { portfolioItems } from "@/lib/portfolio-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Github, ExternalLink, AlertTriangle } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Check, Github, ExternalLink } from "lucide-react";
 import { type Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from 'next/navigation';
 
-
-type PortfolioDetailPageProps = {
+type PageProps = {
   params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
@@ -43,7 +41,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 }
 
 
-export default function PortfolioDetailPage({ params }: PortfolioDetailPageProps) {
+export default function PortfolioDetailPage({ params }: PageProps) {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
