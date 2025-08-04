@@ -36,8 +36,17 @@ const navLinks = [
 ]
 
 function BotMessageContent({ text }: { text: string }) {
-    // Simple renderer for now, can be expanded to handle markdown
-    return <div>{text}</div>;
+    const parts = text.split(/(- .*)/g).filter(Boolean);
+    return (
+        <div>
+            {parts.map((part, index) => {
+                if (part.startsWith('- ')) {
+                    return <div key={index} className="ml-4">{part}</div>;
+                }
+                return <p key={index}>{part}</p>;
+            })}
+        </div>
+    );
 }
 
 
@@ -115,9 +124,9 @@ export function Chatbot() {
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:h-auto md:w-[440px] md:max-h-[85vh] md:bottom-6 md:right-6 transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-full md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-full md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
               <Avatar>
                  <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="bot avatar" />
@@ -130,7 +139,7 @@ export function Chatbot() {
             </Button>
           </CardHeader>
 
-          <CardContent className="flex-grow p-0 overflow-hidden">
+          <CardContent className="flex-grow p-0 overflow-y-auto">
             <ScrollArea ref={scrollAreaRef} className="h-full">
               <div className="p-4 space-y-4">
                 {messages.map((message) => (
@@ -160,7 +169,7 @@ export function Chatbot() {
             </ScrollArea>
           </CardContent>
 
-          <div className="p-4 border-t bg-background">
+          <div className="p-4 border-t bg-background flex-shrink-0">
             {activeAction && (
               <div className="mb-2">
                 {activeAction === 'ask' && (
@@ -209,3 +218,5 @@ export function Chatbot() {
     </>
   )
 }
+
+    
