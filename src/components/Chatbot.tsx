@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, Fragment } from "react"
 import Link from "next/link"
 import { Bot, Send, X, CornerDownLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -34,6 +34,32 @@ const navLinks = [
     { href: "/chapters", label: "Chapters" },
     { href: "/contact", label: "Contact Us" },
 ]
+
+function BotMessageContent({ text }: { text: string }) {
+    const lines = text.split('\n');
+
+    return (
+        <div>
+            {lines.map((line, index) => {
+                if (line.trim().startsWith('- ')) {
+                    return (
+                        <ul key={index} className="list-disc list-inside space-y-1 my-1">
+                            {lines.slice(index).map((item, subIndex) => {
+                                if (!item.trim().startsWith('- ')) return null;
+                                const cleanedItem = item.trim().substring(1).trim();
+                                if (lines.indexOf(item) !== index + subIndex) return null;
+                                return <li key={`${index}-${subIndex}`}>{cleanedItem}</li>;
+                            }).filter(Boolean)}
+                        </ul>
+                    );
+                }
+                if (index > 0 && lines[index-1].trim().startsWith('- ')) return null;
+
+                return <p key={index} className={cn(index > 0 && 'mt-2')}>{line}</p>;
+            })}
+        </div>
+    );
+}
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -108,13 +134,13 @@ export function Chatbot() {
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[400px] md:h-auto transition-transform duration-300", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
-        <Card className="flex flex-col h-full md:max-h-[70vh] rounded-none md:rounded-xl shadow-xl">
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto transition-transform duration-300", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+        <Card className="flex flex-col h-full md:max-h-[75vh] rounded-none md:rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar>
+                 <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="bot avatar" />
                 <AvatarFallback>TN</AvatarFallback>
-                <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="bot avatar" />
               </Avatar>
               <CardTitle className="font-headline">TribeX Navigator</CardTitle>
             </div>
@@ -125,20 +151,20 @@ export function Chatbot() {
           <CardContent className="flex-grow p-0">
             <ScrollArea ref={scrollAreaRef} className="h-[calc(100%-1rem)] p-4 space-y-4">
               {messages.map((message) => (
-                <div key={message.id} className={cn("flex items-end gap-2", message.sender === "user" ? "justify-end" : "justify-start")}>
-                  {message.sender === "bot" && <Avatar className="w-6 h-6"><AvatarFallback>T</AvatarFallback></Avatar>}
+                <div key={message.id} className={cn("flex items-start gap-2.5", message.sender === "user" ? "justify-end" : "justify-start")}>
+                  {message.sender === "bot" && <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                   <div className={cn(
-                    "max-w-[80%] rounded-lg px-3 py-2 text-sm",
+                    "max-w-[80%] rounded-lg px-3.5 py-2.5 text-sm",
                     message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                   )}>
-                    {message.text}
+                    {message.sender === 'bot' ? <BotMessageContent text={message.text} /> : message.text}
                   </div>
                 </div>
               ))}
               {isLoading && (
-                 <div className="flex items-end gap-2 justify-start">
-                    <Avatar className="w-6 h-6"><AvatarFallback>T</AvatarFallback></Avatar>
-                    <div className="bg-muted px-3 py-2 rounded-lg">
+                 <div className="flex items-start gap-2.5 justify-start">
+                    <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
+                    <div className="bg-muted px-3.5 py-2.5 rounded-lg">
                         <span className="animate-pulse">...</span>
                     </div>
                 </div>
@@ -146,8 +172,9 @@ export function Chatbot() {
             </ScrollArea>
           </CardContent>
           <div className="p-4 border-t">
+            <div className="mb-2 space-y-2 transition-opacity duration-300" style={{opacity: activeAction ? 1: 0}}>
               {activeAction === 'ask' && (
-                <div className="mb-2 space-y-2">
+                <div className="space-y-2">
                     <div className="grid grid-cols-1 gap-2">
                     {quickQuestions.map(q => (
                         <Button key={q.id} variant="outline" size="sm" className="justify-start h-auto py-2" onClick={(e) => handleSubmit(e, q.text)}>
@@ -159,17 +186,20 @@ export function Chatbot() {
                 </div>
               )}
                {activeAction === 'navigate' && (
-                <div className="mb-2 grid grid-cols-2 gap-2">
-                    {navLinks.map(link => (
-                        <Button key={link.href} variant="outline" size="sm" asChild>
-                            <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
-                        </Button>
-                    ))}
-                    <Button variant="ghost" size="sm" className="col-span-2" onClick={() => setActiveAction('ask')}>
+                <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                        {navLinks.map(link => (
+                            <Button key={link.href} variant="outline" size="sm" asChild>
+                                <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
+                            </Button>
+                        ))}
+                    </div>
+                    <Button variant="ghost" size="sm" className="w-full" onClick={() => setActiveAction('ask')}>
                         <CornerDownLeft className="mr-2 h-4 w-4"/> Back to questions
                     </Button>
                 </div>
               )}
+            </div>
              <form onSubmit={handleSubmit} className="flex gap-2">
                 <Input
                 value={input}

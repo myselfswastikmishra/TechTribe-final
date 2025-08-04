@@ -1,3 +1,4 @@
+
 import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
@@ -10,7 +11,7 @@ export const ai = genkit({
       apiKey:
         process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('YOUR_GEMINI_API_KEY')
           ? process.env.GEMINI_API_KEY
-          : 'AIzaSyDPTJ7DF3UpsfhI6W5N6RVT1LyIB45end0',
+          : 'AIzaSyDo3ahg4cUTIHMNkU_NadC3cQ7OXt-D4HI',
     }),
   ],
 });
