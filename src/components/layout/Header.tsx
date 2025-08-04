@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -63,9 +62,6 @@ export function Header() {
         {/* Mobile Header */}
         <div className="contents md:hidden">
           <MobileHeader navLinks={navLinks} BrandLink={BrandLink}>
-             <Button asChild size="sm">
-                <Link href="/contact">Contact</Link>
-            </Button>
             <HeaderActions />
           </MobileHeader>
         </div>

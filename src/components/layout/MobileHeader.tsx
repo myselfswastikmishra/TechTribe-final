@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -72,6 +71,9 @@ export function MobileHeader({ navLinks, BrandLink, children }: MobileHeaderProp
             {navLinks.map((link) => (
               <NavLink key={link.href} {...link} className="text-lg" />
             ))}
+             <Button asChild size="lg" className="mt-4" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/contact">Contact Us</Link>
+            </Button>
           </nav>
         </SheetContent>
       </Sheet>
