@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useRef, useEffect, Fragment } from "react"
+import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Bot, Send, X, CornerDownLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -44,26 +44,26 @@ function BotMessageContent({ text }: { text: string }) {
         if (listItems.length > 0) {
             content.push(
                 <ul key={`list-${content.length}`} className="list-disc list-inside space-y-1 my-1">
-                    {listItems.map((item, index) => <li key={index}>{item}</li>)}
+                    {listItems.map((item, index) => <li key={index}>{item.replace(/^- /, '')}</li>)}
                 </ul>
             );
             listItems = [];
         }
     };
 
-    lines.forEach(line => {
+    lines.forEach((line, i) => {
         const trimmedLine = line.trim();
         if (trimmedLine.startsWith('- ')) {
-            listItems.push(trimmedLine.substring(2));
+            listItems.push(trimmedLine);
         } else {
             flushList();
             if (trimmedLine) {
-                 content.push(<p key={`p-${content.length}`} className="mt-2 first:mt-0">{trimmedLine}</p>);
+                 content.push(<p key={`p-${content.length}-${i}`} className="mt-2 first:mt-0">{trimmedLine}</p>);
             }
         }
     });
 
-    flushList(); // Add any remaining list items
+    flushList(); 
 
     return <div>{content}</div>;
 }
@@ -174,7 +174,11 @@ export function Chatbot() {
                    <div className="flex items-start gap-2.5 justify-start">
                       <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
                       <div className="bg-muted px-3.5 py-2.5 rounded-lg">
-                          <span className="animate-pulse">...</span>
+                          <div className="flex items-center space-x-1">
+                            <span className="h-1.5 w-1.5 bg-current rounded-full animate-pulse" style={{animationDelay: '0ms'}}></span>
+                            <span className="h-1.5 w-1.5 bg-current rounded-full animate-pulse" style={{animationDelay: '200ms'}}></span>
+                            <span className="h-1.5 w-1.5 bg-current rounded-full animate-pulse" style={{animationDelay: '400ms'}}></span>
+                          </div>
                       </div>
                   </div>
                 )}
@@ -182,7 +186,7 @@ export function Chatbot() {
             </ScrollArea>
           </CardContent>
           <div className="p-4 border-t">
-            <div className="mb-2 space-y-2 transition-opacity duration-300" style={{opacity: activeAction ? 1: 0, height: activeAction ? 'auto' : 0, overflow: 'hidden'}}>
+            <div className={cn("transition-all duration-300", activeAction ? "opacity-100 h-auto mb-2" : "opacity-0 h-0 invisible")}>
               {activeAction === 'ask' && (
                 <div className="space-y-2">
                     <div className="grid grid-cols-1 gap-2">

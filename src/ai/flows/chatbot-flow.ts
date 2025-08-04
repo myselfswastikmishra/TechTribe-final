@@ -63,15 +63,13 @@ const chatbotFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async (input) => {
-    const {output} = await ai.generate({
-        prompt: `The user asks: "${input.message}".
+    const llmResponse = await ai.generate({
+      prompt: `The user asks: "${input.message}".
 
-        Provide a concise and friendly answer based *only* on the provided context.`,
-        system: CONTEXT,
-        output: {
-            schema: ChatOutputSchema
-        }
+      Provide a concise and friendly answer based *only* on the provided context.`,
+      system: CONTEXT,
     });
-    return output!;
+    
+    return { answer: llmResponse.text };
   }
 );
