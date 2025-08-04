@@ -4,7 +4,6 @@
  * @fileOverview A chatbot flow for the Tech TribeX website.
  *
  * - chat - A function that handles the chatbot conversation.
- * - ChatInput - The input type for the chat function.
  * - ChatOutput - The return type for the chat function.
  */
 
@@ -57,17 +56,6 @@ The vision is to create a powerful ecosystem that provides:
 The core mission is to build a movement that connects and empowers people driven to build, disrupt, and do something meaningful. Swastik is always open to collaborations and partnerships that align with this mission. After all, this isn’t just a community — it’s a movement.
 `;
 
-const prompt = ai.definePrompt({
-  name: 'chatbotPrompt',
-  input: {schema: ChatInputSchema},
-  output: {schema: ChatOutputSchema},
-  system: CONTEXT,
-  prompt: `The user asks: "{{message}}".
-
-  Provide a concise and friendly answer based *only* on the provided context.`,
-});
-
-
 const chatbotFlow = ai.defineFlow(
   {
     name: 'chatbotFlow',
@@ -75,7 +63,15 @@ const chatbotFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async (input) => {
-    const {output} = await prompt(input);
+    const {output} = await ai.generate({
+        prompt: `The user asks: "${input.message}".
+
+        Provide a concise and friendly answer based *only* on the provided context.`,
+        system: CONTEXT,
+        output: {
+            schema: ChatOutputSchema
+        }
+    });
     return output!;
   }
 );
