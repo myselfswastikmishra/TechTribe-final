@@ -19,7 +19,7 @@ type Message = {
   sender: "user" | "bot"
 }
 
-type QuickAction = "navigate" | "ask"
+type QuickAction = "ask" | "navigate"
 
 const quickQuestions = [
     { text: "What is Tech TribeX?", id: "q1" },

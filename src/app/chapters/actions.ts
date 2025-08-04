@@ -5,7 +5,7 @@ import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/cha
 
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('YOUR_GEMINI_API_KEY')) 
     ? process.env.GEMINI_API_KEY 
-    : 'AIzaSyDPTJ7DF3UpsfhI6W5N6RVT1LyIB45end0';
+    : 'AIzaSyDo3ahg4cUTIHMNkU_NadC3cQ7OXt-D4HI';
     
 const DISCORD_WEBHOOK_URL = (process.env.DISCORD_WEBHOOK_URL && !process.env.DISCORD_WEBHOOK_URL.includes('YOUR_DISCORD_WEBHOOK_URL'))
     ? process.env.DISCORD_WEBHOOK_URL
