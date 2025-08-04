@@ -50,10 +50,10 @@ export function Header() {
       <div className="container flex h-14 items-center">
         {/* Desktop Header */}
         <div className="hidden md:flex flex-1 items-center">
-          <div className="mr-6">
+          <div className="mr-8">
             <BrandLink />
           </div>
-          <nav className="flex items-center space-x-6">
+          <nav className="flex items-center space-x-6 text-sm">
             {navLinks.map((link) => (
               <NavLink key={link.href} {...link} />
             ))}
@@ -62,12 +62,17 @@ export function Header() {
 
         {/* Mobile Header */}
         <div className="contents md:hidden">
-          <MobileHeader navLinks={navLinks} BrandLink={BrandLink} />
+          <MobileHeader navLinks={navLinks} BrandLink={BrandLink}>
+             <Button asChild size="sm">
+                <Link href="/contact">Contact</Link>
+            </Button>
+            <HeaderActions />
+          </MobileHeader>
         </div>
         
         {/* Actions for Desktop */}
-        <div className="hidden md:flex items-center justify-end gap-2">
-           <Button asChild size="sm">
+        <div className="hidden md:flex flex-1 items-center justify-end gap-2">
+           <Button asChild>
               <Link href="/contact">Contact Us</Link>
           </Button>
           <HeaderActions />

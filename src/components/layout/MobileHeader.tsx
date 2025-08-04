@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { HeaderActions } from "./HeaderActions"
 
 type NavLink = {
   href: string
@@ -19,9 +18,10 @@ type NavLink = {
 interface MobileHeaderProps {
   navLinks: NavLink[]
   BrandLink: React.FC
+  children: React.ReactNode
 }
 
-export function MobileHeader({ navLinks, BrandLink }: MobileHeaderProps) {
+export function MobileHeader({ navLinks, BrandLink, children }: MobileHeaderProps) {
   const [isMounted, setIsMounted] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -70,9 +70,8 @@ export function MobileHeader({ navLinks, BrandLink }: MobileHeaderProps) {
           </div>
           <nav className="flex flex-col space-y-4">
             {navLinks.map((link) => (
-              <NavLink key={link.href} {...link} className="text-base" />
+              <NavLink key={link.href} {...link} className="text-lg" />
             ))}
-            <NavLink href="/contact" label="Contact Us" className="text-base" />
           </nav>
         </SheetContent>
       </Sheet>
@@ -81,7 +80,9 @@ export function MobileHeader({ navLinks, BrandLink }: MobileHeaderProps) {
         <BrandLink />
       </div>
 
-      <HeaderActions />
+      <div className="flex items-center gap-2">
+        {children}
+      </div>
     </div>
   )
 }
