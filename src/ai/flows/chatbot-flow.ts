@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A chatbot flow for the Tech TribeX website.
@@ -13,7 +14,7 @@ import {z} from 'genkit';
 const ChatInputSchema = z.object({
   message: z.string(),
 });
-export type ChatInput = z.infer<typeof ChatInputSchema>;
+type ChatInput = z.infer<typeof ChatInputSchema>;
 
 const ChatOutputSchema = z.object({
   answer: z.string(),
