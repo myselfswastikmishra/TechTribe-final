@@ -40,8 +40,8 @@ Tech TribeX is India’s largest tech-driven student community, connecting, educ
 
 **Founder:** Swastik Mishra
 
-**Founder’s Background:**
-Swastik Mishra's journey began at K.R. Mangalam University, where he led a tech community of over 1000 students. This initiative fostered collaborations with organizations like Growbinar, ISKCON Gurugram, MUEsportsIndia, and Blockchain Orbit.
+**Founder’s Background & Vision:**
+Swastik Mishra's journey began at K.R. Mangalam University, where he led a tech community of over 1000 students. His purpose is to create something meaningful from the ground up and scale it to impact thousands. This initiative fostered collaborations with organizations like Growbinar, ISKCON Gurugram, MUEsportsIndia, and Blockchain Orbit.
 
 **Key Milestones:**
 - Roborush: A flagship tech event at KRMU with 400+ participants.
@@ -54,7 +54,7 @@ The vision is to create a powerful ecosystem that provides:
 - Internship & Placement Opportunities
 - An esports community and tournament platform called TribeXesports.
 
-The core mission is to build a movement that connects and empowers people driven to build, disrupt, and do something meaningful. Swastik is always open to collaborations and partnerships that align with this mission.
+The core mission is to build a movement that connects and empowers people driven to build, disrupt, and do something meaningful. Swastik is always open to collaborations and partnerships that align with this mission. After all, this isn’t just a community — it’s a movement.
 `;
 
 const prompt = ai.definePrompt({
