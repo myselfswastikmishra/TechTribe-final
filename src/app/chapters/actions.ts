@@ -9,7 +9,7 @@ const GEMINI_API_KEY = (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KE
     
 const DISCORD_WEBHOOK_URL = (process.env.DISCORD_WEBHOOK_URL && !process.env.DISCORD_WEBHOOK_URL.includes('YOUR_DISCORD_WEBHOOK_URL'))
     ? process.env.DISCORD_WEBHOOK_URL
-    : 'https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE';
+    : 'https://discord.com/api/webhooks/1402024050557190258/OQemUD9p8nzjpTP5QuKOGKgGhV76Cngoh0Ua3c0wv71OHQyYXiFDijlLkEra4e4hxO_t';
 
 
 export async function submitChapterApplication(values: ChapterApplicationInput) {
@@ -90,6 +90,6 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
     console.error("An unexpected server error occurred during chapter application submission:", error);
-    return { success: false, message: `An unexpected server error occurred: ${errorMessage}` }
+    return { success: false, message: `An unexpected error occurred: ${errorMessage}` }
   }
 }

@@ -9,7 +9,7 @@ import { SendMessageInputSchema } from "./ContactFormWrapper"
 // If it's not found, it will fall back to the hardcoded key (for local/Firebase Studio development).
 const DISCORD_WEBHOOK_URL = (process.env.DISCORD_WEBHOOK_URL && !process.env.DISCORD_WEBHOOK_URL.includes('YOUR_DISCORD_WEBHOOK_URL'))
     ? process.env.DISCORD_WEBHOOK_URL
-    : 'https://discord.com/api/webhooks/1399182678174994433/HB6t5xD2rtt70M1tagVMnt5JqwBniexwNGc9hnthESBqK6gxLezErZSWnwITeDPRASpE';
+    : 'https://discord.com/api/webhooks/1402024050557190258/OQemUD9p8nzjpTP5QuKOGKgGhV76Cngoh0Ua3c0wv71OHQyYXiFDijlLkEra4e4hxO_t';
 
 
 export async function sendDirectMessage(values: z.infer<typeof SendMessageInputSchema>) {
