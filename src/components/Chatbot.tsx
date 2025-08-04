@@ -37,29 +37,37 @@ const navLinks = [
 
 function BotMessageContent({ text }: { text: string }) {
     const lines = text.split('\n');
+    const content: JSX.Element[] = [];
+    let listItems: string[] = [];
 
-    return (
-        <div>
-            {lines.map((line, index) => {
-                if (line.trim().startsWith('- ')) {
-                    return (
-                        <ul key={index} className="list-disc list-inside space-y-1 my-1">
-                            {lines.slice(index).map((item, subIndex) => {
-                                if (!item.trim().startsWith('- ')) return null;
-                                const cleanedItem = item.trim().substring(1).trim();
-                                if (lines.indexOf(item) !== index + subIndex) return null;
-                                return <li key={`${index}-${subIndex}`}>{cleanedItem}</li>;
-                            }).filter(Boolean)}
-                        </ul>
-                    );
-                }
-                if (index > 0 && lines[index-1].trim().startsWith('- ')) return null;
+    const flushList = () => {
+        if (listItems.length > 0) {
+            content.push(
+                <ul key={`list-${content.length}`} className="list-disc list-inside space-y-1 my-1">
+                    {listItems.map((item, index) => <li key={index}>{item}</li>)}
+                </ul>
+            );
+            listItems = [];
+        }
+    };
 
-                return <p key={index} className={cn(index > 0 && 'mt-2')}>{line}</p>;
-            })}
-        </div>
-    );
+    lines.forEach(line => {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('- ')) {
+            listItems.push(trimmedLine.substring(2));
+        } else {
+            flushList();
+            if (trimmedLine) {
+                 content.push(<p key={`p-${content.length}`} className="mt-2 first:mt-0">{trimmedLine}</p>);
+            }
+        }
+    });
+
+    flushList(); // Add any remaining list items
+
+    return <div>{content}</div>;
 }
+
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -81,10 +89,10 @@ export function Chatbot() {
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-        scrollAreaRef.current.scrollTo({
-            top: scrollAreaRef.current.scrollHeight,
-            behavior: "smooth"
-        });
+        const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
+        if (viewport) {
+            viewport.scrollTop = viewport.scrollHeight;
+        }
     }
   }, [messages])
 
@@ -134,8 +142,8 @@ export function Chatbot() {
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto transition-transform duration-300", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
-        <Card className="flex flex-col h-full md:max-h-[75vh] rounded-none md:rounded-xl shadow-xl">
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+        <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar>
@@ -148,31 +156,33 @@ export function Chatbot() {
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
-          <CardContent className="flex-grow p-0">
-            <ScrollArea ref={scrollAreaRef} className="h-[calc(100%-1rem)] p-4 space-y-4">
-              {messages.map((message) => (
-                <div key={message.id} className={cn("flex items-start gap-2.5", message.sender === "user" ? "justify-end" : "justify-start")}>
-                  {message.sender === "bot" && <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
-                  <div className={cn(
-                    "max-w-[80%] rounded-lg px-3.5 py-2.5 text-sm",
-                    message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
-                  )}>
-                    {message.sender === 'bot' ? <BotMessageContent text={message.text} /> : message.text}
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                 <div className="flex items-start gap-2.5 justify-start">
-                    <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
-                    <div className="bg-muted px-3.5 py-2.5 rounded-lg">
-                        <span className="animate-pulse">...</span>
+          <CardContent className="flex-grow p-0 overflow-hidden">
+            <ScrollArea ref={scrollAreaRef} className="h-full">
+              <div className="p-4 space-y-4">
+                {messages.map((message) => (
+                  <div key={message.id} className={cn("flex items-start gap-2.5", message.sender === "user" ? "justify-end" : "justify-start")}>
+                    {message.sender === "bot" && <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
+                    <div className={cn(
+                      "max-w-[80%] rounded-lg px-3.5 py-2.5 text-sm",
+                      message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                    )}>
+                      {message.sender === 'bot' ? <BotMessageContent text={message.text} /> : message.text}
                     </div>
-                </div>
-              )}
+                  </div>
+                ))}
+                {isLoading && (
+                   <div className="flex items-start gap-2.5 justify-start">
+                      <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
+                      <div className="bg-muted px-3.5 py-2.5 rounded-lg">
+                          <span className="animate-pulse">...</span>
+                      </div>
+                  </div>
+                )}
+              </div>
             </ScrollArea>
           </CardContent>
           <div className="p-4 border-t">
-            <div className="mb-2 space-y-2 transition-opacity duration-300" style={{opacity: activeAction ? 1: 0}}>
+            <div className="mb-2 space-y-2 transition-opacity duration-300" style={{opacity: activeAction ? 1: 0, height: activeAction ? 'auto' : 0, overflow: 'hidden'}}>
               {activeAction === 'ask' && (
                 <div className="space-y-2">
                     <div className="grid grid-cols-1 gap-2">
