@@ -228,12 +228,12 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-300",
+        "fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-300 flex p-0 md:p-6 items-end justify-end",
         !isOpen ? "pointer-events-none opacity-0" : "pointer-events-auto opacity-100"
        )}>
         <Card className={cn(
-          "fixed flex flex-col h-full w-full overflow-hidden shadow-xl", // Mobile: full screen
-          "md:h-[70vh] md:max-h-[700px] md:w-[440px] md:rounded-xl md:bottom-6 md:right-6 md:inset-auto" // Desktop: floating window
+          "h-full w-full flex flex-col overflow-hidden shadow-xl", // Mobile: full screen
+          "md:h-full md:max-h-[700px] md:w-[440px] md:rounded-xl" // Desktop: floating window
         )}>
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0 p-4 border-b">
             <div className="flex items-center gap-3">
@@ -248,7 +248,7 @@ export function Chatbot() {
             </Button>
           </CardHeader>
 
-          <CardContent ref={scrollAreaRef} className="flex-grow p-4 space-y-4 overflow-y-auto">
+          <CardContent ref={scrollAreaRef} className="flex-1 p-4 space-y-4 overflow-y-auto">
               {messages.map((message) => (
                 <div 
                     key={message.id} 
@@ -337,5 +337,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
