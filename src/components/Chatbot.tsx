@@ -21,9 +21,9 @@ type Message = {
 type QuickActionType = "ask" | "navigate"
 
 const predefinedQuestions: Record<string, string> = {
-    "What is Tech TribeX?": "🚀 Tech TribeX is India's emerging tech-driven student community connecting, educating, and empowering tech enthusiasts nationwide!",
-    "Who is the founder of Tech TribeX?": "👨‍💻 Swastik Mishra - a visionary leader who started this movement at K.R. Mangalam University, aiming to transform student tech engagement! Connect with him on LinkedIn: https://www.linkedin.com/in/myselfswastikmishra/",
-    "What is the vision of Tech TribeX?": "🌍 To build the largest student tech ecosystem offering training, opportunities, and a platform for innovation and growth!"
+    "What is Tech Tribe?": "🚀 Tech Tribe is India's emerging tech-driven student community connecting, educating, and empowering tech enthusiasts nationwide!",
+    "Who is the founder of Tech Tribe?": "👨‍💻 Swastik Mishra - a visionary leader who started this movement at K.R. Mangalam University, aiming to transform student tech engagement! Connect with him on LinkedIn: https://www.linkedin.com/in/myselfswastikmishra/",
+    "What is the vision of Tech Tribe?": "🌍 To build the largest student tech ecosystem offering training, opportunities, and a platform for innovation and growth!"
 }
 
 const navLinks = [
@@ -34,7 +34,6 @@ const navLinks = [
     { href: "/contact", label: "Contact Us" },
 ]
 
-// A component to correctly render text with links, lists, and proper wrapping.
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
@@ -132,7 +131,7 @@ export function Chatbot() {
     setIsOpen(open);
     if (!open) {
       document.body.style.overflow = '';
-      resetChat(); // Reset state when closing
+      resetChat();
     } else {
       document.body.style.overflow = 'hidden';
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -338,3 +337,5 @@ export function Chatbot() {
     </>
   )
 }
+
+    
