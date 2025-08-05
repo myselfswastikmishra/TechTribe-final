@@ -213,7 +213,7 @@ export function Chatbot() {
         onClick={() => setIsOpen(true)} 
         size="icon" 
         className={cn(
-            "fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg transform-gpu transition-transform duration-300",
+            "fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg transition-transform duration-300",
             isOpen ? "scale-0" : "scale-100"
         )}
         aria-label="Open chat"
@@ -222,8 +222,8 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-50 transition-transform duration-300 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
-        !isOpen ? "scale-0 pointer-events-none" : "scale-100 pointer-events-auto"
+        "fixed inset-0 z-50 transition-all duration-300 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
+        !isOpen ? "scale-0 pointer-events-none opacity-0" : "scale-100 pointer-events-auto opacity-100"
       )}>
         <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
@@ -246,8 +246,9 @@ export function Chatbot() {
                     <div key={message.id} className={cn("flex w-full items-start gap-3")}>
                       {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
-                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm break-words",
-                        message.sender === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted"
+                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
+                        message.sender === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted",
+                        "break-words overflow-hidden"
                       )}>
                         <BotMessageContent text={message.text} />
                       </div>
@@ -282,7 +283,7 @@ export function Chatbot() {
                                     {q}
                                 </Button>
                             ))}
-                            <Button variant="outline" size="sm" className="w-full justify-center" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
+                            <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
                         </div>
                     </>
                     )}
@@ -327,3 +328,5 @@ export function Chatbot() {
     </>
   )
 }
+
+    
