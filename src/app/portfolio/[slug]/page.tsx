@@ -12,7 +12,7 @@ type PageProps = {
   params: { slug: string };
 };
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
@@ -40,7 +40,7 @@ export function generateMetadata({ params }: PageProps): Metadata {
 }
 
 
-export default function PortfolioDetailPage({ params }: PageProps) {
+export default function PortfolioDetailPage({ params }: { params: { slug: string } }) {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
