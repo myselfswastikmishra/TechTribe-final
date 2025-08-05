@@ -57,7 +57,7 @@ export function Chatbot() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeAction, setActiveAction] = useState<QuickAction | null>(null)
   const { toast } = useToast()
-  const scrollViewportRef = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // Set initial message only once when the bot is opened for the first time
@@ -70,10 +70,10 @@ export function Chatbot() {
   }, [isOpen]);
 
   useEffect(() => {
-    if (scrollViewportRef.current) {
+    if (scrollAreaRef.current) {
         setTimeout(() => {
-            if (scrollViewportRef.current) {
-                scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
+            if (scrollAreaRef.current) {
+                scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
             }
         }, 100);
     }
@@ -155,7 +155,7 @@ export function Chatbot() {
           </CardHeader>
 
           <CardContent className="flex-grow p-0 overflow-hidden">
-            <ScrollArea className="h-full" viewportRef={scrollViewportRef}>
+             <ScrollArea className="h-full" viewportRef={scrollAreaRef}>
                 <div className="space-y-4 p-4">
                   {messages.map((message) => (
                     <div key={message.id} className={cn("flex items-start gap-3", message.sender === "user" ? "justify-end" : "justify-start")}>
