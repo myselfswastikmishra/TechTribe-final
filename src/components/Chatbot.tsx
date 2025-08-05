@@ -3,14 +3,14 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { Bot, Send, X, CornerDownLeft, LoaderCircle } from "lucide-react"
+import { Bot, Send, X, CornerDownLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "./ui/card"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { chat, type ChatOutput } from "@/ai/flows/chatbot-flow"
+import { chat } from "@/ai/flows/chatbot-flow"
 import { useToast } from "@/hooks/use-toast"
 
 type Message = {
@@ -36,7 +36,6 @@ const navLinks = [
 ]
 
 function BotMessageContent({ text }: { text: string }) {
-    // Basic markdown for lists
     const parts = text.split(/(\n- .*)/g).filter(Boolean);
     return (
         <div className="flex flex-col space-y-1">
@@ -49,6 +48,7 @@ function BotMessageContent({ text }: { text: string }) {
         </div>
     );
 }
+
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -68,7 +68,6 @@ export function Chatbot() {
        setActiveAction("ask");
     }
   }, [isOpen]);
-
 
   useEffect(() => {
     if (scrollViewportRef.current) {
@@ -98,12 +97,12 @@ export function Chatbot() {
             setMessages(prev => [...prev, botMessage])
             setIsLoading(false)
             setActiveAction("ask")
-        }, 500); // Simulate a slight delay
+        }, 500);
         return;
     }
 
     try {
-      const result: ChatOutput = await chat({ message: userMessage })
+      const result = await chat({ message: userMessage })
       const botMessage: Message = { id: (Date.now() + 1).toString(), text: result.answer, sender: "bot" }
       setMessages(prev => [...prev, botMessage])
     } catch (error) {
@@ -129,20 +128,19 @@ export function Chatbot() {
     }
   }
 
-  const handleToggle = () => {
-    setIsOpen(prev => !prev);
-  }
-
   return (
     <>
-      <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300", isOpen ? "scale-0" : "scale-100")}>
-        <Button onClick={handleToggle} size="icon" className="w-16 h-16 rounded-full shadow-lg">
-          <Bot className="w-8 h-8" />
-        </Button>
-      </div>
+      <Button 
+        onClick={() => setIsOpen(true)} 
+        size="icon" 
+        className={cn("fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg transition-transform duration-300", isOpen ? "scale-0" : "scale-100")}
+        aria-label="Open chat"
+      >
+        <Bot className="w-8 h-8" />
+      </Button>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
-        <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+        <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
               <Avatar>
@@ -151,14 +149,14 @@ export function Chatbot() {
               </Avatar>
               <CardTitle className="font-headline">TribeX Navigator</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={handleToggle}>
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
 
-          <CardContent className="flex-grow p-0 overflow-y-auto">
+          <CardContent className="flex-grow p-0 overflow-hidden">
             <ScrollArea className="h-full" viewportRef={scrollViewportRef}>
-                <div className="space-y-6 p-4">
+                <div className="space-y-4 p-4">
                   {messages.map((message) => (
                     <div key={message.id} className={cn("flex items-start gap-3", message.sender === "user" ? "justify-end" : "justify-start")}>
                       {message.sender === "bot" && <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>}
@@ -186,54 +184,62 @@ export function Chatbot() {
             </ScrollArea>
           </CardContent>
 
-          <div className="p-4 border-t bg-background flex-shrink-0">
-            {activeAction && !isLoading && (
-              <div className="mb-3 space-y-2.5 transition-all duration-300">
-                {activeAction === 'ask' && (
-                  <>
-                      <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
-                      <div className="space-y-2">
-                        {Object.keys(predefinedQuestions).map(q => (
-                            <Button key={q} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2" onClick={(e) => handleSubmit(e, q)}>
-                                <span className="whitespace-normal leading-tight">{q}</span>
-                            </Button>
-                        ))}
-                        <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
-                      </div>
-                  </>
+          <CardFooter className="p-4 border-t bg-background flex-shrink-0">
+            <div className="w-full">
+                {activeAction && !isLoading && (
+                <div className="mb-3 space-y-2.5 transition-all duration-300">
+                    {activeAction === 'ask' && (
+                    <>
+                        <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
+                        <div className="space-y-2">
+                            {Object.keys(predefinedQuestions).map(q => (
+                                <Button key={q} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2" onClick={(e) => handleSubmit(e, q)}>
+                                    <span className="whitespace-normal leading-tight">{q}</span>
+                                </Button>
+                            ))}
+                            <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
+                        </div>
+                    </>
+                    )}
+                    {activeAction === 'navigate' && (
+                    <>
+                        <p className="text-sm text-muted-foreground text-center">Where would you like to go?</p>
+                        <div className="grid grid-cols-2 gap-2">
+                            {navLinks.map(link => (
+                                <Button key={link.href} variant="outline" size="sm" asChild>
+                                    <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
+                                </Button>
+                            ))}
+                        </div>
+                        <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => setActiveAction('ask')}>
+                            <CornerDownLeft className="mr-2 h-4 w-4"/> Back to questions
+                        </Button>
+                    </>
+                    )}
+                </div>
                 )}
-                 {activeAction === 'navigate' && (
-                   <>
-                      <p className="text-sm text-muted-foreground text-center">Where would you like to go?</p>
-                      <div className="grid grid-cols-2 gap-2">
-                          {navLinks.map(link => (
-                              <Button key={link.href} variant="outline" size="sm" asChild>
-                                  <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
-                              </Button>
-                          ))}
-                      </div>
-                      <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => setActiveAction('ask')}>
-                          <CornerDownLeft className="mr-2 h-4 w-4"/> Back to questions
-                      </Button>
-                  </>
-                )}
-              </div>
-            )}
-             <form onSubmit={handleSubmit} className="flex gap-2">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask me anything..."
-                  disabled={isLoading}
-                  autoComplete="off"
-                />
-                <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
-                    {isLoading ? <LoaderCircle className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                </Button>
-            </form>
-          </div>
+                <form onSubmit={handleSubmit} className="flex gap-2">
+                    <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Ask me anything..."
+                    disabled={isLoading}
+                    autoComplete="off"
+                    />
+                    <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+                        {isLoading ? (
+                            <div className="h-5 w-5 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin"></div>
+                        ) : (
+                            <Send className="w-5 h-5" />
+                        )}
+                    </Button>
+                </form>
+            </div>
+          </CardFooter>
         </Card>
       </div>
     </>
   )
 }
+
+    
