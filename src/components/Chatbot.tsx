@@ -38,58 +38,45 @@ const navLinks = [
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    // This function will render text and convert any URLs into clickable links.
-    const renderTextWithLinks = (part: string, key: React.Key) => {
-        const segments = part.split(urlRegex);
-        return (
-            <React.Fragment key={key}>
-                {segments.map((segment, i) =>
-                    urlRegex.test(segment) ? (
-                        <a
-                            key={i}
-                            href={segment}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary underline hover:text-primary/80"
-                        >
-                            {segment}
-                        </a>
-                    ) : (
-                        <span key={i}>{segment}</span>
-                    )
-                )}
-            </React.Fragment>
+    const renderTextWithLinks = (line: string) => {
+        const parts = line.split(urlRegex);
+        return parts.map((part, index) => 
+            urlRegex.test(part) ? (
+                <a
+                    key={index}
+                    href={part}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline hover:text-primary/80"
+                >
+                    {part}
+                </a>
+            ) : (
+                <React.Fragment key={index}>{part}</React.Fragment>
+            )
         );
     };
 
-    // Split the text into blocks separated by one or more newlines.
-    const blocks = text.split(/\n\s*\n/);
+    const blocks = text.split('\n\n');
 
     return (
         <div className="flex flex-col gap-2 text-sm">
             {blocks.map((block, blockIndex) => {
-                const lines = block.split('\n').filter(line => line.trim() !== '');
-                // Check if all lines in a block start with a list marker (e.g., '-', '•', '*')
-                if (lines.every(line => /^\s*[-•*]\s/.test(line))) {
+                const lines = block.split('\n');
+                if (lines.some(line => /^\s*[-•*]\s/.test(line))) {
                     return (
                         <ul key={blockIndex} className="list-disc pl-5 space-y-1">
                             {lines.map((line, lineIndex) => (
                                 <li key={lineIndex}>
-                                    {renderTextWithLinks(line.replace(/^\s*[-•*]\s/, ''), lineIndex)}
+                                    {renderTextWithLinks(line.replace(/^\s*[-•*]\s/, ''))}
                                 </li>
                             ))}
                         </ul>
                     );
                 }
-                // Otherwise, render as a paragraph block.
                 return (
                     <p key={blockIndex} className="whitespace-pre-wrap">
-                         {lines.map((line, lineIndex) => (
-                            <React.Fragment key={lineIndex}>
-                                {renderTextWithLinks(line, lineIndex)}
-                                {lineIndex < lines.length - 1 && <br />}
-                            </React.Fragment>
-                        ))}
+                        {renderTextWithLinks(block)}
                     </p>
                 );
             })}
@@ -305,5 +292,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
