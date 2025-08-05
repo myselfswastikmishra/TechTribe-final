@@ -4,7 +4,7 @@
  * @fileOverview A chatbot flow for the Tech TribeX website.
  *
  * - chat - A function that handles the chatbot conversation.
- * - ChatOutput - The return type for the chat function.
+ * - ChatOutput - The return type for a chat function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -59,7 +59,7 @@ const chatbotFlow = ai.defineFlow(
   },
   async (input) => {
     const llmResponse = await ai.generate({
-      model: 'gemini-pro',
+      model: 'gemini-1.5-flash-latest',
       prompt: input.message,
       system: CONTEXT,
     });
