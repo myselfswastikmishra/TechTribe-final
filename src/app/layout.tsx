@@ -1,6 +1,6 @@
 
 import type { Metadata } from 'next'
-import { spaceGrotesk } from '@/lib/fonts'
+import { spaceGrotesk, ptSans } from '@/lib/fonts'
 import './globals.css'
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
@@ -39,7 +39,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
         "font-sans antialiased min-h-screen bg-background flex flex-col",
-        spaceGrotesk.variable
+        spaceGrotesk.variable,
+        ptSans.variable
       )}>
         <ThemeProvider
           attribute="class"
