@@ -80,6 +80,7 @@ export default function PortfolioDetailPage({ params }: Props) {
           <div className="md:col-span-2">
             <h2 className="text-2xl font-bold font-headline">About the Project</h2>
             <p className="mt-4 text-lg text-muted-foreground">{project.description}</p>
+
           </div>
           <div>
             <h2 className="text-2xl font-bold font-headline">Key Features</h2>
