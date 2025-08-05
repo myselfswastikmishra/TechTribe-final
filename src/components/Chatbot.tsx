@@ -114,6 +114,7 @@ export function Chatbot() {
   const [activeAction, setActiveAction] = useState<QuickAction | null>(null)
   const { toast } = useToast()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setIsMounted(true);
@@ -122,6 +123,7 @@ export function Chatbot() {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      inputRef.current?.focus();
     } else {
       document.body.style.overflow = '';
     }
@@ -149,7 +151,7 @@ export function Chatbot() {
            scrollEl.scrollTop = scrollEl.scrollHeight;
         }, 50)
     }
-  }, [messages, isLoading])
+  }, [messages, isLoading, activeAction])
 
   const handleSubmit = async (e: React.FormEvent, question?: string) => {
     e.preventDefault()
@@ -218,11 +220,13 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-[100] transition-all duration-300",
-        "md:inset-auto md:w-[440px] md:h-[70vh] md:max-h-[700px] md:bottom-6 md:right-6",
-        !isOpen ? "scale-0 pointer-events-none opacity-0" : "scale-100 pointer-events-auto opacity-100"
-      )}>
-        <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
+        "fixed inset-0 z-[100] transition-opacity duration-300",
+        !isOpen ? "pointer-events-none opacity-0" : "pointer-events-auto opacity-100"
+       )}>
+        <Card className={cn(
+          "flex flex-col h-full overflow-hidden shadow-xl",
+          "md:absolute md:w-[440px] md:h-[70vh] md:max-h-[700px] md:bottom-6 md:right-6 md:rounded-xl"
+        )}>
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
               <Avatar>
@@ -248,7 +252,7 @@ export function Chatbot() {
                   {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                   <div className={cn(
                     "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
-                    "overflow-hidden",
+                    "overflow-hidden break-words",
                     message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                   )}>
                     <BotMessageContent text={message.text} />
@@ -267,12 +271,8 @@ export function Chatbot() {
                     </div>
                 </div>
               )}
-          </CardContent>
-
-          <CardFooter className="flex-shrink-0 p-4 border-t bg-background">
-            <div className="w-full">
-                {activeAction && !isLoading && (
-                <div className="mb-3 space-y-2.5 transition-all duration-300">
+               {activeAction && !isLoading && (
+                <div className="pt-4 space-y-2.5 transition-all duration-300">
                     {activeAction === 'ask' && (
                     <>
                         <p className="text-sm text-center text-muted-foreground">Or ask one of these questions:</p>
@@ -303,26 +303,31 @@ export function Chatbot() {
                     )}
                 </div>
                 )}
-                <form onSubmit={handleSubmit} className="flex gap-2">
-                    <Input
+          </CardContent>
+
+          <CardFooter className="flex-shrink-0 p-4 border-t bg-background">
+              <form onSubmit={handleSubmit} className="flex gap-2 w-full">
+                  <Input
+                    ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask me anything..."
                     disabled={isLoading}
                     autoComplete="off"
-                    />
-                    <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
-                        {isLoading ? (
-                            <div className="w-5 h-5 border-2 rounded-full border-primary-foreground/20 border-t-primary-foreground animate-spin"></div>
-                        ) : (
-                            <Send className="w-5 h-5" />
-                        )}
-                    </Button>
-                </form>
-            </div>
+                  />
+                  <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+                      {isLoading ? (
+                          <div className="w-5 h-5 border-2 rounded-full border-primary-foreground/20 border-t-primary-foreground animate-spin"></div>
+                      ) : (
+                          <Send className="w-5 h-5" />
+                      )}
+                  </Button>
+              </form>
           </CardFooter>
         </Card>
       </div>
     </>
   )
 }
+
+    
