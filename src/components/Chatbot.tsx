@@ -37,39 +37,62 @@ const navLinks = [
 
 function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text.split(urlRegex);
 
-    return (
-        <div className="flex flex-col space-y-1 text-sm">
-            <p className="whitespace-pre-wrap">
-                {parts.map((part, index) => {
-                    if (part.match(urlRegex)) {
-                        return (
-                            <a
-                                key={index}
-                                href={part}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary underline hover:text-primary/80"
-                            >
-                                {part}
-                            </a>
-                        );
-                    }
-                    if (part.includes('\n- ')) {
-                         return part.split(/(\n- .*)/g).filter(Boolean).map((subPart, subIndex) => {
-                            if (subPart.startsWith('\n- ')) {
-                                return <li key={`${index}-${subIndex}`} className="ml-4 list-disc">{subPart.substring(3)}</li>;
-                            }
-                            return <span key={`${index}-${subIndex}`}>{subPart}</span>
-                         })
-                    }
-                    return <span key={index}>{part}</span>;
-                })}
+    const renderText = (part: string, key: React.Key) => {
+        if (part.match(urlRegex)) {
+            return (
+                <a
+                    key={key}
+                    href={part}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline hover:text-primary/80"
+                >
+                    {part}
+                </a>
+            );
+        }
+        return <span key={key}>{part}</span>;
+    };
+
+    const paragraphs = text.split('\n').map((paragraph, pIndex) => {
+        // Check for list items
+        if (paragraph.trim().startsWith('- ')) {
+            const listItems = text.split('\n').filter(line => line.trim().startsWith('- '));
+            return (
+                <ul key={pIndex} className="list-disc pl-5 space-y-1 my-1">
+                    {listItems.map((item, lIndex) => (
+                        <li key={lIndex}>{item.trim().substring(2)}</li>
+                    ))}
+                </ul>
+            );
+        }
+        // Avoid rendering list items twice
+        if (text.includes('\n- ') && !paragraph.trim().startsWith('- ')) {
+             const nonListContent = text.split('\n- ')[0];
+             const parts = nonListContent.split(urlRegex);
+             return <p key={pIndex} className="whitespace-pre-wrap">{parts.map(renderText)}</p>
+        }
+
+
+        const parts = paragraph.split(urlRegex);
+        return (
+            <p key={pIndex} className="whitespace-pre-wrap">
+                {parts.map(renderText)}
             </p>
-        </div>
-    );
+        );
+    }).filter((p, index, self) => {
+        // Filter out duplicate list renderings
+        if (p?.key && p.key > 0 && text.includes('\n- ')) {
+            const prev = self[index-1];
+            if (prev?.type === 'ul') return false;
+        }
+        return true;
+    });
+
+    return <div className="flex flex-col space-y-1 text-sm">{paragraphs}</div>;
 }
+
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -82,14 +105,15 @@ export function Chatbot() {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-       setTimeout(() => {
+        const timer = setTimeout(() => {
            setMessages([
               { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
            ]);
            setActiveAction("ask");
        }, 100);
+       return () => clearTimeout(timer)
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -159,7 +183,7 @@ export function Chatbot() {
         <Bot className="w-8 h-8" />
       </Button>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 transform-gpu md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100vh-6rem)] md:max-h-[700px] md:rounded-xl", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 transform-gpu md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100dvh-6rem)] md:max-h-[700px] md:rounded-xl", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -213,8 +237,8 @@ export function Chatbot() {
                         <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2" onClick={(e) => handleSubmit(e, q)}>
-                                    <span className="whitespace-normal leading-tight">{q}</span>
+                                <Button key={q} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
+                                    {q}
                                 </Button>
                             ))}
                             <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
@@ -262,3 +286,5 @@ export function Chatbot() {
     </>
   )
 }
+
+    
