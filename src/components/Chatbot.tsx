@@ -23,7 +23,7 @@ type QuickAction = "ask" | "navigate"
 
 const predefinedQuestions: Record<string, string> = {
     "What is Tech TribeX?": "🚀 Tech TribeX is India's emerging tech-driven student community connecting, educating, and empowering tech enthusiasts nationwide!",
-    "Who is the founder of Tech TribeX?": "👨‍💻 Swastik Mishra - a visionary leader who started this movement at K.R. Mangalam University, aiming to transform student tech engagement!",
+    "Who is the founder of Tech TribeX?": "👨‍💻 Swastik Mishra - a visionary leader who started this movement at K.R. Mangalam University, aiming to transform student tech engagement! Connect with him on LinkedIn: https://www.linkedin.com/in/myselfswastikmishra/",
     "What is the vision of Tech TribeX?": "🌍 To build the largest student tech ecosystem offering training, opportunities, and a platform for innovation and growth!"
 }
 
@@ -36,16 +36,39 @@ const navLinks = [
 ]
 
 function BotMessageContent({ text }: { text: string }) {
-    // Basic markdown for lists
-    const parts = text.split(/(\n- .*)/g).filter(Boolean);
+    // Regex to find URLs in the text
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+
     return (
-        <div className="flex flex-col space-y-1">
-            {parts.map((part, index) => {
-                if (part.startsWith('\n- ')) {
-                    return <li key={index} className="ml-4 list-disc">{part.substring(3)}</li>;
-                }
-                return <p key={index} className="whitespace-pre-wrap">{part}</p>;
-            })}
+        <div className="flex flex-col space-y-1 text-sm">
+            <p className="whitespace-pre-wrap">
+                {parts.map((part, index) => {
+                    if (part.match(urlRegex)) {
+                        return (
+                            <a
+                                key={index}
+                                href={part}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary underline hover:text-primary/80"
+                            >
+                                {part}
+                            </a>
+                        );
+                    }
+                    // Handle markdown lists
+                    if (part.includes('\n- ')) {
+                         return part.split(/(\n- .*)/g).filter(Boolean).map((subPart, subIndex) => {
+                            if (subPart.startsWith('\n- ')) {
+                                return <li key={`${index}-${subIndex}`} className="ml-4 list-disc">{subPart.substring(3)}</li>;
+                            }
+                            return <span key={`${index}-${subIndex}`}>{subPart}</span>
+                         })
+                    }
+                    return <span key={index}>{part}</span>;
+                })}
+            </p>
         </div>
     );
 }
@@ -69,7 +92,7 @@ export function Chatbot() {
            setActiveAction("ask");
        }, 0);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -156,14 +179,14 @@ export function Chatbot() {
             </Button>
           </CardHeader>
 
-          <CardContent className="flex-grow p-0 overflow-hidden">
+          <CardContent className="flex-grow p-0 overflow-y-auto">
              <ScrollArea className="h-full" viewportRef={scrollAreaRef}>
                 <div className="space-y-4 p-4">
                   {messages.map((message) => (
                     <div key={message.id} className={cn("flex items-start gap-3", message.sender === "user" ? "justify-end" : "justify-start")}>
                       {message.sender === "bot" && <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
-                        "max-w-[85%] rounded-lg px-3.5 py-2.5 text-sm shadow-sm",
+                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
                         message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                       )}>
                         <BotMessageContent text={message.text} />
