@@ -60,13 +60,15 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
             </React.Fragment>
         );
     };
-
+    
+    // Process text to handle newlines and create paragraphs for blocks of text,
+    // and list items for lines starting with a hyphen.
     const blocks = text.split('\n').filter(line => line.trim() !== '');
 
     const groupedBlocks = blocks.reduce((acc, line) => {
         const isListItem = /^\s*[-•*]\s/.test(line);
         const lastGroup = acc[acc.length - 1];
-
+        
         if (isListItem) {
             const cleanLine = line.replace(/^\s*[-•*]\s/, '');
             if (lastGroup && lastGroup.type === 'list') {
@@ -75,17 +77,16 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
                 acc.push({ type: 'list', items: [cleanLine] });
             }
         } else {
-            if (lastGroup && lastGroup.type === 'paragraph') {
-                lastGroup.lines.push(line);
-            } else {
-                acc.push({ type: 'paragraph', lines: [line] });
-            }
+            // If it's not a list item, treat it as a paragraph.
+            // Each non-list line gets its own paragraph group to ensure proper spacing.
+            acc.push({ type: 'paragraph', lines: [line] });
         }
         return acc;
     }, [] as Array<{ type: 'paragraph'; lines: string[] } | { type: 'list'; items: string[] }>);
 
+
     return (
-        <div className="flex flex-col gap-2 text-sm">
+        <div className="flex flex-col gap-2 text-sm" style={{ overflowWrap: 'break-word' }}>
             {groupedBlocks.map((block, blockIndex) => {
                 if (block.type === 'list') {
                     return (
@@ -98,8 +99,9 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
                         </ul>
                     );
                 }
+                // Render paragraphs
                 return (
-                    <p key={blockIndex} className="whitespace-pre-wrap">
+                    <p key={blockIndex}>
                         {block.lines.map((line, lineIndex) => renderTextWithLinks(line, lineIndex))}
                     </p>
                 );
@@ -222,7 +224,7 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-50 transition-all duration-300 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
+        "fixed inset-0 z-[100] transition-all duration-300 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
         !isOpen ? "scale-0 pointer-events-none opacity-0" : "scale-100 pointer-events-auto opacity-100"
       )}>
         <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
@@ -253,8 +255,7 @@ export function Chatbot() {
                       {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
                         "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
-                        message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted",
-                        "overflow-hidden break-words"
+                        message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                       )}>
                         <BotMessageContent text={message.text} />
                       </div>
@@ -285,7 +286,7 @@ export function Chatbot() {
                         <p className="text-sm text-center text-muted-foreground">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
+                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal text-center" onClick={(e) => handleSubmit(e, q)}>
                                     {q}
                                 </Button>
                             ))}
@@ -333,3 +334,5 @@ export function Chatbot() {
     </>
   )
 }
+
+    
