@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { Bot, Send, X, CornerDownLeft } from "lucide-react"
+import { Bot, Send, X, CornerDownLeft, LoaderCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
@@ -36,19 +36,19 @@ const navLinks = [
 ]
 
 function BotMessageContent({ text }: { text: string }) {
-    const parts = text.split(/(- .*)/g).filter(Boolean);
+    // Basic markdown for lists
+    const parts = text.split(/(\n- .*)/g).filter(Boolean);
     return (
-        <div>
+        <>
             {parts.map((part, index) => {
-                if (part.startsWith('- ')) {
-                    return <div key={index} className="ml-4">{part}</div>;
+                if (part.startsWith('\n- ')) {
+                    return <li key={index} className="ml-4 list-disc">{part.substring(3)}</li>;
                 }
-                return <p key={index}>{part}</p>;
+                return <p key={index} className="whitespace-pre-wrap">{part}</p>;
             })}
-        </div>
+        </>
     );
 }
-
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -63,10 +63,11 @@ export function Chatbot() {
     if (isOpen && messages.length === 0) {
       setMessages([
         { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
-      ])
-      setActiveAction("ask")
+      ]);
+      setActiveAction("ask");
     }
-  }, [isOpen, messages.length])
+  }, [isOpen, messages.length]);
+
 
   useEffect(() => {
     const scrollViewport = scrollAreaRef.current?.querySelector("div[data-radix-scroll-area-viewport]");
@@ -115,18 +116,21 @@ export function Chatbot() {
     }
   }
 
+  const handleToggle = () => {
+    setIsOpen(prev => !prev);
+  }
 
   return (
     <>
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300", isOpen ? "scale-0" : "scale-100")}>
-        <Button onClick={() => setIsOpen(true)} size="icon" className="w-16 h-16 rounded-full shadow-lg">
+        <Button onClick={handleToggle} size="icon" className="w-16 h-16 rounded-full shadow-lg">
           <Bot className="w-8 h-8" />
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-full md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
-          <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
+          <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar>
                  <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="bot avatar" />
@@ -134,58 +138,60 @@ export function Chatbot() {
               </Avatar>
               <CardTitle className="font-headline">TribeX Navigator</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" size="icon" onClick={handleToggle}>
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
 
           <CardContent className="flex-grow p-0 overflow-y-auto">
-            <ScrollArea ref={scrollAreaRef} className="h-full">
-              <div className="p-4 space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id} className={cn("flex items-start gap-2.5", message.sender === "user" ? "justify-end" : "justify-start")}>
-                    {message.sender === "bot" && <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
-                    <div className={cn(
-                      "max-w-[80%] rounded-lg px-3.5 py-2.5 text-sm",
-                      message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
-                    )}>
-                      <BotMessageContent text={message.text} />
-                    </div>
-                  </div>
-                ))}
-                {isLoading && (
-                   <div className="flex items-start gap-2.5 justify-start">
-                      <Avatar className="w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
-                      <div className="bg-muted px-3.5 py-2.5 rounded-lg">
-                          <div className="flex items-center space-x-1">
-                            <span className="h-1.5 w-1.5 bg-current rounded-full animate-pulse" style={{animationDelay: '0ms'}}></span>
-                            <span className="h-1.5 w-1.5 bg-current rounded-full animate-pulse" style={{animationDelay: '200ms'}}></span>
-                            <span className="h-1.5 w-1.5 bg-current rounded-full animate-pulse" style={{animationDelay: '400ms'}}></span>
-                          </div>
+            <ScrollArea ref={scrollAreaRef} className="h-full p-4">
+                <div className="space-y-4">
+                  {messages.map((message) => (
+                    <div key={message.id} className={cn("flex items-start gap-2.5", message.sender === "user" ? "justify-end" : "justify-start")}>
+                      {message.sender === "bot" && <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>}
+                      <div className={cn(
+                        "max-w-[85%] rounded-lg px-3.5 py-2.5 text-sm shadow-sm",
+                        message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                      )}>
+                        <BotMessageContent text={message.text} />
                       </div>
-                  </div>
-                )}
-              </div>
+                    </div>
+                  ))}
+                  {isLoading && (
+                    <div className="flex items-start gap-2.5 justify-start">
+                        <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>
+                        <div className="bg-muted px-3.5 py-2.5 rounded-lg shadow-sm">
+                            <div className="flex items-center space-x-1.5">
+                              <span className="h-1.5 w-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0ms'}}></span>
+                              <span className="h-1.5 w-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '200ms'}}></span>
+                              <span className="h-1.5 w-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '400ms'}}></span>
+                            </div>
+                        </div>
+                    </div>
+                  )}
+                </div>
             </ScrollArea>
           </CardContent>
 
-          <div className="p-4 border-t bg-background flex-shrink-0">
-            {activeAction && (
-              <div className="mb-2">
+          <div className="p-4 border-t bg-background">
+            {activeAction && !isLoading && (
+              <div className="mb-3 space-y-2.5 transition-all duration-300">
                 {activeAction === 'ask' && (
-                  <div className="space-y-2">
-                      <div className="grid grid-cols-1 gap-2">
-                      {quickQuestions.map(q => (
-                          <Button key={q.id} variant="outline" size="sm" className="justify-start h-auto py-2" onClick={(e) => handleSubmit(e, q.text)}>
-                              <span className="text-left whitespace-normal">{q.text}</span>
-                          </Button>
-                      ))}
+                  <>
+                      <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
+                      <div className="space-y-2">
+                        {quickQuestions.map(q => (
+                            <Button key={q.id} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2" onClick={(e) => handleSubmit(e, q.text)}>
+                                <span className="whitespace-normal leading-tight">{q.text}</span>
+                            </Button>
+                        ))}
+                        <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
                       </div>
-                      <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
-                  </div>
+                  </>
                 )}
                  {activeAction === 'navigate' && (
-                  <div className="space-y-2">
+                   <>
+                      <p className="text-sm text-muted-foreground text-center">Where would you like to go?</p>
                       <div className="grid grid-cols-2 gap-2">
                           {navLinks.map(link => (
                               <Button key={link.href} variant="outline" size="sm" asChild>
@@ -193,10 +199,10 @@ export function Chatbot() {
                               </Button>
                           ))}
                       </div>
-                      <Button variant="ghost" size="sm" className="w-full" onClick={() => setActiveAction('ask')}>
+                      <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => setActiveAction('ask')}>
                           <CornerDownLeft className="mr-2 h-4 w-4"/> Back to questions
                       </Button>
-                  </div>
+                  </>
                 )}
               </div>
             )}
@@ -209,7 +215,7 @@ export function Chatbot() {
                   autoComplete="off"
                 />
                 <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
-                    <Send className="w-5 h-5" />
+                    {isLoading ? <LoaderCircle className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                 </Button>
             </form>
           </div>
@@ -218,5 +224,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
