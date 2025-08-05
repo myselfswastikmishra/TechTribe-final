@@ -121,17 +121,23 @@ export function Chatbot() {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
+  const resetChat = () => {
+    setMessages([]);
+    setInput("");
+    setIsLoading(false);
+    setActiveAction(null);
+  };
+
+  const handleSetIsOpen = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      document.body.style.overflow = '';
+      resetChat(); // Reset state when closing
+    } else {
       document.body.style.overflow = 'hidden';
       setTimeout(() => inputRef.current?.focus(), 100);
-    } else {
-      document.body.style.overflow = '';
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
+  };
 
   useEffect(() => {
     if (isOpen && messages.length === 0 && isMounted) {
@@ -141,18 +147,15 @@ export function Chatbot() {
            ]);
            setActiveAction("ask");
        }, 100);
-       return () => clearTimeout(timer)
+       return () => clearTimeout(timer);
     }
   }, [isOpen, messages.length, isMounted]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-        const scrollEl = scrollAreaRef.current;
-        setTimeout(() => {
-           scrollEl.scrollTop = scrollEl.scrollHeight;
-        }, 50)
+        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
-  }, [messages, isLoading, activeAction])
+  }, [messages, isLoading, activeAction]);
 
   const handleSubmit = async (e: React.FormEvent, question?: string) => {
     e.preventDefault()
@@ -214,7 +217,7 @@ export function Chatbot() {
   return (
     <>
       <Button 
-        onClick={() => setIsOpen(true)} 
+        onClick={() => handleSetIsOpen(true)} 
         size="icon" 
         className={cn(
             "fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg transition-transform duration-300",
@@ -241,7 +244,7 @@ export function Chatbot() {
               </Avatar>
               <CardTitle className="font-headline text-lg">TribeX Navigator</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" size="icon" onClick={() => handleSetIsOpen(false)}>
               <X className="w-5 h-5" />
             </Button>
           </CardHeader>
@@ -297,7 +300,7 @@ export function Chatbot() {
                         <div className="grid grid-cols-2 gap-2">
                             {navLinks.map(link => (
                                 <Button key={link.href} variant="outline" size="sm" asChild>
-                                    <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
+                                    <Link href={link.href} onClick={() => handleSetIsOpen(false)}>{link.label}</Link>
                                 </Button>
                             ))}
                         </div>
