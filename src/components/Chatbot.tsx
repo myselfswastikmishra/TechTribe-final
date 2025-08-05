@@ -38,11 +38,13 @@ const navLinks = [
 function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const renderText = (part: string, key: React.Key) => {
+    const parts = text.split(urlRegex);
+
+    const content = parts.map((part, index) => {
         if (part.match(urlRegex)) {
             return (
                 <a
-                    key={key}
+                    key={index}
                     href={part}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -52,45 +54,24 @@ function BotMessageContent({ text }: { text: string }) {
                 </a>
             );
         }
-        return <span key={key}>{part}</span>;
-    };
 
-    const paragraphs = text.split('\n').map((paragraph, pIndex) => {
-        // Check for list items
-        if (paragraph.trim().startsWith('- ')) {
-            const listItems = text.split('\n').filter(line => line.trim().startsWith('- '));
-            return (
-                <ul key={pIndex} className="list-disc pl-5 space-y-1 my-1">
-                    {listItems.map((item, lIndex) => (
-                        <li key={lIndex}>{item.trim().substring(2)}</li>
-                    ))}
-                </ul>
-            );
-        }
-        // Avoid rendering list items twice
-        if (text.includes('\n- ') && !paragraph.trim().startsWith('- ')) {
-             const nonListContent = text.split('\n- ')[0];
-             const parts = nonListContent.split(urlRegex);
-             return <p key={pIndex} className="whitespace-pre-wrap">{parts.map(renderText)}</p>
-        }
+        const textParts = part.split('\n').map((line, lineIndex) => {
+            if (line.trim().startsWith('- ')) {
+                return (
+                    <ul key={`${index}-${lineIndex}`} className="list-disc pl-5 space-y-1 my-1">
+                        {line.split('\n').filter(l => l.trim().startsWith('- ')).map((item, itemIndex) => (
+                           <li key={itemIndex}>{item.trim().substring(2)}</li>
+                        ))}
+                    </ul>
+                );
+            }
+            return <span key={`${index}-${lineIndex}`}>{line}<br/></span>;
+        });
 
-
-        const parts = paragraph.split(urlRegex);
-        return (
-            <p key={pIndex} className="whitespace-pre-wrap">
-                {parts.map(renderText)}
-            </p>
-        );
-    }).filter((p, index, self) => {
-        // Filter out duplicate list renderings
-        if (p?.key && p.key > 0 && text.includes('\n- ')) {
-            const prev = self[index-1];
-            if (prev?.type === 'ul') return false;
-        }
-        return true;
+        return <span key={index}>{textParts}</span>;
     });
 
-    return <div className="flex flex-col space-y-1 text-sm">{paragraphs}</div>;
+    return <div className="flex flex-col space-y-1 text-sm whitespace-pre-wrap">{content}</div>;
 }
 
 
@@ -183,7 +164,10 @@ export function Chatbot() {
         <Bot className="w-8 h-8" />
       </Button>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 transform-gpu md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100dvh-6rem)] md:max-h-[700px] md:rounded-xl", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn(
+        "fixed bottom-0 right-0 z-50 w-full h-full transform-gpu transition-transform duration-300 md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100dvh-6rem)] md:max-h-[700px] md:rounded-xl",
+        !isOpen ? "translate-y-full md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100"
+      )}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -286,5 +270,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
