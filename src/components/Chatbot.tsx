@@ -61,29 +61,46 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
         );
     };
 
-    const blocks = text.split('\n\n');
+    const blocks = text.split('\n').filter(line => line.trim() !== '');
+
+    const groupedBlocks = blocks.reduce((acc, line) => {
+        const isListItem = /^\s*[-•*]\s/.test(line);
+        const lastGroup = acc[acc.length - 1];
+
+        if (isListItem) {
+            const cleanLine = line.replace(/^\s*[-•*]\s/, '');
+            if (lastGroup && lastGroup.type === 'list') {
+                lastGroup.items.push(cleanLine);
+            } else {
+                acc.push({ type: 'list', items: [cleanLine] });
+            }
+        } else {
+            if (lastGroup && lastGroup.type === 'paragraph') {
+                lastGroup.lines.push(line);
+            } else {
+                acc.push({ type: 'paragraph', lines: [line] });
+            }
+        }
+        return acc;
+    }, [] as Array<{ type: 'paragraph'; lines: string[] } | { type: 'list'; items: string[] }>);
 
     return (
         <div className="flex flex-col gap-2 text-sm">
-            {blocks.map((block, blockIndex) => {
-                const lines = block.split('\n');
-                const isList = lines.every(line => /^\s*[-•*]\s/.test(line));
-
-                if (isList) {
+            {groupedBlocks.map((block, blockIndex) => {
+                if (block.type === 'list') {
                     return (
                         <ul key={blockIndex} className="list-disc pl-5 space-y-1">
-                            {lines.map((item, itemIndex) => (
+                            {block.items.map((item, itemIndex) => (
                                 <li key={itemIndex}>
-                                    {renderTextWithLinks(item.replace(/^\s*[-•*]\s/, ''), itemIndex)}
+                                    {renderTextWithLinks(item, itemIndex)}
                                 </li>
                             ))}
                         </ul>
                     );
                 }
-
                 return (
                     <p key={blockIndex} className="whitespace-pre-wrap">
-                        {lines.map((line, lineIndex) => renderTextWithLinks(line, lineIndex))}
+                        {block.lines.map((line, lineIndex) => renderTextWithLinks(line, lineIndex))}
                     </p>
                 );
             })}
@@ -205,7 +222,7 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-50 transform-gpu transition-transform duration-300 origin-bottom-right md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
+        "fixed inset-0 z-50 transition-transform duration-300 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
         !isOpen ? "scale-0 pointer-events-none" : "scale-100 pointer-events-auto"
       )}>
         <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
@@ -229,7 +246,7 @@ export function Chatbot() {
                     <div key={message.id} className={cn("flex w-full items-start gap-3")}>
                       {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
-                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
+                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm break-words",
                         message.sender === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted"
                       )}>
                         <BotMessageContent text={message.text} />
@@ -261,7 +278,7 @@ export function Chatbot() {
                         <p className="text-sm text-center text-muted-foreground">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal text-center" onClick={(e) => handleSubmit(e, q)}>
+                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
                                     {q}
                                 </Button>
                             ))}
