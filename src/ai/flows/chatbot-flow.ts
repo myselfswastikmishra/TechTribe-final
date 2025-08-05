@@ -59,6 +59,7 @@ const chatbotFlow = ai.defineFlow(
   },
   async (input) => {
     const llmResponse = await ai.generate({
+      model: 'gemini-pro',
       prompt: input.message,
       system: CONTEXT,
     });

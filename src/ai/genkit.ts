@@ -11,7 +11,7 @@ export const ai = genkit({
       apiKey:
         process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('YOUR_GEMINI_API_KEY')
           ? process.env.GEMINI_API_KEY
-          : 'AIzaSyDo3ahg4cUTIHMNkU_NadC3cQ7OXt-D4HI',
+          : 'AIzaSyCmOfCe0RZ8PH85OYuqnsRbg0wZZorDCFE',
     }),
   ],
 });

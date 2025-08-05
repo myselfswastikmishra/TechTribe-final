@@ -73,7 +73,11 @@ export function Chatbot() {
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+        const scrollEl = scrollAreaRef.current;
+        // A short delay helps ensure the DOM has updated before we scroll
+        setTimeout(() => {
+           scrollEl.scrollTop = scrollEl.scrollHeight;
+        }, 50)
     }
   }, [messages, isLoading])
 
