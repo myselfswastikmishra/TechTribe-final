@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "./ui/card"
 import { Input } from "./ui/input"
-import { ScrollArea } from "./ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { chat } from "@/ai/flows/chatbot-flow"
 import { useToast } from "@/hooks/use-toast"
@@ -82,7 +81,7 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
 
 
     return (
-        <div className="flex flex-col gap-2 text-sm" style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}>
+        <div className="flex flex-col gap-2 text-sm" style={{ overflowWrap: 'break-word' }}>
             {groupedBlocks.map((block, blockIndex) => {
                 if (block.type === 'list') {
                     return (
@@ -220,7 +219,7 @@ export function Chatbot() {
 
        <div className={cn(
         "fixed inset-0 z-[100] transition-all duration-300",
-        "md:inset-auto md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6",
+        "md:inset-auto md:w-[440px] md:h-[70vh] md:max-h-[700px] md:bottom-6 md:right-6",
         !isOpen ? "scale-0 pointer-events-none opacity-0" : "scale-100 pointer-events-auto opacity-100"
       )}>
         <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
@@ -237,41 +236,37 @@ export function Chatbot() {
             </Button>
           </CardHeader>
 
-          <CardContent className="flex-grow p-0 overflow-y-auto">
-             <ScrollArea className="h-full" viewportRef={scrollAreaRef}>
-                <div className="p-4 space-y-4">
-                  {messages.map((message) => (
-                    <div 
-                        key={message.id} 
-                        className={cn(
-                            "flex w-full items-start gap-3",
-                            message.sender === 'user' && 'justify-end'
-                        )}
-                    >
-                      {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
-                      <div className={cn(
-                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
-                        "overflow-hidden" /* Prevents content from breaking out */,
-                        message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
-                      )}>
-                        <BotMessageContent text={message.text} />
-                      </div>
-                    </div>
-                  ))}
-                  {isLoading && (
-                    <div className="flex items-start gap-3 justify-start">
-                        <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
-                        <div className="p-2.5 rounded-lg shadow-sm bg-muted">
-                            <div className="flex items-center space-x-1.5">
-                              <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0ms'}}></span>
-                              <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '200ms'}}></span>
-                              <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '400ms'}}></span>
-                            </div>
+          <CardContent ref={scrollAreaRef} className="flex-grow p-4 space-y-4 overflow-y-auto">
+              {messages.map((message) => (
+                <div 
+                    key={message.id} 
+                    className={cn(
+                        "flex w-full items-start gap-3",
+                        message.sender === 'user' && 'justify-end'
+                    )}
+                >
+                  {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
+                  <div className={cn(
+                    "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
+                    "overflow-hidden",
+                    message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                  )}>
+                    <BotMessageContent text={message.text} />
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex items-start gap-3 justify-start">
+                    <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
+                    <div className="p-2.5 rounded-lg shadow-sm bg-muted">
+                        <div className="flex items-center space-x-1.5">
+                          <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0ms'}}></span>
+                          <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '200ms'}}></span>
+                          <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '400ms'}}></span>
                         </div>
                     </div>
-                  )}
                 </div>
-            </ScrollArea>
+              )}
           </CardContent>
 
           <CardFooter className="flex-shrink-0 p-4 border-t bg-background">
@@ -283,7 +278,7 @@ export function Chatbot() {
                         <p className="text-sm text-center text-muted-foreground">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal text-center" onClick={(e) => handleSubmit(e, q)}>
+                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
                                     {q}
                                 </Button>
                             ))}
@@ -331,5 +326,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
