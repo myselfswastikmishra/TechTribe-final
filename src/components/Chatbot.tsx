@@ -334,5 +334,6 @@ export function Chatbot() {
       </div>
     </>
   )
+}
 
     
