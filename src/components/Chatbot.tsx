@@ -243,12 +243,18 @@ export function Chatbot() {
              <ScrollArea className="h-full" viewportRef={scrollAreaRef}>
                 <div className="p-4 space-y-4">
                   {messages.map((message) => (
-                    <div key={message.id} className={cn("flex w-full items-start gap-3")}>
+                    <div 
+                        key={message.id} 
+                        className={cn(
+                            "flex w-full items-start gap-3",
+                            message.sender === 'user' && 'justify-end'
+                        )}
+                    >
                       {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
                         "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
-                        message.sender === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted",
-                        "break-words overflow-hidden"
+                        message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted",
+                        "overflow-hidden break-words"
                       )}>
                         <BotMessageContent text={message.text} />
                       </div>
@@ -294,7 +300,6 @@ export function Chatbot() {
                             {navLinks.map(link => (
                                 <Button key={link.href} variant="outline" size="sm" asChild>
                                     <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
-
                                 </Button>
                             ))}
                         </div>
@@ -328,5 +333,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
