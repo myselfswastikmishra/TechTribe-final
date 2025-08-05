@@ -6,7 +6,7 @@ import { SendMessageInputSchema } from "./ContactFormWrapper"
 
 // This configuration uses a fallback mechanism.
 // It will first try to use the DISCORD_WEBHOOK_URL from your environment variables (for production).
-// If it's not found, it will fall back to the hardcoded key (for local/Firebase Studio development).
+// If it's not found, it will fall back to the hardcoded key (for local development).
 const DISCORD_WEBHOOK_URL = (process.env.DISCORD_WEBHOOK_URL && !process.env.DISCORD_WEBHOOK_URL.includes('YOUR_DISCORD_WEBHOOK_URL'))
     ? process.env.DISCORD_WEBHOOK_URL
     : 'https://discord.com/api/webhooks/1402024050557190258/OQemUD9p8nzjpTP5QuKOGKgGhV76Cngoh0Ua3c0wv71OHQyYXiFDijlLkEra4e4hxO_t';

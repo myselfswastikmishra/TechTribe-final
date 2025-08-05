@@ -32,7 +32,7 @@ Your website is built with some of the coolest and most modern tools available! 
 | **TypeScript**      | A helpful robot that checks our code for mistakes before they happen. |
 | **Tailwind CSS**    | A giant box of crayons for styling everything to look amazing.        |
 | **ShadCN/UI**       | Pre-made Lego pieces (like buttons and cards) that look great.        |
-| **Genkit & Google AI** | The AI "brain" that helps with smart features on the site.          |
+| **AI Toolkit**      | The "brain" that helps with smart features on the site.               |
 | **Discord Webhooks**| A magic mailbox that sends form submissions straight to Discord.      |
 
 ---
@@ -44,7 +44,7 @@ Want to play around with the website on your own computer? Here’s how!
 ### **Step 1: Get Your Secret Keys (Important!)**
 
 Your website uses two special "keys" to make its forms work.
--   **Google AI Key:** For the AI features in the "Start a Chapter" form.
+-   **AI Service Key:** For the smart features in the "Start a Chapter" form.
 -   **Discord Webhook URL:** To send form notifications to your Discord server.
 
 **For this project to work perfectly, you need to tell it what your keys are.**
@@ -53,8 +53,8 @@ Your website uses two special "keys" to make its forms work.
 2.  Open that `.env` file and copy-paste the following inside it:
 
     ```
-    # Get your Google AI key from here: https://aistudio.google.com/app/apikey
-    GEMINI_API_KEY="PASTE_YOUR_GOOGLE_AI_KEY_HERE"
+    # You can get an API key from a service like Google AI Studio
+    GEMINI_API_KEY="PASTE_YOUR_AI_SERVICE_KEY_HERE"
 
     # Learn how to create a Discord Webhook here: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
     DISCORD_WEBHOOK_URL="PASTE_YOUR_DISCORD_WEBHOOK_URL_HERE"
@@ -86,7 +86,7 @@ This part handles the "brains" for your forms.
 ```bash
 npm run genkit:watch
 ```
-Keep this terminal open to see if the AI is working correctly.
+Keep this terminal open to see if the AI service is working correctly.
 
 ---
 
@@ -100,7 +100,7 @@ Ready to show your website to the world? You'll use a service like **Vercel** or
     Just like you did for your local computer, you **must** tell your hosting service what your secret keys are. If you don't, your forms won't work on the live website.
 
     In your Vercel or Netlify project settings, find the section for **Environment Variables** and add these two:
-    -   `GEMINI_API_KEY` - Paste your Google AI key here.
+    -   `GEMINI_API_KEY` - Paste your AI service key here.
     -   `DISCORD_WEBHOOK_URL` - Paste your Discord Webhook URL here.
 
 ---
@@ -173,7 +173,7 @@ Your website has two forms, and they are both very smart!
 
 3.  **The Server Does Its Job:**
     - The server code takes the form data.
-    - If it's the "Start a Chapter" form, it first sends the data to the **Genkit AI flow** for processing.
+    - If it's the "Start a Chapter" form, it first sends the data to the **AI service** for processing.
     - Then, it formats a nice message and sends it to your **Discord channel** using the Webhook URL you provided.
 
 4.  **The User Gets a Confirmation:**

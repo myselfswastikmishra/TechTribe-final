@@ -81,7 +81,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
     if (!response.ok) {
       console.error("Failed to send chapter application notification to Discord.", { status: response.status, statusText: response.statusText });
        // The application was successful, but the notification failed. This is a partial success.
-      return { success: true, message: "Your application was received, but the final notification to the admin could not be sent. Please verify the Discord Webhook URL on the server." }
+      return { success: true, message: "Your application was received, a notification could not be sent. Please verify the Discord Webhook URL on the server." }
     }
 
     // This is the full success path.
