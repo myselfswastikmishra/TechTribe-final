@@ -38,45 +38,68 @@ const navLinks = [
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const renderTextWithLinks = (line: string) => {
+    const renderTextWithLinks = (line: string, key: number) => {
         const parts = line.split(urlRegex);
-        return parts.map((part, index) => 
-            urlRegex.test(part) ? (
-                <a
-                    key={index}
-                    href={part}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary underline hover:text-primary/80"
-                >
-                    {part}
-                </a>
-            ) : (
-                <React.Fragment key={index}>{part}</React.Fragment>
-            )
+        return (
+            <React.Fragment key={key}>
+                {parts.map((part, index) =>
+                    urlRegex.test(part) ? (
+                        <a
+                            key={index}
+                            href={part}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline hover:text-primary/80"
+                        >
+                            {part}
+                        </a>
+                    ) : (
+                        <React.Fragment key={index}>{part}</React.Fragment>
+                    )
+                )}
+            </React.Fragment>
         );
     };
 
-    const blocks = text.split('\n\n');
+    const blocks = text.split('\n').map(line => line.trim());
+    const groupedBlocks: (string | string[])[] = [];
+
+    let currentList: string[] = [];
+
+    blocks.forEach(block => {
+        const isListItem = /^\s*[-•*]\s/.test(block);
+        if (isListItem) {
+            currentList.push(block.replace(/^\s*[-•*]\s/, ''));
+        } else {
+            if (currentList.length > 0) {
+                groupedBlocks.push([...currentList]);
+                currentList = [];
+            }
+            if (block) {
+                groupedBlocks.push(block);
+            }
+        }
+    });
+
+    if (currentList.length > 0) {
+        groupedBlocks.push([...currentList]);
+    }
 
     return (
         <div className="flex flex-col gap-2 text-sm">
-            {blocks.map((block, blockIndex) => {
-                const lines = block.split('\n');
-                if (lines.some(line => /^\s*[-•*]\s/.test(line))) {
+            {groupedBlocks.map((block, index) => {
+                if (Array.isArray(block)) {
                     return (
-                        <ul key={blockIndex} className="list-disc pl-5 space-y-1">
-                            {lines.map((line, lineIndex) => (
-                                <li key={lineIndex}>
-                                    {renderTextWithLinks(line.replace(/^\s*[-•*]\s/, ''))}
-                                </li>
+                        <ul key={index} className="list-disc pl-5 space-y-1">
+                            {block.map((item, itemIndex) => (
+                                <li key={itemIndex}>{renderTextWithLinks(item, itemIndex)}</li>
                             ))}
                         </ul>
                     );
                 }
                 return (
-                    <p key={blockIndex} className="whitespace-pre-wrap">
-                        {renderTextWithLinks(block)}
+                    <p key={index} className="whitespace-pre-wrap">
+                        {renderTextWithLinks(block, index)}
                     </p>
                 );
             })}
@@ -169,7 +192,7 @@ export function Chatbot() {
   }
 
   if (!isMounted) {
-    return null; // Return null on the server to avoid hydration errors
+    return null;
   }
 
   return (
@@ -178,7 +201,7 @@ export function Chatbot() {
         onClick={() => setIsOpen(true)} 
         size="icon" 
         className={cn(
-            "fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg transition-transform duration-300",
+            "fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg transform-gpu transition-transform duration-300",
             isOpen ? "scale-0" : "scale-100"
         )}
         aria-label="Open chat"
@@ -187,7 +210,7 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 origin-bottom-right md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4.5rem)] md:rounded-xl",
+        "fixed bottom-0 right-0 z-50 w-full h-full transform-gpu transition-transform duration-300 origin-bottom-right md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4.5rem)]",
         !isOpen ? "scale-0" : "scale-100"
       )}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
@@ -243,7 +266,7 @@ export function Chatbot() {
                         <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
+                                <Button key={q} variant="outline" size="sm" className="w-full h-auto text-left py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
                                     {q}
                                 </Button>
                             ))}
