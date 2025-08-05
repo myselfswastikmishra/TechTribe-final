@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useRef, useEffect, memo } from "react"
+import React, { useState, useRef, useEffect, memo } from "react"
 import Link from "next/link"
 import { Bot, Send, X, CornerDownLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -38,7 +38,7 @@ const navLinks = [
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const renderTextWithLinks = (part: string, key: string | number) => {
+    const renderTextWithLinks = (part: string, key: React.Key) => {
         const segments = part.split(urlRegex);
         return (
             <React.Fragment key={key}>
@@ -60,11 +60,11 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
             </React.Fragment>
         );
     };
-    
+
     const blocks = text.split('\n\n');
 
     return (
-        <div className="flex flex-col gap-2 text-sm whitespace-pre-wrap">
+        <div className="flex flex-col gap-2 text-sm">
             {blocks.map((block, blockIndex) => {
                 const lines = block.split('\n').filter(line => line.trim() !== '');
                 if (lines.every(line => line.trim().startsWith('- '))) {
@@ -79,8 +79,13 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
                     );
                 }
                 return (
-                    <p key={blockIndex}>
-                        {lines.map((line, lineIndex) => renderTextWithLinks(line, lineIndex))}
+                    <p key={blockIndex} className="whitespace-pre-wrap">
+                         {lines.map((line, lineIndex) => (
+                            <React.Fragment key={lineIndex}>
+                                {renderTextWithLinks(line, lineIndex)}
+                                <br />
+                            </React.Fragment>
+                        ))}
                     </p>
                 );
             })}
@@ -284,5 +289,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
