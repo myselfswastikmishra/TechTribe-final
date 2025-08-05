@@ -60,13 +60,14 @@ export function Chatbot() {
   const scrollViewportRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // Set initial message only once when the bot is opened for the first time
     if (isOpen && messages.length === 0) {
        setMessages([
           { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
        ]);
        setActiveAction("ask");
     }
-  }, [isOpen, messages.length]);
+  }, [isOpen]);
 
 
   useEffect(() => {
@@ -140,7 +141,7 @@ export function Chatbot() {
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -155,7 +156,7 @@ export function Chatbot() {
             </Button>
           </CardHeader>
 
-          <CardContent className="flex-grow p-0 overflow-hidden">
+          <CardContent className="flex-grow p-0 overflow-y-auto">
             <ScrollArea className="h-full" viewportRef={scrollViewportRef}>
                 <div className="space-y-6 p-4">
                   {messages.map((message) => (
