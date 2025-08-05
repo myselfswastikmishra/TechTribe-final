@@ -41,7 +41,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 }
 
 
-export default function PortfolioDetailPage({ params }: PageProps) {
+export default function PortfolioDetailPage({ params }: { params: { slug: string } }) {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
