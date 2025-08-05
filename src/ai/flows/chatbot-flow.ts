@@ -13,16 +13,12 @@ import {z} from 'genkit';
 const ChatInputSchema = z.object({
   message: z.string(),
 });
-type ChatInput = z.infer<typeof ChatInputSchema>;
 
 const ChatOutputSchema = z.object({
   answer: z.string(),
 });
 export type ChatOutput = z.infer<typeof ChatOutputSchema>;
 
-export async function chat(input: ChatInput): Promise<ChatOutput> {
-  return await chatbotFlow(input);
-}
 
 const CONTEXT = `
 You are TribeX Navigator, the friendly and helpful AI assistant for the Tech TribeX website.
@@ -72,3 +68,7 @@ const chatbotFlow = ai.defineFlow(
     return { answer: llmResponse.text };
   }
 );
+
+export async function chat(input: z.infer<typeof ChatInputSchema>): Promise<ChatOutput> {
+  return await chatbotFlow(input);
+}

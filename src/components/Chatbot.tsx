@@ -36,6 +36,7 @@ const navLinks = [
 ]
 
 function BotMessageContent({ text }: { text: string }) {
+    // Basic markdown for lists
     const parts = text.split(/(\n- .*)/g).filter(Boolean);
     return (
         <div className="flex flex-col space-y-1">
@@ -49,7 +50,6 @@ function BotMessageContent({ text }: { text: string }) {
     );
 }
 
-
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -60,22 +60,20 @@ export function Chatbot() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Set initial message only once when the bot is opened for the first time
     if (isOpen && messages.length === 0) {
-       setMessages([
-          { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
-       ]);
-       setActiveAction("ask");
+       // Wrapped in timeout to avoid state update race conditions on initial open
+       setTimeout(() => {
+           setMessages([
+              { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
+           ]);
+           setActiveAction("ask");
+       }, 0);
     }
   }, [isOpen]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-        setTimeout(() => {
-            if (scrollAreaRef.current) {
-                scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-            }
-        }, 100);
+        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages, isLoading])
 
@@ -97,7 +95,7 @@ export function Chatbot() {
             setMessages(prev => [...prev, botMessage])
             setIsLoading(false)
             setActiveAction("ask")
-        }, 500);
+        }, 500); // Simulate bot thinking
         return;
     }
 
@@ -139,7 +137,7 @@ export function Chatbot() {
         <Bot className="w-8 h-8" />
       </Button>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 transform-gpu md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100vh-6rem)] md:max-h-[700px] md:rounded-xl", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -241,5 +239,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
