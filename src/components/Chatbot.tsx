@@ -18,7 +18,7 @@ type Message = {
   sender: "user" | "bot"
 }
 
-type QuickAction = "ask" | "navigate"
+type QuickActionType = "ask" | "navigate"
 
 const predefinedQuestions: Record<string, string> = {
     "What is Tech TribeX?": "🚀 Tech TribeX is India's emerging tech-driven student community connecting, educating, and empowering tech enthusiasts nationwide!",
@@ -34,6 +34,7 @@ const navLinks = [
     { href: "/contact", label: "Contact Us" },
 ]
 
+// A component to correctly render text with links, lists, and proper wrapping.
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
@@ -81,7 +82,7 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
 
 
     return (
-        <div className="flex flex-col gap-2 text-sm" style={{ overflowWrap: 'break-word' }}>
+        <div className="text-sm" style={{ overflowWrap: 'break-word', maxWidth: '100%' }}>
             {groupedBlocks.map((block, blockIndex) => {
                 if (block.type === 'list') {
                     return (
@@ -111,7 +112,7 @@ export function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [activeAction, setActiveAction] = useState<QuickAction | null>(null)
+  const [activeAction, setActiveAction] = useState<QuickActionType | null>(null)
   const { toast } = useToast()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -123,7 +124,7 @@ export function Chatbot() {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      inputRef.current?.focus();
+      setTimeout(() => inputRef.current?.focus(), 100);
     } else {
       document.body.style.overflow = '';
     }
@@ -151,7 +152,7 @@ export function Chatbot() {
            scrollEl.scrollTop = scrollEl.scrollHeight;
         }, 50)
     }
-  }, [messages, isLoading])
+  }, [messages, isLoading, activeAction])
 
   const handleSubmit = async (e: React.FormEvent, question?: string) => {
     e.preventDefault()
@@ -194,14 +195,15 @@ export function Chatbot() {
     }
   }
 
-  const handleQuickAction = (action: QuickAction) => {
+  const handleQuickAction = (action: QuickActionType) => {
     setActiveAction(action);
     if (action === "navigate") {
-      setMessages(prev => [...prev, {
-        id: `nav-prompt-${Date.now().toString()}-${Math.random().toString()}`,
-        text: "Great! Where would you like to go? 🚀",
-        sender: "bot"
-      }]);
+      const newNavMessage: Message = {
+          id: `nav-prompt-${Date.now().toString()}-${Math.random().toString()}`,
+          text: "Great! Where would you like to go? 🚀",
+          sender: "bot"
+      };
+      setMessages(prev => [...prev, newNavMessage]);
     }
   };
 
@@ -224,20 +226,20 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-[100] bg-black/50 transition-opacity duration-300",
+        "fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transition-opacity duration-300",
         !isOpen ? "pointer-events-none opacity-0" : "pointer-events-auto opacity-100"
        )}>
         <Card className={cn(
-          "flex flex-col h-full overflow-hidden shadow-xl",
-          "md:absolute md:w-[440px] md:h-[70vh] md:max-h-[700px] md:bottom-6 md:right-6 md:rounded-xl"
+          "fixed flex flex-col h-full w-full overflow-hidden shadow-xl", // Mobile: full screen
+          "md:h-[70vh] md:max-h-[700px] md:w-[440px] md:rounded-xl md:bottom-6 md:right-6 md:inset-auto" // Desktop: floating window
         )}>
-          <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
+          <CardHeader className="flex flex-row items-center justify-between flex-shrink-0 p-4 border-b">
             <div className="flex items-center gap-3">
               <Avatar>
                  <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="bot avatar" />
                 <AvatarFallback>TN</AvatarFallback>
               </Avatar>
-              <CardTitle className="font-headline">TribeX Navigator</CardTitle>
+              <CardTitle className="font-headline text-lg">TribeX Navigator</CardTitle>
             </div>
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
               <X className="w-5 h-5" />
@@ -256,7 +258,6 @@ export function Chatbot() {
                   {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                   <div className={cn(
                     "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
-                    "overflow-hidden break-words",
                     message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                   )}>
                     <BotMessageContent text={message.text} />
@@ -282,7 +283,7 @@ export function Chatbot() {
                         <p className="text-sm text-center text-muted-foreground">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
+                                <Button key={q} variant="outline" size="sm" className="w-full h-auto text-center justify-center py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
                                     {q}
                                 </Button>
                             ))}
@@ -318,6 +319,7 @@ export function Chatbot() {
                     placeholder="Ask me anything..."
                     disabled={isLoading}
                     autoComplete="off"
+                    className="text-base"
                   />
                   <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
                       {isLoading ? (
@@ -333,5 +335,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
