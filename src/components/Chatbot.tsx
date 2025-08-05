@@ -38,48 +38,57 @@ const navLinks = [
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const renderTextWithLinks = (line: string) => {
+    const renderTextWithLinks = (line: string, key: number) => {
         const parts = line.split(urlRegex);
-        return parts.map((part, index) =>
-            urlRegex.test(part) ? (
-                <a
-                    key={index}
-                    href={part}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary underline hover:text-primary/80"
-                >
-                    {part}
-                </a>
-            ) : (
-                <React.Fragment key={index}>{part}</React.Fragment>
-            )
+        return (
+            <React.Fragment key={key}>
+                {parts.map((part, index) =>
+                    urlRegex.test(part) ? (
+                        <a
+                            key={index}
+                            href={part}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline hover:text-primary/80"
+                        >
+                            {part}
+                        </a>
+                    ) : (
+                        part
+                    )
+                )}
+            </React.Fragment>
         );
     };
 
-    const blocks = text.split('\n').filter(line => line.trim() !== '');
-    
-    const content = [];
-    let listItems: string[] = [];
+    const blocks = text.split('\n\n').map(block => block.trim()).filter(Boolean);
 
-    for (const block of blocks) {
-        const isListItem = /^\s*[-•*]\s/.test(block);
-        if (isListItem) {
-            listItems.push(block.replace(/^\s*[-•*]\s/, ''));
-        } else {
-            if (listItems.length > 0) {
-                content.push(<ul key={content.length} className="list-disc pl-5 space-y-1">{listItems.map((item, i) => <li key={i}>{renderTextWithLinks(item)}</li>)}</ul>);
-                listItems = [];
-            }
-            content.push(<p key={content.length} className="whitespace-pre-wrap">{renderTextWithLinks(block)}</p>);
-        }
-    }
+    return (
+        <div className="flex flex-col gap-2 text-sm">
+            {blocks.map((block, blockIndex) => {
+                const lines = block.split('\n');
+                const isList = lines.some(line => /^\s*[-•*]\s/.test(line));
 
-    if (listItems.length > 0) {
-        content.push(<ul key={content.length} className="list-disc pl-5 space-y-1">{listItems.map((item, i) => <li key={i}>{renderTextWithLinks(item)}</li>)}</ul>);
-    }
-    
-    return <div className="flex flex-col gap-2 text-sm">{content}</div>;
+                if (isList) {
+                    return (
+                        <ul key={blockIndex} className="list-disc pl-5 space-y-1">
+                            {lines.map((item, itemIndex) => (
+                                <li key={itemIndex}>
+                                    {renderTextWithLinks(item.replace(/^\s*[-•*]\s/, ''), itemIndex)}
+                                </li>
+                            ))}
+                        </ul>
+                    );
+                }
+
+                return (
+                    <p key={blockIndex} className="whitespace-pre-wrap">
+                        {renderTextWithLinks(block, blockIndex)}
+                    </p>
+                );
+            })}
+        </div>
+    );
 });
 
 
@@ -185,11 +194,10 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4.5rem)]",
-        "transition-transform duration-300 origin-bottom-right",
+        "fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 origin-bottom-right md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4.5rem)] md:bottom-6 md:right-6",
         !isOpen ? "scale-0" : "scale-100"
       )}>
-        <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
+        <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
               <Avatar>
@@ -205,10 +213,10 @@ export function Chatbot() {
 
           <CardContent className="flex-grow p-0 overflow-y-auto">
              <ScrollArea className="h-full" viewportRef={scrollAreaRef}>
-                <div className="space-y-4 p-4">
+                <div className="p-4 space-y-4">
                   {messages.map((message) => (
                     <div key={message.id} className={cn("flex items-start gap-3", message.sender === "user" ? "justify-end" : "justify-start")}>
-                      {message.sender === "bot" && <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>}
+                      {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
                         "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
                         message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
@@ -219,12 +227,12 @@ export function Chatbot() {
                   ))}
                   {isLoading && (
                     <div className="flex items-start gap-3 justify-start">
-                        <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>
-                        <div className="bg-muted px-3.5 py-2.5 rounded-lg shadow-sm">
+                        <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>
+                        <div className="p-2.5 rounded-lg shadow-sm bg-muted">
                             <div className="flex items-center space-x-1.5">
-                              <span className="h-1.5 w-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0ms'}}></span>
-                              <span className="h-1.5 w-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '200ms'}}></span>
-                              <span className="h-1.5 w-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '400ms'}}></span>
+                              <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0ms'}}></span>
+                              <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '200ms'}}></span>
+                              <span className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '400ms'}}></span>
                             </div>
                         </div>
                     </div>
@@ -233,13 +241,13 @@ export function Chatbot() {
             </ScrollArea>
           </CardContent>
 
-          <CardFooter className="p-4 border-t bg-background flex-shrink-0">
+          <CardFooter className="flex-shrink-0 p-4 border-t bg-background">
             <div className="w-full">
                 {activeAction && !isLoading && (
                 <div className="mb-3 space-y-2.5 transition-all duration-300">
                     {activeAction === 'ask' && (
                     <>
-                        <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
+                        <p className="text-sm text-center text-muted-foreground">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
                                 <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
@@ -252,7 +260,7 @@ export function Chatbot() {
                     )}
                     {activeAction === 'navigate' && (
                     <>
-                        <p className="text-sm text-muted-foreground text-center">Where would you like to go?</p>
+                        <p className="text-sm text-center text-muted-foreground">Where would you like to go?</p>
                         <div className="grid grid-cols-2 gap-2">
                             {navLinks.map(link => (
                                 <Button key={link.href} variant="outline" size="sm" asChild>
@@ -262,7 +270,7 @@ export function Chatbot() {
                             ))}
                         </div>
                         <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => setActiveAction('ask')}>
-                            <CornerDownLeft className="mr-2 h-4 w-4"/> Back to questions
+                            <CornerDownLeft className="w-4 h-4 mr-2"/> Back to questions
                         </Button>
                     </>
                     )}
@@ -278,7 +286,7 @@ export function Chatbot() {
                     />
                     <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
                         {isLoading ? (
-                            <div className="h-5 w-5 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin"></div>
+                            <div className="w-5 h-5 border-2 rounded-full border-primary-foreground/20 border-t-primary-foreground animate-spin"></div>
                         ) : (
                             <Send className="w-5 h-5" />
                         )}
