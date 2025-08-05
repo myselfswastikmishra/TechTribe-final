@@ -34,9 +34,12 @@ const getImagesPerSlide = () => {
 
 export const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [imagesPerSlide, setImagesPerSlide] = useState(getImagesPerSlide());
+    // Initialize with a default value on the server and update on the client in useEffect
+    const [imagesPerSlide, setImagesPerSlide] = useState(3);
+    const [isMounted, setIsMounted] = useState(false);
 
      useEffect(() => {
+        setIsMounted(true);
         const handleResize = () => {
             setImagesPerSlide(getImagesPerSlide());
         };
@@ -49,13 +52,21 @@ export const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
     }, []);
 
     const slides = useMemo(() => {
+        if (!isMounted) {
+            // Return a default slide structure for SSR to prevent mismatch
+            const result = [];
+            for (let i = 0; i < images.length; i += 3) {
+                result.push(images.slice(i, i + 3));
+            }
+            return result;
+        }
         const result = [];
         if (imagesPerSlide === 0) return [];
         for (let i = 0; i < images.length; i += imagesPerSlide) {
             result.push(images.slice(i, i + imagesPerSlide));
         }
         return result;
-    }, [images, imagesPerSlide]);
+    }, [images, imagesPerSlide, isMounted]);
 
     useEffect(() => {
         if (slides.length <= 1) return;
@@ -72,6 +83,8 @@ export const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
         2: "grid-cols-2",
         3: "grid-cols-3",
     }
+    
+    const currentGridClass = isMounted ? (gridClasses[imagesPerSlide] || 'grid-cols-3') : 'grid-cols-3';
 
 
     return (
@@ -81,7 +94,7 @@ export const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
                 {slides.map((slide, slideIndex) => (
-                    <div key={slideIndex} className={cn("flex-shrink-0 w-full h-full grid gap-4", gridClasses[imagesPerSlide] || 'grid-cols-3')}>
+                    <div key={slideIndex} className={cn("flex-shrink-0 w-full h-full grid gap-4", currentGridClass)}>
                         {slide.map((image, imageIndex) => (
                              <div key={imageIndex} className="relative w-full h-full rounded-lg overflow-hidden">
                                 <Image
