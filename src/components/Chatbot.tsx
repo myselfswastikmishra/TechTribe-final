@@ -38,62 +38,52 @@ const navLinks = [
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const renderTextWithLinks = (line: string) => {
+    const renderTextWithLinks = (line: string, key: number) => {
         const parts = line.split(urlRegex);
-        return parts.map((part, index) =>
-            urlRegex.test(part) ? (
-                <a
-                    key={index}
-                    href={part}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary underline hover:text-primary/80"
-                >
-                    {part}
-                </a>
-            ) : (
-                part
-            )
+        return (
+            <React.Fragment key={key}>
+                {parts.map((part, i) =>
+                    urlRegex.test(part) ? (
+                        <a
+                            key={i}
+                            href={part}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline hover:text-primary/80"
+                        >
+                            {part}
+                        </a>
+                    ) : (
+                        part
+                    )
+                )}
+            </React.Fragment>
         );
     };
 
-    const blocks = text.split('\n').map(line => line.trim());
-    const groupedBlocks: (string | string[])[] = [];
-    let currentList: string[] = [];
-
-    blocks.forEach(block => {
-        if (/^\s*[-•*]\s/.test(block)) {
-            currentList.push(block.replace(/^\s*[-•*]\s/, ''));
-        } else {
-            if (currentList.length > 0) {
-                groupedBlocks.push(currentList);
-                currentList = [];
-            }
-            if (block) {
-                groupedBlocks.push(block);
-            }
-        }
-    });
-
-    if (currentList.length > 0) {
-        groupedBlocks.push(currentList);
-    }
+    const blocks = text.split('\n\n');
 
     return (
         <div className="flex flex-col gap-2 text-sm">
-            {groupedBlocks.map((block, index) => {
-                if (Array.isArray(block)) {
+            {blocks.map((block, blockIndex) => {
+                const lines = block.split('\n');
+                const isList = lines.every(line => /^\s*[-•*]\s/.test(line));
+
+                if (isList) {
                     return (
-                        <ul key={index} className="list-disc pl-5 space-y-1">
-                            {block.map((item, itemIndex) => (
-                                <li key={itemIndex}>{renderTextWithLinks(item)}</li>
+                        <ul key={blockIndex} className="list-disc pl-5 space-y-1">
+                            {lines.map((item, itemIndex) => (
+                                <li key={itemIndex}>
+                                    {renderTextWithLinks(item.replace(/^\s*[-•*]\s/, ''), itemIndex)}
+                                </li>
                             ))}
                         </ul>
                     );
                 }
+
                 return (
-                    <p key={index} className="whitespace-pre-wrap">
-                        {renderTextWithLinks(block)}
+                    <p key={blockIndex} className="whitespace-pre-wrap">
+                        {lines.map((line, lineIndex) => renderTextWithLinks(line, lineIndex))}
                     </p>
                 );
             })}
@@ -215,7 +205,7 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed bottom-0 right-0 z-50 w-full h-full transform-gpu transition-transform duration-300 origin-bottom-right md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6",
+        "fixed inset-0 z-50 transform-gpu transition-transform duration-300 origin-bottom-right md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
         !isOpen ? "scale-0 pointer-events-none" : "scale-100 pointer-events-auto"
       )}>
         <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
@@ -236,11 +226,11 @@ export function Chatbot() {
              <ScrollArea className="h-full" viewportRef={scrollAreaRef}>
                 <div className="p-4 space-y-4">
                   {messages.map((message) => (
-                    <div key={message.id} className={cn("flex w-full items-start gap-3", message.sender === "user" ? "justify-end" : "justify-start")}>
+                    <div key={message.id} className={cn("flex w-full items-start gap-3")}>
                       {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
                         "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
-                        message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                        message.sender === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted"
                       )}>
                         <BotMessageContent text={message.text} />
                       </div>
@@ -271,7 +261,7 @@ export function Chatbot() {
                         <p className="text-sm text-center text-muted-foreground">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal justify-center text-center" onClick={(e) => handleSubmit(e, q)}>
+                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal text-center" onClick={(e) => handleSubmit(e, q)}>
                                     {q}
                                 </Button>
                             ))}
