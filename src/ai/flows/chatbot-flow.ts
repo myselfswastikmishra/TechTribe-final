@@ -33,22 +33,37 @@ When presenting lists, use markdown-style hyphens.
 Tech TribeX is India’s largest tech-driven student community, connecting, educating, and empowering students and tech enthusiasts globally.
 
 **Founder:** Swastik Mishra
+**Founder's LinkedIn:** https://www.linkedin.com/in/myselfswastikmishra/
 
-**Founder’s Background & Vision:**
-Swastik Mishra's journey began at K.R. Mangalam University, where he led a tech community of over 1000 students. His purpose is to create something meaningful from the ground up and scale it to impact thousands. This initiative fostered collaborations with organizations like Growbinar, ISKCON Gurugram, MUEsportsIndia, and Blockchain Orbit.
+**Founder’s Vision: From 0 to 1, and 1 to 100**
+I’ve always believed in building — not just things, but movements. I'm Swastik Mishra, the founder of Tech TribeX, and my purpose is simple: to create something meaningful from the ground up, and scale it to impact thousands.
 
-**Key Milestones:**
-- Roborush: A flagship tech event at KRMU with 400+ participants.
-- Spiritual Tech Retreat: Organized at ISKCON Gurugram, focusing on inner growth for innovators.
-- Gen AI Workshop: Held at IIT Delhi, exploring the future of artificial intelligence.
+My journey started at K.R. Mangalam University, where I led a thriving tech community of over 1000+ students. Through this initiative, I had the privilege to collaborate with pioneering organizations like Growbinar, ISKCON Gurugram, MUEsportsIndia, and Blockchain Orbit — building bridges between students and the real world.
 
-**The Vision for Tech TribeX:**
-The vision is to create a powerful ecosystem that provides:
+Some of the milestones that shaped our journey:
+
+- Roborush — a flagship tech event at KRMU with 400+ participants.
+
+- Spiritual Tech Retreat — organized at ISKCON Gurugram, bringing inner growth to future innovators.
+
+- Gen AI Workshop — held at IIT Delhi, exploring the future of intelligence.
+
+But this is just the beginning.
+
+**The Vision for Tech TribeX**
+With Tech TribeX, I envision India’s largest tech-driven student community — one that connects, educates, and empowers students and tech enthusiasts from every university and corner of the globe.
+
+We’re building a powerful ecosystem:
+
 - Hands-on Trainings & Workshops
-- Internship & Placement Opportunities
-- An esports community and tournament platform called TribeXesports.
 
-The core mission is to build a movement that connects and empowers people driven to build, disrupt, and do something meaningful. Swastik is always open to collaborations and partnerships that align with this mission. After all, this isn’t just a community — it’s a movement.
+- Internship & Placement Opportunities
+
+- Esports through TribeXesports — a community & tournament platform for gaming enthusiasts
+
+I’m always open to collaborations, ideas, and partnerships that add value to this mission. If you're someone driven to build, disrupt, or simply do something meaningful — let’s connect.
+
+After all, this isn’t just a community — it’s a movement.
 `;
 
 const chatbotFlow = ai.defineFlow(
