@@ -38,73 +38,48 @@ const navLinks = [
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const renderTextWithLinks = (line: string, key: number) => {
+    const renderTextWithLinks = (line: string) => {
         const parts = line.split(urlRegex);
-        return (
-            <React.Fragment key={key}>
-                {parts.map((part, index) =>
-                    urlRegex.test(part) ? (
-                        <a
-                            key={index}
-                            href={part}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary underline hover:text-primary/80"
-                        >
-                            {part}
-                        </a>
-                    ) : (
-                        <React.Fragment key={index}>{part}</React.Fragment>
-                    )
-                )}
-            </React.Fragment>
+        return parts.map((part, index) =>
+            urlRegex.test(part) ? (
+                <a
+                    key={index}
+                    href={part}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline hover:text-primary/80"
+                >
+                    {part}
+                </a>
+            ) : (
+                <React.Fragment key={index}>{part}</React.Fragment>
+            )
         );
     };
 
-    const blocks = text.split('\n').map(line => line.trim());
-    const groupedBlocks: (string | string[])[] = [];
+    const blocks = text.split('\n').filter(line => line.trim() !== '');
+    
+    const content = [];
+    let listItems: string[] = [];
 
-    let currentList: string[] = [];
-
-    blocks.forEach(block => {
+    for (const block of blocks) {
         const isListItem = /^\s*[-•*]\s/.test(block);
         if (isListItem) {
-            currentList.push(block.replace(/^\s*[-•*]\s/, ''));
+            listItems.push(block.replace(/^\s*[-•*]\s/, ''));
         } else {
-            if (currentList.length > 0) {
-                groupedBlocks.push([...currentList]);
-                currentList = [];
+            if (listItems.length > 0) {
+                content.push(<ul key={content.length} className="list-disc pl-5 space-y-1">{listItems.map((item, i) => <li key={i}>{renderTextWithLinks(item)}</li>)}</ul>);
+                listItems = [];
             }
-            if (block) {
-                groupedBlocks.push(block);
-            }
+            content.push(<p key={content.length} className="whitespace-pre-wrap">{renderTextWithLinks(block)}</p>);
         }
-    });
-
-    if (currentList.length > 0) {
-        groupedBlocks.push([...currentList]);
     }
 
-    return (
-        <div className="flex flex-col gap-2 text-sm">
-            {groupedBlocks.map((block, index) => {
-                if (Array.isArray(block)) {
-                    return (
-                        <ul key={index} className="list-disc pl-5 space-y-1">
-                            {block.map((item, itemIndex) => (
-                                <li key={itemIndex}>{renderTextWithLinks(item, itemIndex)}</li>
-                            ))}
-                        </ul>
-                    );
-                }
-                return (
-                    <p key={index} className="whitespace-pre-wrap">
-                        {renderTextWithLinks(block, index)}
-                    </p>
-                );
-            })}
-        </div>
-    );
+    if (listItems.length > 0) {
+        content.push(<ul key={content.length} className="list-disc pl-5 space-y-1">{listItems.map((item, i) => <li key={i}>{renderTextWithLinks(item)}</li>)}</ul>);
+    }
+    
+    return <div className="flex flex-col gap-2 text-sm">{content}</div>;
 });
 
 
@@ -123,7 +98,7 @@ export function Chatbot() {
   }, []);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
+    if (isOpen && messages.length === 0 && isMounted) {
         const timer = setTimeout(() => {
            setMessages([
               { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
@@ -132,7 +107,7 @@ export function Chatbot() {
        }, 100);
        return () => clearTimeout(timer)
     }
-  }, [isOpen, messages.length]);
+  }, [isOpen, messages.length, isMounted]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -210,7 +185,8 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed bottom-0 right-0 z-50 w-full h-full transform-gpu transition-transform duration-300 origin-bottom-right md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4.5rem)]",
+        "fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4.5rem)]",
+        "transition-transform duration-300 origin-bottom-right",
         !isOpen ? "scale-0" : "scale-100"
       )}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
@@ -266,7 +242,7 @@ export function Chatbot() {
                         <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
                         <div className="space-y-2">
                             {Object.keys(predefinedQuestions).map(q => (
-                                <Button key={q} variant="outline" size="sm" className="w-full h-auto text-left py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
+                                <Button key={q} variant="outline" size="sm" className="w-full h-auto py-2 whitespace-normal" onClick={(e) => handleSubmit(e, q)}>
                                     {q}
                                 </Button>
                             ))}
