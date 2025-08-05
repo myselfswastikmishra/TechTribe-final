@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Bot, Send, X, CornerDownLeft, LoaderCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
@@ -21,11 +21,11 @@ type Message = {
 
 type QuickAction = "ask" | "navigate"
 
-const quickQuestions = [
-    { text: "What is Tech TribeX?", id: "q1" },
-    { text: "Who is the founder of Tech TribeX?", id: "q2" },
-    { text: "What is the vision of Tech TribeX?", id: "q3" },
-]
+const predefinedQuestions: Record<string, string> = {
+    "What is Tech TribeX?": "🚀 Tech TribeX is India's emerging tech-driven student community connecting, educating, and empowering tech enthusiasts nationwide!",
+    "Who is the founder of Tech TribeX?": "👨‍💻 Swastik Mishra - a visionary leader who started this movement at K.R. Mangalam University, aiming to transform student tech engagement!",
+    "What is the vision of Tech TribeX?": "🌍 To build the largest student tech ecosystem offering training, opportunities, and a platform for innovation and growth!"
+}
 
 const navLinks = [
     { href: "/services", label: "Services" },
@@ -61,18 +61,20 @@ export function Chatbot() {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      setMessages([
-        { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
-      ]);
-      setActiveAction("ask");
+       setMessages([
+          { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
+       ]);
+       setActiveAction("ask");
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
 
   useEffect(() => {
     if (scrollViewportRef.current) {
         setTimeout(() => {
-            scrollViewportRef.current!.scrollTop = scrollViewportRef.current!.scrollHeight;
+            if (scrollViewportRef.current) {
+                scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
+            }
         }, 100);
     }
   }, [messages, isLoading])
@@ -87,6 +89,17 @@ export function Chatbot() {
     setInput("")
     setIsLoading(true)
     setActiveAction(null)
+
+    // Check for predefined question first
+    if (predefinedQuestions[userMessage]) {
+        setTimeout(() => {
+            const botMessage: Message = { id: (Date.now() + 1).toString(), text: predefinedQuestions[userMessage], sender: "bot" }
+            setMessages(prev => [...prev, botMessage])
+            setIsLoading(false)
+            setActiveAction("ask")
+        }, 500); // Simulate a slight delay
+        return;
+    }
 
     try {
       const result: ChatOutput = await chat({ message: userMessage })
@@ -127,7 +140,7 @@ export function Chatbot() {
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:h-[70vh] md:max-h-[700px] md:bottom-6 md:right-6 md:w-[440px] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -143,10 +156,10 @@ export function Chatbot() {
           </CardHeader>
 
           <CardContent className="flex-grow p-0 overflow-hidden">
-            <ScrollArea className="h-full">
-                <div ref={scrollViewportRef} className="space-y-4 p-4">
+            <ScrollArea className="h-full" viewportRef={scrollViewportRef}>
+                <div className="space-y-6 p-4">
                   {messages.map((message) => (
-                    <div key={message.id} className={cn("flex items-start gap-2.5", message.sender === "user" ? "justify-end" : "justify-start")}>
+                    <div key={message.id} className={cn("flex items-start gap-3", message.sender === "user" ? "justify-end" : "justify-start")}>
                       {message.sender === "bot" && <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
                         "max-w-[85%] rounded-lg px-3.5 py-2.5 text-sm shadow-sm",
@@ -157,7 +170,7 @@ export function Chatbot() {
                     </div>
                   ))}
                   {isLoading && (
-                    <div className="flex items-start gap-2.5 justify-start">
+                    <div className="flex items-start gap-3 justify-start">
                         <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>
                         <div className="bg-muted px-3.5 py-2.5 rounded-lg shadow-sm">
                             <div className="flex items-center space-x-1.5">
@@ -179,9 +192,9 @@ export function Chatbot() {
                   <>
                       <p className="text-sm text-muted-foreground text-center">Or ask one of these questions:</p>
                       <div className="space-y-2">
-                        {quickQuestions.map(q => (
-                            <Button key={q.id} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2" onClick={(e) => handleSubmit(e, q.text)}>
-                                <span className="whitespace-normal leading-tight">{q.text}</span>
+                        {Object.keys(predefinedQuestions).map(q => (
+                            <Button key={q} variant="outline" size="sm" className="w-full justify-start h-auto text-left py-2" onClick={(e) => handleSubmit(e, q)}>
+                                <span className="whitespace-normal leading-tight">{q}</span>
                             </Button>
                         ))}
                         <Button variant="outline" size="sm" className="w-full" onClick={() => handleQuickAction("navigate")}>Navigate Website</Button>
