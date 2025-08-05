@@ -35,64 +35,57 @@ const navLinks = [
     { href: "/contact", label: "Contact Us" },
 ]
 
-// Memoized and refactored component to correctly handle text parsing
 const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const renderTextWithLinks = (part: string) => {
-        const linkedParts = part.split(urlRegex);
-        return linkedParts.map((linkedPart, i) => {
-            if (linkedPart.match(urlRegex)) {
-                return (
-                    <a
-                        key={`link-${i}`}
-                        href={linkedPart}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary underline hover:text-primary/80"
-                    >
-                        {linkedPart}
-                    </a>
-                );
-            }
-            return <span key={`text-${i}`}>{linkedPart}</span>;
-        });
-    };
-
-    const lines = text.split('\n');
-    let isList = false;
-    const content = [];
-    const listItems = [];
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (line.trim().startsWith('- ')) {
-            if (!isList) isList = true;
-            listItems.push(
-                <li key={`li-${i}`}>{renderTextWithLinks(line.trim().substring(2))}</li>
-            );
-        } else {
-            if (isList) {
-                content.push(
-                    <ul key={`ul-${i}`} className="list-disc pl-5 space-y-1 my-1">
-                        {listItems.splice(0, listItems.length)}
-                    </ul>
-                );
-                isList = false;
-            }
-            content.push(<div key={`div-${i}`}>{renderTextWithLinks(line)}</div>);
-        }
-    }
-
-    if (isList) {
-        content.push(
-            <ul key="ul-end" className="list-disc pl-5 space-y-1 my-1">
-                {listItems}
-            </ul>
+    const renderTextWithLinks = (part: string, key: string | number) => {
+        const segments = part.split(urlRegex);
+        return (
+            <React.Fragment key={key}>
+                {segments.map((segment, i) =>
+                    urlRegex.test(segment) ? (
+                        <a
+                            key={i}
+                            href={segment}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline hover:text-primary/80"
+                        >
+                            {segment}
+                        </a>
+                    ) : (
+                        <span key={i}>{segment}</span>
+                    )
+                )}
+            </React.Fragment>
         );
-    }
+    };
+    
+    const blocks = text.split('\n\n');
 
-    return <div className="flex flex-col text-sm whitespace-pre-wrap">{content}</div>;
+    return (
+        <div className="flex flex-col gap-2 text-sm whitespace-pre-wrap">
+            {blocks.map((block, blockIndex) => {
+                const lines = block.split('\n').filter(line => line.trim() !== '');
+                if (lines.every(line => line.trim().startsWith('- '))) {
+                    return (
+                        <ul key={blockIndex} className="list-disc pl-5 space-y-1">
+                            {lines.map((line, lineIndex) => (
+                                <li key={lineIndex}>
+                                    {renderTextWithLinks(line.trim().substring(2), lineIndex)}
+                                </li>
+                            ))}
+                        </ul>
+                    );
+                }
+                return (
+                    <p key={blockIndex}>
+                        {lines.map((line, lineIndex) => renderTextWithLinks(line, lineIndex))}
+                    </p>
+                );
+            })}
+        </div>
+    );
 });
 
 
@@ -186,7 +179,7 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100dvh-6rem)] md:max-h-[700px] md:rounded-xl origin-bottom-right",
+        "fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 origin-bottom-right md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4.5rem)] md:rounded-xl",
         !isOpen ? "scale-0" : "scale-100"
       )}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
@@ -291,3 +284,5 @@ export function Chatbot() {
     </>
   )
 }
+
+    
