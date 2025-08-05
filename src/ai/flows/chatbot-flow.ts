@@ -59,9 +59,7 @@ const chatbotFlow = ai.defineFlow(
   },
   async (input) => {
     const llmResponse = await ai.generate({
-      prompt: `The user asks: "${input.message}".
-
-      Provide a short, friendly answer based *only* on the provided context. Use emojis!`,
+      prompt: input.message,
       system: CONTEXT,
     });
     
