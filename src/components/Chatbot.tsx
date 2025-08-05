@@ -36,7 +36,6 @@ const navLinks = [
 ]
 
 function BotMessageContent({ text }: { text: string }) {
-    // Regex to find URLs in the text
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const parts = text.split(urlRegex);
 
@@ -57,7 +56,6 @@ function BotMessageContent({ text }: { text: string }) {
                             </a>
                         );
                     }
-                    // Handle markdown lists
                     if (part.includes('\n- ')) {
                          return part.split(/(\n- .*)/g).filter(Boolean).map((subPart, subIndex) => {
                             if (subPart.startsWith('\n- ')) {
@@ -84,20 +82,18 @@ export function Chatbot() {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-       // Wrapped in timeout to avoid state update race conditions on initial open
        setTimeout(() => {
            setMessages([
               { id: "hello", text: "Hi there! I'm the TribeX Navigator. How can I help you today? 👋", sender: "bot" }
            ]);
            setActiveAction("ask");
-       }, 0);
+       }, 100);
     }
-  }, [isOpen, messages.length]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
         const scrollEl = scrollAreaRef.current;
-        // A short delay helps ensure the DOM has updated before we scroll
         setTimeout(() => {
            scrollEl.scrollTop = scrollEl.scrollHeight;
         }, 50)
@@ -115,14 +111,13 @@ export function Chatbot() {
     setIsLoading(true)
     setActiveAction(null)
 
-    // Check for predefined question first
     if (predefinedQuestions[userMessage]) {
         setTimeout(() => {
             const botMessage: Message = { id: (Date.now() + 1).toString(), text: predefinedQuestions[userMessage], sender: "bot" }
             setMessages(prev => [...prev, botMessage])
             setIsLoading(false)
             setActiveAction("ask")
-        }, 500); // Simulate bot thinking
+        }, 500);
         return;
     }
 
@@ -233,6 +228,7 @@ export function Chatbot() {
                             {navLinks.map(link => (
                                 <Button key={link.href} variant="outline" size="sm" asChild>
                                     <Link href={link.href} onClick={() => setIsOpen(false)}>{link.label}</Link>
+
                                 </Button>
                             ))}
                         </div>
