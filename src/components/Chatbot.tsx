@@ -151,7 +151,7 @@ export function Chatbot() {
            scrollEl.scrollTop = scrollEl.scrollHeight;
         }, 50)
     }
-  }, [messages, isLoading, activeAction])
+  }, [messages, isLoading])
 
   const handleSubmit = async (e: React.FormEvent, question?: string) => {
     e.preventDefault()
@@ -195,11 +195,15 @@ export function Chatbot() {
   }
 
   const handleQuickAction = (action: QuickAction) => {
-    setActiveAction(action)
+    setActiveAction(action);
     if (action === "navigate") {
-       setMessages(prev => [...prev, { id: "nav-prompt", text: "Great! Where would you like to go? 🚀", sender: "bot" }])
+      setMessages(prev => [...prev, {
+        id: `nav-prompt-${Date.now().toString()}-${Math.random().toString()}`,
+        text: "Great! Where would you like to go? 🚀",
+        sender: "bot"
+      }]);
     }
-  }
+  };
 
   if (!isMounted) {
     return null;
@@ -220,7 +224,7 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-[100] transition-opacity duration-300",
+        "fixed inset-0 z-[100] bg-black/50 transition-opacity duration-300",
         !isOpen ? "pointer-events-none opacity-0" : "pointer-events-auto opacity-100"
        )}>
         <Card className={cn(
@@ -246,7 +250,7 @@ export function Chatbot() {
                     key={message.id} 
                     className={cn(
                         "flex w-full items-start gap-3",
-                        message.sender === 'user' && 'justify-end'
+                         message.sender === 'user' && 'justify-end'
                     )}
                 >
                   {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
