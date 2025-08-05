@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { chat } from "@/ai/flows/chatbot-flow"
+import { chat, type ChatOutput } from "@/ai/flows/chatbot-flow"
 import { useToast } from "@/hooks/use-toast"
 
 type Message = {
@@ -39,14 +39,14 @@ function BotMessageContent({ text }: { text: string }) {
     // Basic markdown for lists
     const parts = text.split(/(\n- .*)/g).filter(Boolean);
     return (
-        <>
+        <div className="flex flex-col space-y-1">
             {parts.map((part, index) => {
                 if (part.startsWith('\n- ')) {
                     return <li key={index} className="ml-4 list-disc">{part.substring(3)}</li>;
                 }
                 return <p key={index} className="whitespace-pre-wrap">{part}</p>;
             })}
-        </>
+        </div>
     );
 }
 
@@ -57,7 +57,7 @@ export function Chatbot() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeAction, setActiveAction] = useState<QuickAction | null>(null)
   const { toast } = useToast()
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const scrollViewportRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -66,15 +66,14 @@ export function Chatbot() {
       ]);
       setActiveAction("ask");
     }
-  }, [isOpen, messages.length]);
+  }, [isOpen]);
 
 
   useEffect(() => {
-    const scrollViewport = scrollAreaRef.current?.querySelector("div[data-radix-scroll-area-viewport]");
-    if (scrollViewport) {
-      setTimeout(() => {
-        scrollViewport.scrollTop = scrollViewport.scrollHeight;
-      }, 100);
+    if (scrollViewportRef.current) {
+        setTimeout(() => {
+            scrollViewportRef.current!.scrollTop = scrollViewportRef.current!.scrollHeight;
+        }, 100);
     }
   }, [messages, isLoading])
 
@@ -90,7 +89,7 @@ export function Chatbot() {
     setActiveAction(null)
 
     try {
-      const result = await chat({ message: userMessage })
+      const result: ChatOutput = await chat({ message: userMessage })
       const botMessage: Message = { id: (Date.now() + 1).toString(), text: result.answer, sender: "bot" }
       setMessages(prev => [...prev, botMessage])
     } catch (error) {
@@ -128,9 +127,9 @@ export function Chatbot() {
         </Button>
       </div>
 
-      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:bottom-6 md:right-6 md:w-[440px] md:h-auto md:max-h-[85vh] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
+      <div className={cn("fixed bottom-0 right-0 z-50 w-full h-full md:h-[70vh] md:max-h-[700px] md:bottom-6 md:right-6 md:w-[440px] transition-transform duration-300 transform-gpu", !isOpen ? "translate-y-[110%] md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100")}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
               <Avatar>
                  <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="bot avatar" />
@@ -143,9 +142,9 @@ export function Chatbot() {
             </Button>
           </CardHeader>
 
-          <CardContent className="flex-grow p-0 overflow-y-auto">
-            <ScrollArea ref={scrollAreaRef} className="h-full p-4">
-                <div className="space-y-4">
+          <CardContent className="flex-grow p-0 overflow-hidden">
+            <ScrollArea className="h-full">
+                <div ref={scrollViewportRef} className="space-y-4 p-4">
                   {messages.map((message) => (
                     <div key={message.id} className={cn("flex items-start gap-2.5", message.sender === "user" ? "justify-end" : "justify-start")}>
                       {message.sender === "bot" && <Avatar className="w-8 h-8 flex-shrink-0"><AvatarFallback>T</AvatarFallback></Avatar>}
@@ -173,7 +172,7 @@ export function Chatbot() {
             </ScrollArea>
           </CardContent>
 
-          <div className="p-4 border-t bg-background">
+          <div className="p-4 border-t bg-background flex-shrink-0">
             {activeAction && !isLoading && (
               <div className="mb-3 space-y-2.5 transition-all duration-300">
                 {activeAction === 'ask' && (
