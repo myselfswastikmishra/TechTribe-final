@@ -2,12 +2,12 @@
 import type { Metadata } from 'next'
 import { spaceGrotesk } from '@/lib/fonts'
 import './globals.css'
-import { Toaster } from "@/components/ui/toaster"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import { cn } from '@/lib/utils'
 import { Chatbot } from '@/components/Chatbot'
+import { ToasterWrapper } from '@/components/ToasterWrapper'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://techtribe.com'),
@@ -52,7 +52,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <Chatbot />
-          <Toaster />
+          <ToasterWrapper />
         </ThemeProvider>
       </body>
     </html>
