@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, memo } from "react"
 import Link from "next/link"
 import { Bot, Send, X, CornerDownLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -35,44 +35,65 @@ const navLinks = [
     { href: "/contact", label: "Contact Us" },
 ]
 
-function BotMessageContent({ text }: { text: string }) {
+// Memoized and refactored component to correctly handle text parsing
+const BotMessageContent = memo(function BotMessageContent({ text }: { text: string }) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    const parts = text.split(urlRegex);
-
-    const content = parts.map((part, index) => {
-        if (part.match(urlRegex)) {
-            return (
-                <a
-                    key={index}
-                    href={part}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary underline hover:text-primary/80"
-                >
-                    {part}
-                </a>
-            );
-        }
-
-        const textParts = part.split('\n').map((line, lineIndex) => {
-            if (line.trim().startsWith('- ')) {
+    const renderTextWithLinks = (part: string) => {
+        const linkedParts = part.split(urlRegex);
+        return linkedParts.map((linkedPart, i) => {
+            if (linkedPart.match(urlRegex)) {
                 return (
-                    <ul key={`${index}-${lineIndex}`} className="list-disc pl-5 space-y-1 my-1">
-                        {line.split('\n').filter(l => l.trim().startsWith('- ')).map((item, itemIndex) => (
-                           <li key={itemIndex}>{item.trim().substring(2)}</li>
-                        ))}
-                    </ul>
+                    <a
+                        key={`link-${i}`}
+                        href={linkedPart}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary underline hover:text-primary/80"
+                    >
+                        {linkedPart}
+                    </a>
                 );
             }
-            return <span key={`${index}-${lineIndex}`}>{line}<br/></span>;
+            return <span key={`text-${i}`}>{linkedPart}</span>;
         });
+    };
 
-        return <span key={index}>{textParts}</span>;
-    });
+    const lines = text.split('\n');
+    let isList = false;
+    const content = [];
+    const listItems = [];
 
-    return <div className="flex flex-col space-y-1 text-sm whitespace-pre-wrap">{content}</div>;
-}
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (line.trim().startsWith('- ')) {
+            if (!isList) isList = true;
+            listItems.push(
+                <li key={`li-${i}`}>{renderTextWithLinks(line.trim().substring(2))}</li>
+            );
+        } else {
+            if (isList) {
+                content.push(
+                    <ul key={`ul-${i}`} className="list-disc pl-5 space-y-1 my-1">
+                        {listItems.splice(0, listItems.length)}
+                    </ul>
+                );
+                isList = false;
+            }
+            content.push(<div key={`div-${i}`}>{renderTextWithLinks(line)}</div>);
+        }
+    }
+
+    if (isList) {
+        content.push(
+            <ul key="ul-end" className="list-disc pl-5 space-y-1 my-1">
+                {listItems}
+            </ul>
+        );
+    }
+
+    return <div className="flex flex-col text-sm whitespace-pre-wrap">{content}</div>;
+});
 
 
 export function Chatbot() {
@@ -164,9 +185,9 @@ export function Chatbot() {
         <Bot className="w-8 h-8" />
       </Button>
 
-      <div className={cn(
-        "fixed bottom-0 right-0 z-50 w-full h-full transform-gpu transition-transform duration-300 md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100dvh-6rem)] md:max-h-[700px] md:rounded-xl",
-        !isOpen ? "translate-y-full md:translate-y-0 md:scale-0" : "translate-y-0 md:scale-100"
+       <div className={cn(
+        "fixed bottom-0 right-0 z-50 w-full h-full transition-transform duration-300 md:bottom-6 md:right-6 md:w-[440px] md:h-[calc(100dvh-6rem)] md:max-h-[700px] md:rounded-xl origin-bottom-right",
+        !isOpen ? "scale-0" : "scale-100"
       )}>
         <Card className="flex flex-col h-full rounded-none md:rounded-xl shadow-xl overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between flex-shrink-0">
