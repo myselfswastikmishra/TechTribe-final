@@ -61,8 +61,6 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
         );
     };
     
-    // Process text to handle newlines and create paragraphs for blocks of text,
-    // and list items for lines starting with a hyphen.
     const blocks = text.split('\n').filter(line => line.trim() !== '');
 
     const groupedBlocks = blocks.reduce((acc, line) => {
@@ -77,8 +75,6 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
                 acc.push({ type: 'list', items: [cleanLine] });
             }
         } else {
-            // If it's not a list item, treat it as a paragraph.
-            // Each non-list line gets its own paragraph group to ensure proper spacing.
             acc.push({ type: 'paragraph', lines: [line] });
         }
         return acc;
@@ -99,7 +95,6 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
                         </ul>
                     );
                 }
-                // Render paragraphs
                 return (
                     <p key={blockIndex}>
                         {block.lines.map((line, lineIndex) => renderTextWithLinks(line, lineIndex))}
@@ -254,7 +249,7 @@ export function Chatbot() {
                     >
                       {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
-                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
+                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm break-words",
                         message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                       )}>
                         <BotMessageContent text={message.text} />
@@ -334,5 +329,3 @@ export function Chatbot() {
     </>
   )
 }
-
-    
