@@ -82,7 +82,7 @@ const BotMessageContent = memo(function BotMessageContent({ text }: { text: stri
 
 
     return (
-        <div className="flex flex-col gap-2 text-sm" style={{ overflowWrap: 'break-word' }}>
+        <div className="flex flex-col gap-2 text-sm" style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}>
             {groupedBlocks.map((block, blockIndex) => {
                 if (block.type === 'list') {
                     return (
@@ -219,7 +219,8 @@ export function Chatbot() {
       </Button>
 
        <div className={cn(
-        "fixed inset-0 z-[100] transition-all duration-300 md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6 md:inset-auto",
+        "fixed inset-0 z-[100] transition-all duration-300",
+        "md:inset-auto md:w-[440px] md:h-auto md:max-h-[calc(100dvh-4rem)] md:bottom-6 md:right-6",
         !isOpen ? "scale-0 pointer-events-none opacity-0" : "scale-100 pointer-events-auto opacity-100"
       )}>
         <Card className="flex flex-col h-full overflow-hidden shadow-xl md:rounded-xl">
@@ -249,7 +250,8 @@ export function Chatbot() {
                     >
                       {message.sender === "bot" && <Avatar className="flex-shrink-0 w-8 h-8"><AvatarFallback>T</AvatarFallback></Avatar>}
                       <div className={cn(
-                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm break-words",
+                        "max-w-[85%] rounded-lg px-3.5 py-2.5 shadow-sm",
+                        "overflow-hidden" /* Prevents content from breaking out */,
                         message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                       )}>
                         <BotMessageContent text={message.text} />
@@ -329,3 +331,5 @@ export function Chatbot() {
     </>
   )
 }
+
+    
