@@ -1,0 +1,20 @@
+diff --git a/node_modules/@opentelemetry/instrumentation-winston/build/src/instrumentation.js b/node_modules/@opentelemetry/instrumentation-winston/build/src/instrumentation.js
+index 2816e87..5c0773d 100644
+--- a/node_modules/@opentelemetry/instrumentation-winston/build/src/instrumentation.js
++++ b/node_modules/@opentelemetry/instrumentation-winston/build/src/instrumentation.js
+@@ -17,7 +17,6 @@
+ const winston_1 = require("./internal/winston");
+ const version_1 = require("./version");
+ const constants_1 = require("./internal/constants");
+-const winston_transport_1 = require("@opentelemetry/winston-transport");
+ /**
+  * Winston instrumentation for OpenTelemetry
+  */
+@@ -32,7 +31,6 @@
+         const winston = moduleExports;
+         const { level, levels } = winston.config.syslog;
+         const options = { level: (level || constants_1.DEFAULT_LEVEL), levels: (levels || constants_1.DEFAULT_LEVELS) };
+-        (0, winston_transport_1.setWinstonTransport)(this.tracer, options);
+         const massagedPatch = (0, winston_1.getWinston3Patch)(winston, this.tracer, this._config);
+         if (massagedPatch) {
+             this._massUnpatch(moduleExports, 'createLogger');
