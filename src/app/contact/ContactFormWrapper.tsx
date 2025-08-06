@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export const SendMessageInputSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
-  subject: z.string().min(1, "Please select a subject."),
+  subject: z.enum(["schedule_call", "sponsorship", "general_inquiry", "other"]),
   customSubject: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters."),
 }).refine(data => {
@@ -31,20 +31,22 @@ export const SendMessageInputSchema = z.object({
     path: ["customSubject"],
 });
 
+export type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
+
 
 export function ContactFormWrapper() {
   const searchParams = useSearchParams()
   const subjectParam = searchParams.get('subject')
   const customSubjectParam = searchParams.get('customSubject')
 
-  let defaultSubject = "general_inquiry"
+  let defaultSubject: SendMessageInput['subject'] = "general_inquiry"
   if (subjectParam === 'sponsorship') defaultSubject = 'sponsorship'
   if (subjectParam === 'schedule_call') defaultSubject = 'schedule_call'
   if (subjectParam === 'other') defaultSubject = 'other'
 
 
   const { toast } = useToast()
-  const form = useForm<z.infer<typeof SendMessageInputSchema>>({
+  const form = useForm<SendMessageInput>({
     resolver: zodResolver(SendMessageInputSchema),
     defaultValues: {
       name: "",
@@ -64,7 +66,7 @@ export function ContactFormWrapper() {
   }, [subjectValue, form]);
 
 
-  async function onSubmit(values: z.infer<typeof SendMessageInputSchema>) {
+  async function onSubmit(values: SendMessageInput) {
     const result = await sendDirectMessage(values)
 
     if (result.success) {

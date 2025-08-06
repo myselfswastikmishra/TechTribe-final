@@ -3,20 +3,17 @@
 
 import { chapterApplication, type ChapterApplicationInput } from "@/ai/flows/chapter-application-flow"
 
-const GEMINI_API_KEY = (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('YOUR_GEMINI_API_KEY')) 
-    ? process.env.GEMINI_API_KEY 
-    : 'AIzaSyDo3ahg4cUTIHMNkU_NadC3cQ7OXt-D4HI';
-    
-const DISCORD_WEBHOOK_URL = (process.env.DISCORD_WEBHOOK_URL && !process.env.DISCORD_WEBHOOK_URL.includes('YOUR_DISCORD_WEBHOOK_URL'))
-    ? process.env.DISCORD_WEBHOOK_URL
-    : 'https://discord.com/api/webhooks/1402024050557190258/OQemUD9p8nzjpTP5QuKOGKgGhV76Cngoh0Ua3c0wv71OHQyYXiFDijlLkEra4e4hxO_t';
-
-
 export async function submitChapterApplication(values: ChapterApplicationInput) {
-  // First, check if the key is available.
-  if (!GEMINI_API_KEY) {
-    console.error("Gemini API Key is not configured on the server via environment variables or hardcoded fallback.");
+  // First, check if the keys are available from environment variables.
+  if (!process.env.GEMINI_API_KEY) {
+    console.error("Gemini API Key is not configured on the server via environment variables.");
     return { success: false, message: "The AI service is not configured. Please contact the site administrator." };
+  }
+
+  if (!process.env.DISCORD_WEBHOOK_URL) {
+      console.error("Discord Webhook URL is not configured on the server via environment variables.");
+      // The application was successful, but the notification failed. This is a partial success.
+      return { success: true, message: "Your application was received, but the admin could not be notified. The server's notification service is not configured." }
   }
 
   try {
@@ -26,13 +23,6 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
       // If the AI flow itself has an issue, report it.
       console.error("The Genkit chapter application flow failed:", flowResult.message);
       return { success: false, message: flowResult.message || "An AI processing error occurred." }
-    }
-
-    // After the flow succeeds, check if the webhook URL is available.
-    if (!DISCORD_WEBHOOK_URL) {
-      console.error("Discord Webhook URL is not configured on the server via environment variables or hardcoded fallback.");
-      // The application was successful, but the notification failed. This is a partial success.
-      return { success: true, message: "Your application was received, but the admin could not be notified. The server's notification service is not configured." }
     }
 
     const discordMessage = {
@@ -70,7 +60,7 @@ export async function submitChapterApplication(values: ChapterApplicationInput) 
       ],
     }
 
-    const response = await fetch(DISCORD_WEBHOOK_URL, {
+    const response = await fetch(process.env.DISCORD_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
