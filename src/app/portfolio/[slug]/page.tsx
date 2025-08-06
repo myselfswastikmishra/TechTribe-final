@@ -8,12 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from 'next/navigation';
 
-type Props = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-export function generateMetadata({ params }: Props): Metadata {
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
@@ -41,7 +36,7 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 
-export default function PortfolioDetailPage({ params }: Props) {
+export default function PortfolioDetailPage({ params }: { params: { slug: string } }) {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
