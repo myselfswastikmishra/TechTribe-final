@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation';
 
 type Props = {
   params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 export function generateMetadata({ params }: Props): Metadata {
