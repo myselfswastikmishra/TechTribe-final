@@ -8,11 +8,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from 'next/navigation';
 
-type PageProps = {
+type Props = {
   params: { slug: string };
 };
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export function generateMetadata({ params }: Props): Metadata {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
@@ -40,7 +40,7 @@ export function generateMetadata({ params }: PageProps): Metadata {
 }
 
 
-export default function PortfolioDetailPage({ params }: PageProps) {
+export default function PortfolioDetailPage({ params }: Props) {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
