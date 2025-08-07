@@ -8,11 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from 'next/navigation';
 
-type Props = {
-  params: { slug: string };
-};
-
-export function generateMetadata({ params }: Props): Metadata {
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
