@@ -40,7 +40,7 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 
-export default function PortfolioDetailPage({ params }: Props) {
+export default function PortfolioDetailPage({ params }: { params: { slug: string } }) {
   const project = portfolioItems.find((p) => p.slug === params.slug);
 
   if (!project) {
