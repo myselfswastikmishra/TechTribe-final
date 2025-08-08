@@ -8,4 +8,10 @@ export const ai = genkit({
       apiKey: process.env.GEMINI_API_KEY,
     }),
   ],
+  telemetry: {
+    instrumentation: {
+      instrumentor: 'none'
+    },
+    logger: 'none'
+  },
 });
